@@ -29,7 +29,7 @@ class NetworkProvider {
 
   Future<void> init() async {
     dio = Dio()
-      ..options.baseUrl = Urls.baseUrlV1
+      ..options.baseUrl = Urls.baseUrl
       ..options.connectTimeout = const Duration(milliseconds: timeout)
       ..options.receiveTimeout = const Duration(milliseconds: timeout);
     dio.interceptors

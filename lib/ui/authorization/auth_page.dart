@@ -99,13 +99,11 @@ class AuthPage extends StatelessWidget {
                                 padding: const EdgeInsets.all(Dimen.size16),
                                 child: BaseTextButton(
                                     buttonText: "Войти",
-                                    onTap: ()  {
-                                      // var result = await viewModel.authenticate();
-                                      BottomModals.showModal(const Text("data"));
-                                      // if (result == AuthResult.success) {
-                                      //   context
-                                      //       .navigateClearStackTo(RouteName.home);
-                                      // }
+                                    onTap: () async {
+                                      var result = await viewModel.authenticate();
+                                      if (result == AuthResult.success) {
+                                        BottomModals.showModal(const Text("data"));
+                                      }
                                     },
                                     weight: FontWeight.w500,
                                     fontSize: 18,
