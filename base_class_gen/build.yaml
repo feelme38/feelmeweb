@@ -1,0 +1,14 @@
+targets:
+  $default:
+    builders:
+      base_class_gen|baseClassGeneratorBuilder:
+        enabled: true
+
+builders:
+  baseClassGeneratorBuilder:
+    import: 'package:base_class_gen/generator/generators.dart'
+    builder_factories: [ 'baseClassGeneratorBuilder' ]
+    applies_builders: [ "source_gen|combining_builder" ]
+    build_extensions: { ".dart": [ "d.g.part" ] }
+    auto_apply: dependents
+    build_to: cache
