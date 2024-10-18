@@ -5,13 +5,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 @singleton
 class AuthPreferences {
   AuthPreferences();
-
-  late SharedPreferences prefs;
-
-  Future<void> init() async {
-    prefs = await SharedPreferences.getInstance();
-  }
-
   // Сохранение токена
   Future<void> saveToken(String token) async {
     final prefs = await SharedPreferences.getInstance();

@@ -1,16 +1,15 @@
-import 'package:feelmeweb/presentation/modals/bottom_modals.dart';
-import 'package:feelmeweb/presentation/modals/dialogs.dart';
+import 'package:feelmeweb/core/enum/auth_result.dart';
+import 'package:feelmeweb/ui/root/root_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
-import 'package:feelmeweb/core/enum/auth_result.dart';
 import 'package:feelmeweb/presentation/buttons/base_text_button.dart';
 import 'package:feelmeweb/presentation/theme/theme_colors.dart';
 import 'package:feelmeweb/presentation/widgets/base_text_field.dart';
 import 'package:feelmeweb/provider/network/log_writer_interceptor.dart';
-
 import '../../presentation/base_screen/base_screen.dart';
 import '../../presentation/theme/dimen.dart';
 import '../../presentation/theme/drawables.dart';
@@ -27,6 +26,7 @@ class AuthPage extends StatelessWidget {
     final viewModel = context.read<AuthViewModel>();
     var consumableVm = context.watch<AuthViewModel>();
     return BaseScreen<AuthViewModel>(
+        needBackButton: false,
         needAppBar: false,
         child: Container(
             decoration: const BoxDecoration(color: AppColor.background),
@@ -53,20 +53,20 @@ class AuthPage extends StatelessWidget {
                             padding: const EdgeInsets.symmetric(horizontal: Dimen.size16),
                             child: Column(children: [
                               BaseTextField(
-                                  hasFocus: consumableVm.loginHasFocus,
-                                  helperText: "Логин",
-                                  node: viewModel.loginNode,
-                                  background: AppColor.background2,
-                                  borderColor: AppColor.basicLightGrey,
-                                  textColor: Colors.black.withOpacity(0.5),
-                                  maxLines: 1,
-                                  danger: consumableVm.authFailed,
-                                  controller: viewModel.loginController,
-                                  onSubmit: (_) =>
-                                      viewModel.passwordNode.requestFocus(),
-                                  onTextChange: (String value) {
-                                    viewModel.textControllerChange();
-                                  },
+                                hasFocus: consumableVm.loginHasFocus,
+                                helperText: "Логин",
+                                node: viewModel.loginNode,
+                                background: AppColor.background2,
+                                borderColor: AppColor.basicLightGrey,
+                                textColor: Colors.black.withOpacity(0.5),
+                                maxLines: 1,
+                                danger: consumableVm.authFailed,
+                                controller: viewModel.loginController,
+                                onSubmit: (_) =>
+                                    viewModel.passwordNode.requestFocus(),
+                                onTextChange: (String value) {
+                                  viewModel.textControllerChange();
+                                },
                               ),
                               const SizedBox(height: Dimen.size12),
                               BaseTextField(
@@ -101,8 +101,8 @@ class AuthPage extends StatelessWidget {
                                     buttonText: "Войти",
                                     onTap: () async {
                                       var result = await viewModel.authenticate();
-                                      if (result == AuthResult.success) {
-                                        BottomModals.showModal(const Text("data"));
+                                      if(result == AuthResult.success) {
+                                        context.pushReplacement("/home");
                                       }
                                     },
                                     weight: FontWeight.w500,

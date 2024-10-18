@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:feelmeweb/presentation/navigation/route_generation.dart';
 import 'package:feelmeweb/presentation/theme/theme.dart';
 import 'package:feelmeweb/provider/di/di_provider.dart';
-import 'package:feelmeweb/provider/network/auth_preferences.dart';
 import 'package:feelmeweb/provider/network/network_provider.dart';
 import 'package:flutter/material.dart';
 
@@ -11,8 +10,11 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   HttpOverrides.global = MyHttpOverrides();
   configureDependencies();
-  await getIt<AuthPreferences>().init();
   runApp(const MyApp());
+  getIt<RouteGenerator>().router.backButtonDispatcher.addCallback(() async {
+
+    return false;
+  });
 }
 
 class MyApp extends StatelessWidget {
@@ -25,50 +27,6 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         title: 'Панель управления системой',
         theme: AppTheme.dataLight,
-    );
-  }
-}
-
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key});
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    getIt<RouteGenerator>().router.go("/auth");
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: const Text(""),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ),
     );
   }
 }
