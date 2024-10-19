@@ -53,7 +53,7 @@ class RouteGenerator {
             GoRoute(
               path: RouteName.home,
               builder: (BuildContext context, GoRouterState state) {
-                return const MyHomePage();
+                return MyHomePage.create();
               },
             ),
           ],
