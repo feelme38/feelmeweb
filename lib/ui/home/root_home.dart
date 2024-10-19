@@ -23,6 +23,7 @@ class MyHomePage extends StatelessWidget {
           appBar: AppBar(
               title: const Text('Сервисные инженеры')
           ),
+          floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
           drawer: Drawer(
             child: ListView(
               padding: EdgeInsets.zero,
@@ -31,33 +32,110 @@ class MyHomePage extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: Colors.blue,
                   ),
-                  child: Text(
-                    'Navigation Drawer',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 24,
-                    ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'FeelMe',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 24,
+                        ),
+                      ),
+                      Text(
+                        'Главное меню',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                ListTile(
-                  leading: const Icon(Icons.home),
-                  title: const Text('Home'),
-                  onTap: () {
-                    //context.go('/home'); // Переход на Home
-                    Navigator.pop(context); // Закрытие drawer
-                  },
+                ExpansionTile(
+                    leading: const Icon(Icons.home),
+                    title: const Text('Пользователи'),
+                    children: [
+                      ListTile(
+                        title: const Text('Список'),
+                        onTap: () {
+                          // context.go('/home'); // Переход на Home
+                          Navigator.pop(context); // Закрытие drawer
+                        },
+                      ),
+                      ListTile(
+                        title: const Text('Добавить'),
+                        onTap: () {
+                          //context.go('/home'); // Переход на Home
+                          Navigator.pop(context); // Закрытие drawer
+                        },
+                      ),
+                    ]
                 ),
-                ListTile(
-                  leading: const Icon(Icons.settings),
-                  title: const Text('Settings'),
-                  onTap: () {
-                    //context.go('/settings'); // Переход на Settings
-                    Navigator.pop(context); // Закрытие drawer
-                  },
+                ExpansionTile(
+                    leading: const Icon(Icons.local_florist),
+                    title: const Text('Ароматы'),
+                    children: [
+                      ListTile(
+                        title: const Text('Список'),
+                        onTap: () {
+                          // context.go('/home'); // Переход на Home
+                          Navigator.pop(context); // Закрытие drawer
+                        },
+                      ),
+                      ListTile(
+                        title: const Text('Добавить'),
+                        onTap: () {
+                          //context.go('/home'); // Переход на Home
+                          Navigator.pop(context); // Закрытие drawer
+                        },
+                      ),
+                    ]
                 ),
+                ExpansionTile(
+                    leading: const Icon(Icons.devices),
+                    title: const Text('Оборудование'),
+                    children: [
+                      ListTile(
+                        title: const Text('Список'),
+                        onTap: () {
+                          // context.go('/home'); // Переход на Home
+                          Navigator.pop(context); // Закрытие drawer
+                        },
+                      ),
+                      ListTile(
+                        title: const Text('Добавить'),
+                        onTap: () {
+                          //context.go('/home'); // Переход на Home
+                          Navigator.pop(context); // Закрытие drawer
+                        },
+                      ),
+                    ]
+                ),
+                ExpansionTile(
+                    leading: const Icon(Icons.person),
+                    title: const Text('Клиенты'),
+                    children: [
+                      ListTile(
+                        title: const Text('Список'),
+                        onTap: () {
+                          // context.go('/home'); // Переход на Home
+                          Navigator.pop(context); // Закрытие drawer
+                        },
+                      ),
+                      ListTile(
+                        title: const Text('Добавить'),
+                        onTap: () {
+                          //context.go('/home'); // Переход на Home
+                          Navigator.pop(context); // Закрытие drawer
+                        },
+                      ),
+                    ]
+                ),
+                const Divider(),
                 ListTile(
                   leading: const Icon(Icons.logout),
-                  title: const Text('Logout'),
+                  title: const Text('Выход'),
                   onTap: () {
                     // context.go('/logout'); // Переход на Logout
                     Navigator.pop(context); // Закрытие drawer

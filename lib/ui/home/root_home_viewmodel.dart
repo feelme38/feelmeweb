@@ -9,14 +9,14 @@ import '../../presentation/base_vm/base_view_model.dart';
 class RootHomeViewModel extends BaseViewModel {
 
   RootHomeViewModel() {
-    init();
+    loadUsers();
   }
 
   final _getUsersUseCase = GetUsersUseCase();
   List<UserResponse> _users = [];
   List<UserResponse> get users => _users;
 
-  init() async {
+  void loadUsers() async {
     loadingOn();
     (await executeUseCaseParam<List<UserResponse>, String?>(_getUsersUseCase, 'd73285b5-dd1a-43a4-8c04-4cb65f62af3a'))
         .doOnError((message, exception) {

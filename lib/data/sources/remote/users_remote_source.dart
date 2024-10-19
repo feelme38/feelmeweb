@@ -31,4 +31,22 @@ class UsersRemoteSource {
     }
   }
 
+  Future<Result> deleteUser(String? userId) async {
+    try {
+      final response = await _networkProvider.dio.onGet(
+          Urls.users,
+          queryParams: {
+            "roleId": userId
+          }
+      );
+      var result =
+      (response.data as List).map((e) => UserResponse.fromJson(e)).toList();
+      return Success(result);
+    } on DioException catch (e) {
+      return Failure(exception: e, message: e.message);
+    } on ConnectionException catch (e) {
+      return Failure(exception: e, message: e.message);
+    }
+  }
+
 }
