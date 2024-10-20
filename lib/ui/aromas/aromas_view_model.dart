@@ -1,12 +1,11 @@
 import 'package:feelmeweb/data/models/response/aroma_response.dart';
-import 'package:feelmeweb/data/models/response/user_response.dart';
 import 'package:feelmeweb/domain/aromas/get_aromas_usecase.dart';
+import 'package:feelmeweb/presentation/base_vm/base_search_view_model.dart';
 import 'package:flutter/material.dart';
 
 import '../../presentation/alert/alert.dart';
-import '../../presentation/base_vm/base_view_model.dart';
 
-class AromasViewModel extends BaseViewModel {
+class AromasViewModel extends BaseSearchViewModel {
 
   AromasViewModel() {
     loadAromas();
@@ -33,6 +32,11 @@ class AromasViewModel extends BaseViewModel {
       notifyListeners();
     });
     loadingOff();
+  }
+
+  void onSearch(String? text) {
+    clearEnabled = text != null && text.isNotEmpty;
+    //refilter(state.defects);
   }
 
   List<DataRow> getTableAromasRows(List<AromaResponse> aromas) => aromas.map((aroma) {
@@ -63,4 +67,7 @@ class AromasViewModel extends BaseViewModel {
       )),
     ]);
   }).toList();
+
+  @override
+  String get title => 'Ароматы';
 }

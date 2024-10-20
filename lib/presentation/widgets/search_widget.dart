@@ -19,8 +19,7 @@ class SearchWidget<T extends BaseSearchViewModel> extends StatelessWidget
       this.needBottomEdge = false,
       this.backArg,
       this.needBackButton = true,
-      Key? key})
-      : super(key: key);
+      super.key});
   final bool needBackButton;
   final dynamic backArg;
   final Function(String?) onSearch;
@@ -60,7 +59,7 @@ class SearchWidget<T extends BaseSearchViewModel> extends StatelessWidget
                       vm.searchController.clear();
                       onSearch(vm.searchController.text);
                     })
-                : const SizedBox(),
+                : null,
             actions: [
               CupertinoButton(
                   padding: const EdgeInsets.only(right: Dimen.size16),
@@ -69,6 +68,7 @@ class SearchWidget<T extends BaseSearchViewModel> extends StatelessWidget
                           vm.setSearchEnabled();
                         }
                       : () {
+                          if(vm.searchController.text.isEmpty && !needBackButton) vm.setSearchEnabled();
                           vm.searchController.clear();
                           onSearch(vm.searchController.text);
                         },
@@ -117,7 +117,7 @@ class SearchWidget<T extends BaseSearchViewModel> extends StatelessWidget
                         () => context.navigateUp(arg: backArg),
                     child:
                         const Icon(Icons.arrow_back, color: AppColor.primary))
-                : const SizedBox(),
+                : null,
             title: titleWidget(context));
   }
 

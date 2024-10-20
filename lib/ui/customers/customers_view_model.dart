@@ -1,11 +1,12 @@
+
 import 'package:feelmeweb/data/models/response/customer_response.dart';
 import 'package:feelmeweb/domain/customers/get_customers_usecase.dart';
 import 'package:flutter/material.dart';
 
 import '../../presentation/alert/alert.dart';
-import '../../presentation/base_vm/base_view_model.dart';
+import '../../presentation/base_vm/base_search_view_model.dart';
 
-class CustomersViewModel extends BaseViewModel {
+class CustomersViewModel extends BaseSearchViewModel {
 
   CustomersViewModel() {
     loadCustomers();
@@ -36,6 +37,11 @@ class CustomersViewModel extends BaseViewModel {
       notifyListeners();
     });
     loadingOff();
+  }
+
+  void onSearch(String? text) {
+    clearEnabled = text != null && text.isNotEmpty;
+    //refilter(state.defects);
   }
 
   List<DataRow> getTableCustomersRows(List<CustomerResponse> customers) => customers.map((customer) {
@@ -90,4 +96,7 @@ class CustomersViewModel extends BaseViewModel {
       )),
     ]);
   }).toList();
+
+  @override
+  String get title => 'Клиенты';
 }

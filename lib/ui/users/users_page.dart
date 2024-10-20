@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../presentation/base_screen/base_screen.dart';
+import '../../presentation/widgets/search_widget.dart';
 
 class UsersPage extends StatelessWidget {
 
@@ -22,8 +23,10 @@ class UsersPage extends StatelessWidget {
         needBackButton: false,
         needAppBar: true,
         drawer: getDrawer(context),
-        appBar: AppBar(
-            title: const Text('Сервисные инженеры')
+        appBar: SearchWidget<UsersViewModel>(
+          context.read<UsersViewModel>().onSearch, () {},
+          needBottomEdge: true,
+          needBackButton: false,
         ),
         child:  Align(
           alignment: Alignment.topCenter,

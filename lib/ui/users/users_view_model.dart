@@ -1,12 +1,12 @@
 import 'package:base_class_gen/core/ext/string_ext.dart';
 import 'package:feelmeweb/data/models/response/user_response.dart';
 import 'package:feelmeweb/domain/users/get_users_usecase.dart';
+import 'package:feelmeweb/presentation/base_vm/base_search_view_model.dart';
 import 'package:flutter/material.dart';
 
 import '../../presentation/alert/alert.dart';
-import '../../presentation/base_vm/base_view_model.dart';
 
-class UsersViewModel extends BaseViewModel {
+class UsersViewModel extends BaseSearchViewModel {
 
   UsersViewModel() {
     loadUsers();
@@ -39,7 +39,10 @@ class UsersViewModel extends BaseViewModel {
     loadingOff();
   }
 
-
+  void onSearch(String? text) {
+    clearEnabled = text != null && text.isNotEmpty;
+    //refilter(state.defects);
+  }
 
   String _renderRouteStatus(String? routeStatus) {
     switch(routeStatus) {
@@ -109,4 +112,7 @@ class UsersViewModel extends BaseViewModel {
       )),
     ]);
   }).toList();
+
+  @override
+  String get title => 'Сервисные инженеры';
 }

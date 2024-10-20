@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../presentation/base_screen/base_screen.dart';
+import '../../presentation/widgets/search_widget.dart';
 import 'customers_view_model.dart';
 
 class CustomersPage extends StatelessWidget {
@@ -22,8 +23,10 @@ class CustomersPage extends StatelessWidget {
         needBackButton: false,
         needAppBar: true,
         drawer: getDrawer(context),
-        appBar: AppBar(
-            title: const Text('Клиенты')
+        appBar: SearchWidget<CustomersViewModel>(
+            context.read<CustomersViewModel>().onSearch, () {},
+            needBottomEdge: true,
+            needBackButton: false,
         ),
         child:  Align(
           alignment: Alignment.topCenter,
