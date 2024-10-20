@@ -11,10 +11,6 @@ void main() async {
   HttpOverrides.global = MyHttpOverrides();
   configureDependencies();
   runApp(const MyApp());
-  getIt<RouteGenerator>().router.backButtonDispatcher.addCallback(() async {
-
-    return false;
-  });
 }
 
 class MyApp extends StatelessWidget {

@@ -1,7 +1,3 @@
-import 'package:feelmeweb/presentation/navigation/route_generation.dart';
-import 'package:feelmeweb/provider/di/di_provider.dart';
-import 'package:feelmeweb/ui/home/root_home.dart';
-import 'package:feelmeweb/ui/root/root_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:feelmeweb/core/enum/auth_result.dart';

@@ -28,6 +28,7 @@ class BaseScreen<T extends BaseViewModel> extends StatelessWidget {
   final Color appbarColor;
   final PreferredSizeWidget? appBar;
   final FloatingActionButton? floatingActionButton;
+  final Drawer? drawer;
 
   const BaseScreen(
       {this.needBackButton = true,
@@ -45,6 +46,7 @@ class BaseScreen<T extends BaseViewModel> extends StatelessWidget {
       this.needAppBar = true,
       this.backArg,
       this.floatingActionButton,
+      this.drawer,
       super.key});
 
   @override
@@ -80,6 +82,7 @@ class BaseScreen<T extends BaseViewModel> extends StatelessWidget {
               floatingActionButton: floatingActionButton,
               floatingActionButtonLocation:
                   FloatingActionButtonLocation.endFloat,
+              drawer: drawer,
               appBar: needAppBar
                   ? appBar ??
                       AppBar(
