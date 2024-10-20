@@ -15,7 +15,7 @@ class AromasPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final users = context.watch<AromasViewModel>().users;
+    final aromas = context.watch<AromasViewModel>().aromas;
     final viewModel = context.read<AromasViewModel>();
 
     return BaseScreen<AromasViewModel>(
@@ -30,8 +30,8 @@ class AromasPage extends StatelessWidget {
           child: SingleChildScrollView(
             scrollDirection: Axis.vertical,
             child: AppTableWidget(
-              dataColumns: viewModel.tableUsersColumns,
-              dataRows: viewModel.getTableUsersRows(users),
+              dataColumns: viewModel.tableAromasColumns,
+              dataRows: viewModel.getTableAromasRows(aromas),
             ),
           ),
         )

@@ -8,9 +8,11 @@
 // coverage:ignore-file
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'package:feelmeweb/data/repository/auth/auth_repository.dart' as _i9;
+import 'package:feelmeweb/data/repository/aromas/aromas_repository.dart' as _i9;
+import 'package:feelmeweb/data/repository/auth/auth_repository.dart' as _i11;
 import 'package:feelmeweb/data/repository/users/users_repository.dart' as _i7;
-import 'package:feelmeweb/data/sources/remote/auth_remote_source.dart' as _i8;
+import 'package:feelmeweb/data/sources/remote/aromas_remote_source.dart' as _i8;
+import 'package:feelmeweb/data/sources/remote/auth_remote_source.dart' as _i10;
 import 'package:feelmeweb/data/sources/remote/users_remote_source.dart' as _i6;
 import 'package:feelmeweb/presentation/navigation/route_generation.dart' as _i5;
 import 'package:feelmeweb/provider/network/auth_preferences.dart' as _i3;
@@ -37,10 +39,14 @@ extension GetItInjectableX on _i1.GetIt {
         _i6.UsersRemoteSource(gh<_i4.NetworkProvider>()));
     gh.singleton<_i7.UsersRepository>(
         _i7.UsersRepositoryImpl(gh<_i6.UsersRemoteSource>()));
-    gh.singleton<_i8.AuthRemoteSource>(
-        _i8.AuthRemoteSource(gh<_i4.NetworkProvider>()));
-    gh.singleton<_i9.AuthRepository>(
-        _i9.AuthRepositoryImpl(gh<_i8.AuthRemoteSource>()));
+    gh.singleton<_i8.AromasRemoteSource>(
+        _i8.AromasRemoteSource(gh<_i4.NetworkProvider>()));
+    gh.singleton<_i9.AromasRepository>(
+        _i9.AromasRepositoryImpl(gh<_i8.AromasRemoteSource>()));
+    gh.singleton<_i10.AuthRemoteSource>(
+        _i10.AuthRemoteSource(gh<_i4.NetworkProvider>()));
+    gh.singleton<_i11.AuthRepository>(
+        _i11.AuthRepositoryImpl(gh<_i10.AuthRemoteSource>()));
     return this;
   }
 }

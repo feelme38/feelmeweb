@@ -1,5 +1,6 @@
+import 'package:feelmeweb/data/models/response/aroma_response.dart';
 import 'package:feelmeweb/data/models/response/user_response.dart';
-import 'package:feelmeweb/domain/users/get_users_usecase.dart';
+import 'package:feelmeweb/domain/aromas/get_aromas_usecase.dart';
 import 'package:flutter/material.dart';
 
 import '../../presentation/alert/alert.dart';
@@ -11,35 +12,35 @@ class AromasViewModel extends BaseViewModel {
     loadUsers();
   }
 
-  final _getUsersUseCase = GetUsersUseCase();
+  final _getAromasUseCase = GetAromasUseCase();
 
-  List<UserResponse> _users = [];
-  List<UserResponse> get users => _users;
+  List<AromaResponse> _aromas = [];
+  List<AromaResponse> get aromas => _aromas;
 
-  final List<DataColumn> _tableUsersColumns = [
+  final List<DataColumn> _tableAromasColumns = [
     const DataColumn(label: Text('Наименование')),
     const DataColumn(label: Text('')),
   ];
-  List<DataColumn> get tableUsersColumns => _tableUsersColumns;
+  List<DataColumn> get tableAromasColumns => _tableAromasColumns;
 
   void loadUsers() async {
     loadingOn();
-    (await executeUseCaseParam<List<UserResponse>, String?>(_getUsersUseCase, 'd73285b5-dd1a-43a4-8c04-4cb65f62af3a'))
+    (await executeUseCase<List<AromaResponse>>(_getAromasUseCase))
         .doOnError((message, exception) {
       addAlert(Alert(message ?? '$exception', style: AlertStyle.danger));
     }).doOnSuccess((value) {
-      _users = value;
+      _aromas = value;
       notifyListeners();
     });
     loadingOff();
   }
 
-  List<DataRow> getTableUsersRows(List<UserResponse> users) => users.map((user) {
+  List<DataRow> getTableAromasRows(List<AromaResponse> aromas) => aromas.map((aroma) {
     return DataRow(cells: [
       DataCell(
           Align(
             alignment: Alignment.center,
-            child: Text(user.name),
+            child: Text(aroma.name),
           )
       ),
       DataCell(Row(
