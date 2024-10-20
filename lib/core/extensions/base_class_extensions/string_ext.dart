@@ -41,4 +41,6 @@ extension S on String {
 
 extension Snull on String? {
   String get orEmpty => this ?? '';
+  String orDash() => this ?? '–';
+  String toDashIfEmpty() => this?.isNotEmpty == true ? orDash() : '–';
 }

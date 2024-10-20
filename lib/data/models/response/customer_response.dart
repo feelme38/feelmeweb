@@ -1,3 +1,4 @@
+import 'package:feelmeweb/data/models/response/device_response.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'customer_response.g.dart';
@@ -10,6 +11,7 @@ class CustomerResponse {
   final String ownerName;
   final String preferredStartTime;
   final String address;
+  final List<DeviceResponse> devices;
   final double? lat;
   final double? lon;
 
@@ -20,6 +22,7 @@ class CustomerResponse {
     required this.ownerName,
     required this.preferredStartTime,
     required this.address,
+    required this.devices,
     this.lat,
     this.lon,
   });
