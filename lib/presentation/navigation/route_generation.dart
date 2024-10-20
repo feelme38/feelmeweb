@@ -1,4 +1,5 @@
 import 'package:feelmeweb/ui/aromas/aromas_page.dart';
+import 'package:feelmeweb/ui/customers/customers_page.dart';
 import 'package:feelmeweb/ui/users/users_page.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -53,6 +54,12 @@ class RouteGenerator {
           path: RouteName.aromasList,
           builder: (BuildContext context, GoRouterState state) {
             return AromasPage.create();
+          },
+        ),
+        GoRoute(
+          path: RouteName.customersList,
+          builder: (BuildContext context, GoRouterState state) {
+            return CustomersPage.create();
           },
         ),
       ],

@@ -4,4 +4,5 @@ class RouteName {
   static const home = '/home';
   static const usersList = '/users';
   static const aromasList = '/aromas';
+  static const customersList = '/customers';
 }

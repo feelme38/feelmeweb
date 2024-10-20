@@ -42,63 +42,53 @@ class BaseViewModel extends ChangeNotifier {
     if (showLoading) loadingOn();
     if (useCase is UseCaseParam<Result<T>, Y>) {
       Result<T> result;
-      if (param != null) {
-        result = await useCase(param);
-        result.doOnError((message, exception) {
-          hasLoadError = true;
-          if (exception is DioException) {
-            if (exception.isNetworkError) {
-              hasInternetConnection = false;
-              addConnectionAlert();
-            } else {
-              addErrorAlert(message: message);
-            }
-          } else if (exception is ConnectionException) {
+      result = await useCase(param);
+      result.doOnError((message, exception) {
+        hasLoadError = true;
+        if (exception is DioException) {
+          if (exception.isNetworkError) {
             hasInternetConnection = false;
             addConnectionAlert();
           } else {
             addErrorAlert(message: message);
           }
-        }).doOnSuccess((value) {
-          hasLoadError = false;
-          hasInternetConnection = true;
-        });
-        if (cancelLoading) loadingOff();
-        return result;
-      } else {
-        if (cancelLoading) loadingOff();
-        return Failure(message: 'param is null');
-      }
+        } else if (exception is ConnectionException) {
+          hasInternetConnection = false;
+          addConnectionAlert();
+        } else {
+          addErrorAlert(message: message);
+        }
+      }).doOnSuccess((value) {
+        hasLoadError = false;
+        hasInternetConnection = true;
+      });
+      if (cancelLoading) loadingOff();
+      return result;
     } else if (useCase is UseCaseNameParam<Result<T>, Y>) {
       Result<T> result;
-      if (param != null) {
-        result = await useCase(param: param);
-        result.doOnError((message, exception) {
-          hasLoadError = true;
-          if (exception is DioException) {
-            if (exception.isNetworkError) {
-              hasInternetConnection = false;
-              addConnectionAlert();
-            } else {
-              addErrorAlert(message: message);
-            }
-          } else if (exception is ConnectionException) {
+      result = await useCase(param: param);
+      result.doOnError((message, exception) {
+        hasLoadError = true;
+        if (exception is DioException) {
+          if (exception.isNetworkError) {
             hasInternetConnection = false;
             addConnectionAlert();
           } else {
             addErrorAlert(message: message);
           }
-        }).doOnSuccess((value) {
-          hasLoadError = false;
-          hasInternetConnection = true;
-          if (cancelLoading) loadingOff();
-        });
+        } else if (exception is ConnectionException) {
+          hasInternetConnection = false;
+          addConnectionAlert();
+        } else {
+          addErrorAlert(message: message);
+        }
+      }).doOnSuccess((value) {
+        hasLoadError = false;
+        hasInternetConnection = true;
         if (cancelLoading) loadingOff();
-        return result;
-      } else {
-        if (cancelLoading) loadingOff();
-        return Failure(message: 'param is null');
-      }
+      });
+      if (cancelLoading) loadingOff();
+      return result;
     } else {
       if (cancelLoading) loadingOff();
       return Failure(message: 'unknown use case');

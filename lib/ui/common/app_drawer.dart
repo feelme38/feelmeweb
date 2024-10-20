@@ -78,8 +78,8 @@ Drawer getDrawer(BuildContext context) {
             ]
         ),
         ExpansionTile(
-            leading: const Icon(Icons.devices),
-            title: const Text('Оборудование'),
+            leading: const Icon(Icons.place),
+            title: const Text('Районы'),
             children: [
               ListTile(
                 title: const Text('Список'),
@@ -104,8 +104,8 @@ Drawer getDrawer(BuildContext context) {
               ListTile(
                 title: const Text('Список'),
                 onTap: () {
-                  // context.go('/home'); // Переход на Home
-                  Navigator.pop(context); // Закрытие drawer
+                  Navigator.pop(context);
+                  context.go("/customers");
                 },
               ),
               ListTile(

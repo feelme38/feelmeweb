@@ -9,7 +9,7 @@ import '../../presentation/base_vm/base_view_model.dart';
 class AromasViewModel extends BaseViewModel {
 
   AromasViewModel() {
-    loadUsers();
+    loadAromas();
   }
 
   final _getAromasUseCase = GetAromasUseCase();
@@ -23,7 +23,7 @@ class AromasViewModel extends BaseViewModel {
   ];
   List<DataColumn> get tableAromasColumns => _tableAromasColumns;
 
-  void loadUsers() async {
+  void loadAromas() async {
     loadingOn();
     (await executeUseCase<List<AromaResponse>>(_getAromasUseCase))
         .doOnError((message, exception) {
