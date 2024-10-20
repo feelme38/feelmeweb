@@ -1,3 +1,4 @@
+import 'package:feelmeweb/ui/aromas/aromas_page.dart';
 import 'package:feelmeweb/ui/users/users_page.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -22,28 +23,11 @@ class RouteGenerator {
       navigatorKey: navigatorKey,
       initialLocation: RouteName.auth,
       routes: <RouteBase>[
-        // GoRoute(
-        //   path: RouteName.slash,
-        //   redirect: (context, state) async {
-        //     var hasTokenValue = await hasToken();
-        //     if(hasTokenValue) {
-        //       print(state.matchedLocation);
-        //       return RouteName.slash + RouteName.home;
-        //     } else {
-        //       return RouteName.slash + RouteName.auth;
-        //     }
-        //   },
-        //   builder: (BuildContext context, GoRouterState state) {
-        //     return const RootPage();
-        //   },
-        //   routes: <RouteBase>[],
-        // ),
-
         GoRoute(
           path: RouteName.auth,
           redirect: (context, state) async {
             var hasTokenValue = await hasToken();
-            if(state.path == "auth" && hasTokenValue) {
+            if(hasTokenValue) {
               return RouteName.home;
             } else {
               return RouteName.auth;
@@ -62,11 +46,15 @@ class RouteGenerator {
         GoRoute(
           path: RouteName.usersList,
           builder: (BuildContext context, GoRouterState state) {
-            print("generate users page");
             return UsersPage.create();
           },
         ),
-
+        GoRoute(
+          path: RouteName.aromasList,
+          builder: (BuildContext context, GoRouterState state) {
+            return AromasPage.create();
+          },
+        ),
       ],
     );
   }

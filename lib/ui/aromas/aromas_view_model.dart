@@ -1,4 +1,3 @@
-import 'package:base_class_gen/core/ext/string_ext.dart';
 import 'package:feelmeweb/data/models/response/user_response.dart';
 import 'package:feelmeweb/domain/users/get_users_usecase.dart';
 import 'package:flutter/material.dart';
@@ -6,9 +5,9 @@ import 'package:flutter/material.dart';
 import '../../presentation/alert/alert.dart';
 import '../../presentation/base_vm/base_view_model.dart';
 
-class UsersViewModel extends BaseViewModel {
+class AromasViewModel extends BaseViewModel {
 
-  UsersViewModel() {
+  AromasViewModel() {
     loadUsers();
   }
 
@@ -18,11 +17,7 @@ class UsersViewModel extends BaseViewModel {
   List<UserResponse> get users => _users;
 
   final List<DataColumn> _tableUsersColumns = [
-    const DataColumn(label: Text('')),
-    const DataColumn(label: Text('Имя')),
-    const DataColumn(label: Text('Всего заданий')),
-    const DataColumn(label: Text('Выполнено заданий')),
-    const DataColumn(label: Text('Статус маршрута')),
+    const DataColumn(label: Text('Наименование')),
     const DataColumn(label: Text('')),
   ];
   List<DataColumn> get tableUsersColumns => _tableUsersColumns;
@@ -39,58 +34,16 @@ class UsersViewModel extends BaseViewModel {
     loadingOff();
   }
 
-
-
-  String _renderRouteStatus(String? routeStatus) {
-    switch(routeStatus) {
-      case 'ASSIGNED': return 'Назначен';
-      case 'STARTED': return 'В работе';
-      case 'PAUSED': return 'Перерыв';
-      case 'FINISHED': return 'Закончен';
-      default: return 'Без маршрута';
-    }
-  }
-
   List<DataRow> getTableUsersRows(List<UserResponse> users) => users.map((user) {
     return DataRow(cells: [
-      DataCell(CircleAvatar(
-        backgroundImage: NetworkImage(
-            user.profileUrl.orEmpty
-        ),
-      )),
       DataCell(
           Align(
             alignment: Alignment.center,
             child: Text(user.name),
           )
       ),
-      DataCell(
-          Align(
-            alignment: Alignment.center,
-            child: Text(user.allTasksCount.toString()),
-          )
-      ),
-      DataCell(
-          Align(
-            alignment: Alignment.center,
-            child: Text(user.completedTasksCount.toString()),
-          )
-      ),
-      DataCell(
-          Align(
-            alignment: Alignment.center,
-            child: Text(_renderRouteStatus(user.routeStatus?.name)),
-          )
-      ),
       DataCell(Row(
         children: [
-          IconButton(
-            icon: const Icon(Icons.directions),
-            onPressed: () {
-              // Логика назначения маршрута
-            },
-            tooltip: 'Создать маршрут',
-          ),
           IconButton(
             icon: const Icon(Icons.edit),
             onPressed: () {
