@@ -1,16 +1,13 @@
-import 'package:feelmeweb/core/extensions/base_class_extensions/string_ext.dart';
 import 'package:feelmeweb/data/models/response/customer_response.dart';
-import 'package:feelmeweb/data/models/response/device_response.dart';
 import 'package:feelmeweb/domain/customers/get_customers_usecase.dart';
-import 'package:feelmeweb/presentation/modals/bottom_modals.dart';
+import 'package:feelmeweb/domain/devices/delete_device_usecase.dart';
 import 'package:feelmeweb/presentation/modals/dialogs.dart';
 import 'package:feelmeweb/presentation/navigation/route_generation.dart';
-import 'package:feelmeweb/ui/common/app_table_widget.dart';
 import 'package:flutter/material.dart';
-
 import '../../presentation/alert/alert.dart';
 import '../../presentation/base_vm/base_search_view_model.dart';
 import '../../provider/di/di_provider.dart';
+import 'widgets/devices_table_dialog_widget.dart';
 
 class CustomersViewModel extends BaseSearchViewModel {
 
@@ -19,6 +16,7 @@ class CustomersViewModel extends BaseSearchViewModel {
   }
 
   final _getCustomersUseCase = GetCustomersUseCase();
+  final _deleteDeviceUseCase = DeleteDeviceUseCase();
 
   List<CustomerResponse> _customers = [];
   List<CustomerResponse> get customers => _customers;
@@ -47,34 +45,10 @@ class CustomersViewModel extends BaseSearchViewModel {
     const DataColumn(label: Text('')),
   ];
 
-  final List<DataColumn> _tableCustomerDevicesColumns = [
-    const DataColumn(
-        label: Text('Модель'),
-        headingRowAlignment: MainAxisAlignment.center
-    ),
-    const DataColumn(
-        label: Text('Аромат'),
-        headingRowAlignment: MainAxisAlignment.center
-    ),
-    const DataColumn(
-        label: Text('Остаток аромата'),
-        headingRowAlignment: MainAxisAlignment.center
-    ),
-    const DataColumn(
-        label: Text('Тип питания'),
-        headingRowAlignment: MainAxisAlignment.center
-    ),
-    const DataColumn(
-        label: Text('Тип сотрудничества'),
-        headingRowAlignment: MainAxisAlignment.center
-    ),
-    const DataColumn(label: Text('')),
-  ];
-
   List<DataColumn> get tableCustomersColumns => _tableCustomersColumns;
 
-  void loadCustomers({String? regionId}) async {
-    loadingOn();
+  void loadCustomers({String? regionId, bool isLoaderNeeded = true}) async {
+    if(isLoaderNeeded) loadingOn();
     (await executeUseCaseParam<List<CustomerResponse>, String?>(_getCustomersUseCase, regionId))
         .doOnError((message, exception) {
       addAlert(Alert(message ?? '$exception', style: AlertStyle.danger));
@@ -82,7 +56,14 @@ class CustomersViewModel extends BaseSearchViewModel {
       _customers = value;
       notifyListeners();
     });
-    loadingOff();
+    if(isLoaderNeeded) loadingOff();
+  }
+
+  void deleteDevice(String deviceId) async {
+    (await executeUseCaseParam<void, String>(_deleteDeviceUseCase, deviceId))
+        .doOnError((message, exception) {
+      addAlert(Alert(message ?? '$exception', style: AlertStyle.danger));
+    });
   }
 
   void onSearch(String? text) {
@@ -131,16 +112,10 @@ class CustomersViewModel extends BaseSearchViewModel {
               if (context == null) return;
               Dialogs.showBaseDialog(
                   context,
-                  IntrinsicHeight(
-                    child: Container(
-                      alignment: Alignment.center,
-                      padding: const EdgeInsets.all(16.0), // Внутренние отступы
-                      child: AppTableWidget(
-                          dataColumns: _tableCustomerDevicesColumns,
-                          dataRows: _getTableCustomerDevicesRows(customer.devices)
-                      ),
-                    ),
-                  )
+                  DevicesTableDialogWidget(devices: customer.devices, removeCallback: (s) {
+                    deleteDevice(s);
+                    loadCustomers(isLoaderNeeded: false);
+                  })
               );
             },
             tooltip: 'Посмотреть оборудование',
@@ -161,55 +136,6 @@ class CustomersViewModel extends BaseSearchViewModel {
           ),
         ],
       )),
-    ]);
-  }).toList();
-
-  List<DataRow> _getTableCustomerDevicesRows(List<DeviceResponse> devices) => devices.map((device) {
-    return DataRow(cells: [
-      DataCell(
-          Align(
-            alignment: Alignment.center,
-            child: Text(device.model.orDash()),
-          )
-      ),
-      DataCell(
-          Align(
-            alignment: Alignment.center,
-            child: Text((device.aroma?.name).orDash()),
-          )
-      ),
-      DataCell(
-          Align(
-            alignment: Alignment.center,
-            child: Text((device.aromaVolume?.toString()).orDash()),
-          )
-      ),
-      DataCell(
-          Align(
-            alignment: Alignment.center,
-            child: Text(device.powerType.orDash()),
-          )
-      ),
-      DataCell(
-          Align(
-            alignment: Alignment.center,
-            child: Text(device.contract.orDash()),
-          )
-      ),
-      DataCell(
-        Align(
-          alignment: Alignment.center,
-          child: IconButton(
-            icon: const Icon(Icons.delete),
-            onPressed: () {
-              devices.removeWhere((e) => e.id == device.id);
-              notifyListeners();
-              // Логика удаления пользователя
-            },
-            tooltip: 'Удалить',
-          ),
-        ),
-      ),
     ]);
   }).toList();
 

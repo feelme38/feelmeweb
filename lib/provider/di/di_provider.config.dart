@@ -12,11 +12,15 @@ import 'package:feelmeweb/data/repository/aromas/aromas_repository.dart' as _i9;
 import 'package:feelmeweb/data/repository/auth/auth_repository.dart' as _i11;
 import 'package:feelmeweb/data/repository/customers/customers_repository.dart'
     as _i13;
+import 'package:feelmeweb/data/repository/devices/devices_repository.dart'
+    as _i15;
 import 'package:feelmeweb/data/repository/users/users_repository.dart' as _i7;
 import 'package:feelmeweb/data/sources/remote/aromas_remote_source.dart' as _i8;
 import 'package:feelmeweb/data/sources/remote/auth_remote_source.dart' as _i10;
 import 'package:feelmeweb/data/sources/remote/customers_remote_source.dart'
     as _i12;
+import 'package:feelmeweb/data/sources/remote/devices_remote_source.dart'
+    as _i14;
 import 'package:feelmeweb/data/sources/remote/users_remote_source.dart' as _i6;
 import 'package:feelmeweb/presentation/navigation/route_generation.dart' as _i5;
 import 'package:feelmeweb/provider/network/auth_preferences.dart' as _i3;
@@ -55,6 +59,10 @@ extension GetItInjectableX on _i1.GetIt {
         _i12.CustomersRemoteSource(gh<_i4.NetworkProvider>()));
     gh.singleton<_i13.CustomersRepository>(
         _i13.CustomersRepositoryImpl(gh<_i12.CustomersRemoteSource>()));
+    gh.singleton<_i14.DevicesRemoteSource>(
+        _i14.DevicesRemoteSource(gh<_i4.NetworkProvider>()));
+    gh.singleton<_i15.DevicesRepository>(
+        _i15.DevicesRepositoryImpl(gh<_i14.DevicesRemoteSource>()));
     return this;
   }
 }
