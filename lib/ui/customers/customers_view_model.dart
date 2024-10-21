@@ -17,7 +17,7 @@ class CustomersViewModel extends BaseSearchViewModel {
 
   final _getCustomersUseCase = GetCustomersUseCase();
   final _deleteDeviceUseCase = DeleteDeviceUseCase();
-
+  final _currentCountDevices = <String, int>{};
   List<CustomerResponse> _customers = [];
   List<CustomerResponse> get customers => _customers;
 
@@ -54,9 +54,16 @@ class CustomersViewModel extends BaseSearchViewModel {
       addAlert(Alert(message ?? '$exception', style: AlertStyle.danger));
     }).doOnSuccess((value) {
       _customers = value;
+      fillCurrentCountDevices();
       notifyListeners();
     });
     if(isLoaderNeeded) loadingOff();
+  }
+
+  void fillCurrentCountDevices() {
+    for (var e in _customers) {
+      _currentCountDevices[e.id] = e.devices.length;
+    }
   }
 
   void deleteDevice(String deviceId) async {
@@ -112,11 +119,15 @@ class CustomersViewModel extends BaseSearchViewModel {
               if (context == null) return;
               Dialogs.showBaseDialog(
                   context,
-                  DevicesTableDialogWidget(devices: customer.devices, removeCallback: (s) {
+                  DevicesTableDialogWidget(devices: customer.devices, removeCallback: (s, l) {
                     deleteDevice(s);
-                    loadCustomers(isLoaderNeeded: false);
+                    _currentCountDevices[customer.id] = l;
                   })
-              );
+              ).then((_) {
+                if(customer.devices.length != _currentCountDevices[customer.id]) {
+                  loadCustomers();
+                }
+              });
             },
             tooltip: 'Посмотреть оборудование',
           ),

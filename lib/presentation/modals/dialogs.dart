@@ -9,10 +9,13 @@ import '../../provider/di/di_provider.dart';
 class Dialogs {
 
   static Future<dynamic> showBaseDialog(
-      BuildContext? fromContext, Widget content) async {
+      BuildContext? fromContext,
+      Widget content,
+      { Function(dynamic)? dismissCallback }
+  ) async {
     var context = fromContext ?? getContext();
     if (context != null) {
-      return showDialog(
+      var result = await showDialog(
           context: context,
           builder: (context) {
             return SizedBox(
@@ -30,6 +33,8 @@ class Dialogs {
                             bottom: Dimen.size8),
                         child: content)));
           });
+      dismissCallback?.call(null);
+      return result;
     }
   }
 

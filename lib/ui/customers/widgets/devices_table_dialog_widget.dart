@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import '../../../data/models/response/device_response.dart';
 import '../../common/app_table_widget.dart';
 
-typedef RemoveDeviceCallback = void Function(String);
+typedef RemoveDeviceCallback = void Function(String, int);
 
 class DevicesTableDialogWidget extends StatefulWidget {
 
@@ -24,7 +24,7 @@ class DevicesTableDialogWidget extends StatefulWidget {
 
 class _DevicesTableDialogWidgetState extends State<DevicesTableDialogWidget> {
 
-  late final devices = widget.devices;
+  late final devices = List<DeviceResponse>.from(widget.devices);
 
   @override
   Widget build(BuildContext context) {
@@ -103,7 +103,7 @@ class _DevicesTableDialogWidgetState extends State<DevicesTableDialogWidget> {
             icon: const Icon(Icons.delete),
             onPressed: () {
               devices.removeWhere((e) => e.id == device.id);
-              widget.removeCallback(device.id);
+              widget.removeCallback(device.id, devices.length);
               setState(() {});
             },
             tooltip: 'Удалить',
