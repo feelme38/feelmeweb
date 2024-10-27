@@ -84,8 +84,8 @@ Drawer getDrawer(BuildContext context) {
               ListTile(
                 title: const Text('Список'),
                 onTap: () {
-                  // context.go('/home'); // Переход на Home
-                  Navigator.pop(context); // Закрытие drawer
+                  Navigator.pop(context);
+                  context.go('/regions');
                 },
               ),
               ListTile(

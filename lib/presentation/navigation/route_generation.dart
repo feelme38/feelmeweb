@@ -1,5 +1,6 @@
 import 'package:feelmeweb/ui/aromas/aromas_page.dart';
 import 'package:feelmeweb/ui/customers/customers_page.dart';
+import 'package:feelmeweb/ui/regions/regions_page.dart';
 import 'package:feelmeweb/ui/users/users_page.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -9,6 +10,7 @@ import '../../provider/di/di_provider.dart';
 import '../../provider/network/auth_preferences.dart';
 import '../../ui/authorization/auth_page.dart';
 import '../../ui/home/root_home.dart';
+import '../../ui/routes/create_route_choose_customers.dart';
 
 @singleton
 class RouteGenerator {
@@ -60,6 +62,18 @@ class RouteGenerator {
           path: RouteName.customersList,
           builder: (BuildContext context, GoRouterState state) {
             return CustomersPage.create();
+          },
+        ),
+        GoRoute(
+          path: RouteName.regions,
+          builder: (BuildContext context, GoRouterState state) {
+            return RegionsPage.create();
+          },
+        ),
+        GoRoute(
+          path: RouteName.customerCreateRoute,
+          builder: (BuildContext context, GoRouterState state) {
+            return CreateRouteChooseCustomersPage.create();
           },
         ),
       ],

@@ -2,9 +2,13 @@ import 'package:base_class_gen/core/ext/string_ext.dart';
 import 'package:feelmeweb/data/models/response/user_response.dart';
 import 'package:feelmeweb/domain/users/get_users_usecase.dart';
 import 'package:feelmeweb/presentation/base_vm/base_search_view_model.dart';
+import 'package:feelmeweb/presentation/navigation/route_names.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../presentation/alert/alert.dart';
+import '../../presentation/navigation/route_generation.dart';
+import '../../provider/di/di_provider.dart';
 
 class UsersViewModel extends BaseSearchViewModel {
 
@@ -90,7 +94,9 @@ class UsersViewModel extends BaseSearchViewModel {
           IconButton(
             icon: const Icon(Icons.directions),
             onPressed: () {
-              // Логика назначения маршрута
+              final context = getIt<RouteGenerator>().navigatorKey.currentContext;
+              if (context == null) return;
+              context.go(RouteName.customerCreateRoute, extra: user.id);
             },
             tooltip: 'Создать маршрут',
           ),
