@@ -8,12 +8,14 @@ import '../../presentation/alert/alert.dart';
 
 class CreateRouteViewModel extends BaseSearchViewModel {
 
-  CreateRouteViewModel() {
+  CreateRouteViewModel(this.userId) {
     loadRegions();
   }
 
   final _getRegionsUseCase = GetRegionsUseCase();
   final _getCustomersUseCase = GetCustomersUseCase();
+
+  final String userId;
 
   List<RegionResponse> _regions = [];
   List<RegionResponse> get regions => _regions;
@@ -22,13 +24,20 @@ class CreateRouteViewModel extends BaseSearchViewModel {
   List<CustomerResponse> get customers => _customers;
 
   String? selectedRegionId;
-  final List<String> selectedCustomersIds = [];
+  final List<CustomerResponse> selectedCustomers = [];
+
+  int _creationStage = 1;
+  int get creationStage => _creationStage;
 
   void chooseDefaultRegion() {
     if (_regions.isNotEmpty) {
       selectedRegionId = _regions.first.id;
       loadCustomers(regionId: selectedRegionId);
     }
+  }
+
+  void nextStage() {
+    _creationStage = 2;
   }
 
   void loadRegions() async {
@@ -62,15 +71,15 @@ class CreateRouteViewModel extends BaseSearchViewModel {
     //refilter(state.defects);
   }
 
-  void toggleCustomerSelection(String customerId) {
-    if (selectedCustomersIds.contains(customerId)) {
-      selectedCustomersIds.remove(customerId);
+  void toggleCustomerSelection(CustomerResponse customer) {
+    if (selectedCustomers.contains(customer)) {
+      selectedCustomers.remove(customer);
     } else {
-      selectedCustomersIds.add(customerId);
+      selectedCustomers.add(customer);
     }
     notifyListeners();
   }
 
   @override
-  String get title => 'Выберите клиентов на сегодня';
+  String get title => 'Создание маршрутного листа';
 }

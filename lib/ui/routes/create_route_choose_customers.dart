@@ -14,15 +14,16 @@ class CreateRouteChooseCustomersPage extends StatelessWidget {
 
   const CreateRouteChooseCustomersPage({super.key});
 
-  static Widget create() => ChangeNotifierProvider(
-      create: (context) => CreateRouteViewModel(), child: const CreateRouteChooseCustomersPage());
+  static Widget create(String userId) => ChangeNotifierProvider(
+      create: (context) => CreateRouteViewModel(userId), child: const CreateRouteChooseCustomersPage());
 
   @override
   Widget build(BuildContext context) {
     final regions = context.watch<CreateRouteViewModel>().regions;
     final viewModel = context.read<CreateRouteViewModel>();
     final customers = context.watch<CreateRouteViewModel>().customers;
-    final selectedCustomers = context.watch<CreateRouteViewModel>().selectedCustomersIds;
+    final selectedCustomers = context.watch<CreateRouteViewModel>().selectedCustomers;
+    final creationStage = context.watch<CreateRouteViewModel>().creationStage;
 
     return BaseScreen<CreateRouteViewModel>(
         needBackButton: false,
@@ -74,9 +75,7 @@ class CreateRouteChooseCustomersPage extends StatelessWidget {
                         width: 200,
                         child: BaseTextButton(
                             buttonText: "Далее",
-                            onTap: () {
-
-                            },
+                            onTap: () => viewModel.nextStage(),
                             weight: FontWeight.w500,
                             fontSize: 18,
                             enabled: selectedCustomers.isNotEmpty,

@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import '../../../data/models/response/customer_response.dart';
 import '../../common/app_table_widget.dart';
 
-typedef ToggleCustomerCallback = void Function(String);
+typedef ToggleCustomerCallback = void Function(CustomerResponse);
 
 class CreateRouteChooseCustomersWidget extends StatefulWidget {
 
@@ -16,7 +16,7 @@ class CreateRouteChooseCustomersWidget extends StatefulWidget {
   });
 
   final List<CustomerResponse> customers;
-  final List<String> selectedCustomers;
+  final List<CustomerResponse> selectedCustomers;
   final ToggleCustomerCallback toggleCallback;
 
   @override
@@ -96,9 +96,9 @@ class _CreateRouteChooseCustomersWidgetState extends State<CreateRouteChooseCust
           Align(
             alignment: Alignment.center,
             child: Checkbox(
-              value: widget.selectedCustomers.contains(customer.id),
+              value: widget.selectedCustomers.map((e) => e.id).contains(customer.id),
               onChanged: (_) {
-                widget.toggleCallback.call(customer.id);
+                widget.toggleCallback.call(customer);
                 setState(() {});
               },
             ),
