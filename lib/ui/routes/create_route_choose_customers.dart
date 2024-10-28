@@ -9,6 +9,7 @@ import '../../presentation/buttons/base_text_button.dart';
 import '../../presentation/theme/theme_colors.dart';
 import '../../presentation/widgets/search_widget.dart';
 import '../common/app_drawer.dart';
+import 'create_route_subtasks.dart';
 
 class CreateRouteChooseCustomersPage extends StatelessWidget {
 
@@ -34,7 +35,7 @@ class CreateRouteChooseCustomersPage extends StatelessWidget {
           needBottomEdge: true,
           needBackButton: false,
         ),
-        child: Row(
+        child: creationStage == 1 ? Row(
           children: [
             Expanded(
               child: ListView.builder(
@@ -89,7 +90,7 @@ class CreateRouteChooseCustomersPage extends StatelessWidget {
               ),
             ),
           ],
-        ),
+        ) : const CreateRouteSubtasksWidget(),
     );
   }
 }

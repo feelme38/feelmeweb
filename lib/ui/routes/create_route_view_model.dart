@@ -24,6 +24,8 @@ class CreateRouteViewModel extends BaseSearchViewModel {
   List<CustomerResponse> get customers => _customers;
 
   String? selectedRegionId;
+  String? selectedCustomerId;
+
   final List<CustomerResponse> selectedCustomers = [];
 
   int _creationStage = 1;
@@ -36,8 +38,21 @@ class CreateRouteViewModel extends BaseSearchViewModel {
     }
   }
 
+  void chooseDefaultCustomer() {
+    if (selectedCustomers.isNotEmpty) {
+      selectedCustomerId = selectedCustomers.first.id;
+      loadLastChecklistsInfo(customerId: selectedCustomerId);
+    }
+  }
+
   void nextStage() {
     _creationStage = 2;
+    notifyListeners();
+  }
+
+  void resetStage() {
+    _creationStage = 1;
+    notifyListeners();
   }
 
   void loadRegions() async {
@@ -63,6 +78,19 @@ class CreateRouteViewModel extends BaseSearchViewModel {
       _customers = value;
       notifyListeners();
     });
+    loadingOff();
+  }
+
+  void loadLastChecklistsInfo({String? customerId}) async {
+    selectedCustomerId = customerId;
+    loadingOn();
+    // (await executeUseCaseParam<List<CustomerResponse>, String?>(_getCustomersUseCase, regionId))
+    //     .doOnError((message, exception) {
+    //   addAlert(Alert(message ?? '$exception', style: AlertStyle.danger));
+    // }).doOnSuccess((value) {
+    //   _customers = value;
+    //   notifyListeners();
+    // });
     loadingOff();
   }
 
