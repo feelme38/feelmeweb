@@ -1,4 +1,6 @@
+import 'package:feelmeweb/data/models/response/checklist_info_response.dart';
 import 'package:feelmeweb/data/models/response/region_response.dart';
+import 'package:feelmeweb/domain/checklists/get_last_checklists_usecase.dart';
 import 'package:feelmeweb/domain/regions/get_regions_usecase.dart';
 import 'package:feelmeweb/presentation/base_vm/base_search_view_model.dart';
 
@@ -14,6 +16,7 @@ class CreateRouteViewModel extends BaseSearchViewModel {
 
   final _getRegionsUseCase = GetRegionsUseCase();
   final _getCustomersUseCase = GetCustomersUseCase();
+  final _getLastChecklistsUseCase = GetLastChecklistsUseCase();
 
   final String userId;
 
@@ -22,6 +25,9 @@ class CreateRouteViewModel extends BaseSearchViewModel {
 
   List<CustomerResponse> _customers = [];
   List<CustomerResponse> get customers => _customers;
+
+  List<CheckListInfoResponse> _lastChecklists = [];
+  List<CheckListInfoResponse> get lastChecklists => _lastChecklists;
 
   String? selectedRegionId;
   String? selectedCustomerId;
@@ -48,6 +54,7 @@ class CreateRouteViewModel extends BaseSearchViewModel {
   void nextStage() {
     _creationStage = 2;
     notifyListeners();
+    chooseDefaultCustomer();
   }
 
   void resetStage() {
@@ -82,16 +89,15 @@ class CreateRouteViewModel extends BaseSearchViewModel {
   }
 
   void loadLastChecklistsInfo({String? customerId}) async {
+    if(customerId == null) return;
     selectedCustomerId = customerId;
-    loadingOn();
-    // (await executeUseCaseParam<List<CustomerResponse>, String?>(_getCustomersUseCase, regionId))
-    //     .doOnError((message, exception) {
-    //   addAlert(Alert(message ?? '$exception', style: AlertStyle.danger));
-    // }).doOnSuccess((value) {
-    //   _customers = value;
-    //   notifyListeners();
-    // });
-    loadingOff();
+    (await executeUseCaseParam<List<CheckListInfoResponse>, String>(_getLastChecklistsUseCase, customerId))
+        .doOnError((message, exception) {
+      addAlert(Alert(message ?? '$exception', style: AlertStyle.danger));
+    }).doOnSuccess((value) {
+      _lastChecklists = value;
+      notifyListeners();
+    });
   }
 
   void onSearch(String? text) {

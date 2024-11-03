@@ -746,10 +746,10 @@
       "languageVersion": "3.5"
     }
   ],
-  "generated": "2024-10-14T17:48:19.843971Z",
+  "generated": "2024-11-03T04:47:26.302638Z",
   "generator": "pub",
-  "generatorVersion": "3.5.3",
+  "generatorVersion": "3.5.4",
   "flutterRoot": "file:///Users/ruslan/Downloads/flutter",
-  "flutterVersion": "3.24.3",
+  "flutterVersion": "3.24.4",
   "pubCache": "file:///Users/ruslan/.pub-cache"
 }

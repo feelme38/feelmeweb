@@ -6,4 +6,5 @@ class Urls {
   static const device = 'device';
   static const customers = 'customers';
   static const regions = 'regions';
+  static const lastChecklists = 'checklists/last';
 }

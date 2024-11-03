@@ -73,8 +73,9 @@ class RouteGenerator {
         GoRoute(
           path: RouteName.customerCreateRoute,
           builder: (BuildContext context, GoRouterState state) {
-            final userId = state.extra;
-            return CreateRouteChooseCustomersPage.create(userId as String);
+            final userId = state.extra as String?;
+            if(userId == null) return UsersPage.create();
+            return CreateRouteChooseCustomersPage.create(userId);
           },
         ),
       ],

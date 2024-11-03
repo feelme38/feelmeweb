@@ -11,20 +11,24 @@
 import 'package:feelmeweb/data/repository/aromas/aromas_repository.dart'
     as _i11;
 import 'package:feelmeweb/data/repository/auth/auth_repository.dart' as _i13;
-import 'package:feelmeweb/data/repository/customers/customers_repository.dart'
+import 'package:feelmeweb/data/repository/checklists/checklists_repository.dart'
     as _i15;
-import 'package:feelmeweb/data/repository/devices/devices_repository.dart'
+import 'package:feelmeweb/data/repository/customers/customers_repository.dart'
     as _i17;
+import 'package:feelmeweb/data/repository/devices/devices_repository.dart'
+    as _i19;
 import 'package:feelmeweb/data/repository/regions/regions_repository.dart'
     as _i6;
 import 'package:feelmeweb/data/repository/users/users_repository.dart' as _i9;
 import 'package:feelmeweb/data/sources/remote/aromas_remote_source.dart'
     as _i10;
 import 'package:feelmeweb/data/sources/remote/auth_remote_source.dart' as _i12;
-import 'package:feelmeweb/data/sources/remote/customers_remote_source.dart'
+import 'package:feelmeweb/data/sources/remote/checklist_remote_source.dart'
     as _i14;
-import 'package:feelmeweb/data/sources/remote/devices_remote_source.dart'
+import 'package:feelmeweb/data/sources/remote/customers_remote_source.dart'
     as _i16;
+import 'package:feelmeweb/data/sources/remote/devices_remote_source.dart'
+    as _i18;
 import 'package:feelmeweb/data/sources/remote/regions_remote_source.dart'
     as _i5;
 import 'package:feelmeweb/data/sources/remote/users_remote_source.dart' as _i8;
@@ -65,14 +69,18 @@ extension GetItInjectableX on _i1.GetIt {
         _i12.AuthRemoteSource(gh<_i4.NetworkProvider>()));
     gh.singleton<_i13.AuthRepository>(
         _i13.AuthRepositoryImpl(gh<_i12.AuthRemoteSource>()));
-    gh.singleton<_i14.CustomersRemoteSource>(
-        _i14.CustomersRemoteSource(gh<_i4.NetworkProvider>()));
-    gh.singleton<_i15.CustomersRepository>(
-        _i15.CustomersRepositoryImpl(gh<_i14.CustomersRemoteSource>()));
-    gh.singleton<_i16.DevicesRemoteSource>(
-        _i16.DevicesRemoteSource(gh<_i4.NetworkProvider>()));
-    gh.singleton<_i17.DevicesRepository>(
-        _i17.DevicesRepositoryImpl(gh<_i16.DevicesRemoteSource>()));
+    gh.singleton<_i14.ChecklistRemoteSource>(
+        _i14.ChecklistRemoteSource(gh<_i4.NetworkProvider>()));
+    gh.singleton<_i15.ChecklistsRepository>(
+        _i15.ChecklistsRepositoryImpl(gh<_i14.ChecklistRemoteSource>()));
+    gh.singleton<_i16.CustomersRemoteSource>(
+        _i16.CustomersRemoteSource(gh<_i4.NetworkProvider>()));
+    gh.singleton<_i17.CustomersRepository>(
+        _i17.CustomersRepositoryImpl(gh<_i16.CustomersRemoteSource>()));
+    gh.singleton<_i18.DevicesRemoteSource>(
+        _i18.DevicesRemoteSource(gh<_i4.NetworkProvider>()));
+    gh.singleton<_i19.DevicesRepository>(
+        _i19.DevicesRepositoryImpl(gh<_i18.DevicesRemoteSource>()));
     return this;
   }
 }

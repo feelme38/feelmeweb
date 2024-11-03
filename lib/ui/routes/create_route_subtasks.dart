@@ -1,4 +1,4 @@
-import 'package:feelmeweb/presentation/widgets/circled_text.dart';
+import 'package:base_class_gen/core/ext/string_ext.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -12,9 +12,9 @@ class CreateRouteSubtasksWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final viewModel = context.read<CreateRouteViewModel>()
-      ..chooseDefaultCustomer();
+    final viewModel = context.read<CreateRouteViewModel>();
     final selectedCustomers = context.watch<CreateRouteViewModel>().selectedCustomers;
+    final checklists = context.watch<CreateRouteViewModel>().lastChecklists;
 
     return Row(
       children: [
@@ -25,7 +25,22 @@ class CreateRouteSubtasksWidget extends StatelessWidget {
               final customer = selectedCustomers[index];
              final isSelectedCustomer = viewModel.selectedCustomerId == customer.id;
               return ListTile(
-                title: Text(customer.name),
+                title: Column(
+                  children: [
+                    Text(
+                      customer.name,
+                      style: const TextStyle(
+                          fontSize: 18
+                      ),
+                    ),
+                    Text(
+                        customer.address,
+                        style: const TextStyle(
+                          fontSize: 12
+                        ),
+                    ),
+                  ],
+                ),
                 tileColor:
                 isSelectedCustomer ? Colors.blue[100] : Colors.transparent,
                 onTap: () {
@@ -40,8 +55,41 @@ class CreateRouteSubtasksWidget extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              const Expanded(
-                child: SizedBox(),
+              Column(
+                children: [
+                  Text("Наименование юр. лица"),
+                  Text("ЛПР - Телефон"),
+                  Text("Дата последнего посещения"),
+                  Text("Тип задания"),
+                  ListView.builder(
+                    itemCount: checklists.length,
+                    itemBuilder: (context, index) {
+                      final checklist = checklists[index];
+                      return ListTile(
+                        title: Column(
+                          children: [
+                            Row(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Text(
+                                    checklist.deviceModel.orEmpty,
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Text(
+                                    checklist.checklistAroma.volumeMl.toString(),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                ],
               ),
               Row(
                 children: [
