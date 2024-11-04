@@ -9,7 +9,7 @@ import '../theme/theme_colors.dart';
 
 class BaseTextField extends StatelessWidget {
   const BaseTextField(
-      {Key? key,
+      {super.key,
       required this.controller,
       this.onTextChange,
       this.onSubmit,
@@ -40,8 +40,7 @@ class BaseTextField extends StatelessWidget {
       this.danger,
       this.flexible = false,
       this.dangerText,
-      this.scrollPadding})
-      : super(key: key);
+      this.scrollPadding});
   final FocusNode? node;
   final bool flexible;
   final TextEditingController controller;

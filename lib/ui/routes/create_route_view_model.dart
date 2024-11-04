@@ -3,8 +3,11 @@ import 'package:feelmeweb/data/models/response/region_response.dart';
 import 'package:feelmeweb/domain/checklists/get_last_checklists_usecase.dart';
 import 'package:feelmeweb/domain/regions/get_regions_usecase.dart';
 import 'package:feelmeweb/presentation/base_vm/base_search_view_model.dart';
+import 'package:flutter/material.dart';
 
+import '../../data/models/response/aroma_response.dart';
 import '../../data/models/response/customer_response.dart';
+import '../../domain/aromas/get_aromas_usecase.dart';
 import '../../domain/customers/get_customers_usecase.dart';
 import '../../presentation/alert/alert.dart';
 
@@ -12,11 +15,13 @@ class CreateRouteViewModel extends BaseSearchViewModel {
 
   CreateRouteViewModel(this.userId) {
     loadRegions();
+    loadAromas();
   }
 
   final _getRegionsUseCase = GetRegionsUseCase();
   final _getCustomersUseCase = GetCustomersUseCase();
   final _getLastChecklistsUseCase = GetLastChecklistsUseCase();
+  final _getAromasUseCase = GetAromasUseCase();
 
   final String userId;
 
@@ -29,10 +34,14 @@ class CreateRouteViewModel extends BaseSearchViewModel {
   List<CheckListInfoResponse> _lastChecklists = [];
   List<CheckListInfoResponse> get lastChecklists => _lastChecklists;
 
+  List<AromaResponse> _aromas = [];
+  List<AromaResponse> get aromas => _aromas;
+
   String? selectedRegionId;
   String? selectedCustomerId;
 
   final List<CustomerResponse> selectedCustomers = [];
+  CustomerResponse? selectedCustomer;
 
   int _creationStage = 1;
   int get creationStage => _creationStage;
@@ -47,7 +56,7 @@ class CreateRouteViewModel extends BaseSearchViewModel {
   void chooseDefaultCustomer() {
     if (selectedCustomers.isNotEmpty) {
       selectedCustomerId = selectedCustomers.first.id;
-      loadLastChecklistsInfo(customerId: selectedCustomerId);
+      loadLastChecklistsInfo(customer: selectedCustomers.first);
     }
   }
 
@@ -88,10 +97,11 @@ class CreateRouteViewModel extends BaseSearchViewModel {
     loadingOff();
   }
 
-  void loadLastChecklistsInfo({String? customerId}) async {
-    if(customerId == null) return;
-    selectedCustomerId = customerId;
-    (await executeUseCaseParam<List<CheckListInfoResponse>, String>(_getLastChecklistsUseCase, customerId))
+  void loadLastChecklistsInfo({CustomerResponse? customer}) async {
+    if(customer == null) return;
+    selectedCustomerId = customer.id;
+    selectedCustomer = customer;
+    (await executeUseCaseParam<List<CheckListInfoResponse>, String>(_getLastChecklistsUseCase, customer.id))
         .doOnError((message, exception) {
       addAlert(Alert(message ?? '$exception', style: AlertStyle.danger));
     }).doOnSuccess((value) {
@@ -112,6 +122,18 @@ class CreateRouteViewModel extends BaseSearchViewModel {
       selectedCustomers.add(customer);
     }
     notifyListeners();
+  }
+
+  void loadAromas() async {
+    loadingOn();
+    (await executeUseCase<List<AromaResponse>>(_getAromasUseCase))
+        .doOnError((message, exception) {
+      addAlert(Alert(message ?? '$exception', style: AlertStyle.danger));
+    }).doOnSuccess((value) {
+      _aromas = value;
+      notifyListeners();
+    });
+    loadingOff();
   }
 
   @override

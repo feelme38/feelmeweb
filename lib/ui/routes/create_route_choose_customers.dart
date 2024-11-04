@@ -1,6 +1,6 @@
 
 import 'package:feelmeweb/ui/routes/create_route_view_model.dart';
-import 'package:feelmeweb/ui/routes/widgets/create_route_choose_customers.dart';
+import 'package:feelmeweb/ui/routes/widgets/choose_customers_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
