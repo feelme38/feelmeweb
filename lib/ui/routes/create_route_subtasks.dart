@@ -1,11 +1,10 @@
-import 'package:base_class_gen/core/ext/string_ext.dart';
+import 'package:feelmeweb/core/extensions/base_class_extensions/string_ext.dart';
 import 'package:feelmeweb/ui/routes/widgets/choose_subtasks_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../presentation/buttons/base_text_button.dart';
 import '../../presentation/theme/theme_colors.dart';
-import '../common/app_table_widget.dart';
 import 'create_route_view_model.dart';
 
 class CreateRouteSubtasksWidget extends StatelessWidget {
@@ -17,9 +16,12 @@ class CreateRouteSubtasksWidget extends StatelessWidget {
     final viewModel = context.read<CreateRouteViewModel>();
     final selectedCustomers = context.watch<CreateRouteViewModel>().selectedCustomers;
     final checklists = context.watch<CreateRouteViewModel>().lastChecklists;
-    final lastDate = checklists.firstOrNull == null ? "" : checklists.firstOrNull?.createdAt.toDateTime();
+    final checklistsNotNullId = checklists.where((item) => item.id != null).toList();
+    final lastDate = checklistsNotNullId.isEmpty ? " – " : checklistsNotNullId.firstOrNull?.createdAt?.toDateTime()?.orDash();
     final selectedCustomer = context.watch<CreateRouteViewModel>().selectedCustomer;
     final aromas = context.watch<CreateRouteViewModel>().aromas;
+    final taskTypes = context.watch<CreateRouteViewModel>().taskTypes;
+    var selectedTaskType = context.watch<CreateRouteViewModel>().selectedTaskType;
 
     return Row(
       children: [
@@ -72,9 +74,9 @@ class CreateRouteSubtasksWidget extends StatelessWidget {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text("Юр. лицо: ${selectedCustomer?.name.orEmpty}"),
-                              Text("ЛПР: ${selectedCustomer?.ownerName.orEmpty}"),
-                              Text("Телефон: ${selectedCustomer?.phone.orEmpty}"),
+                              Text("Юр. лицо: ${selectedCustomer?.name.orDash()}"),
+                              Text("ЛПР: ${selectedCustomer?.ownerName.orDash()}"),
+                              Text("Телефон: ${selectedCustomer?.phone.orDash()}"),
                             ],
                           ),
                         ),
@@ -89,16 +91,16 @@ class CreateRouteSubtasksWidget extends StatelessWidget {
                               Padding(
                                 padding: const EdgeInsets.fromLTRB(16.0, 0, 8.0, 0),
                                 child: DropdownButton(
-                                  value: "Плановое",
+                                  value: selectedTaskType,
                                   onChanged: (newValue) {
-
+                                    viewModel.selectNewTaskType(newValue);
                                   },
-                                  items: ["Плановое", "Неплановое"].map((e) {
+                                  items: taskTypes.map((e) {
                                     return DropdownMenuItem(
                                       value: e,
                                       child: SizedBox(
                                         width: 150,
-                                        child: Text(e),
+                                        child: Text(e.name),
                                       ),
                                     );
                                   }).toList(),

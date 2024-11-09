@@ -33,7 +33,10 @@ class CreateRouteChooseSubtasksWidget extends StatefulWidget {
 
 class _CreateRouteChooseSubtasksWidgetState extends State<CreateRouteChooseSubtasksWidget> {
 
-  late AromaResponse? selectedAroma = widget.aromas.firstOrNull;
+  late final List<AromaResponse?> _selectedAromas = List<AromaResponse?>.filled(
+      widget.checklists.length,
+      widget.aromas.firstOrNull
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -66,7 +69,10 @@ class _CreateRouteChooseSubtasksWidgetState extends State<CreateRouteChooseSubta
   List<DataRow> _getTableChecklistRows(
       List<CheckListInfoResponse> checklists,
       List<AromaResponse> aromas
-  ) => checklists.map((checklist) {
+  ) => checklists.asMap().entries.map((entry) {
+    int index = entry.key;
+    CheckListInfoResponse checklist = entry.value;
+
     return DataRow(cells: [
       DataCell(
           Align(
@@ -166,9 +172,9 @@ class _CreateRouteChooseSubtasksWidgetState extends State<CreateRouteChooseSubta
           Align(
             alignment: Alignment.center,
             child: DropdownButton(
-              value: selectedAroma,
+              value: _selectedAromas[index],
               onChanged: (newValue) {
-                selectedAroma = newValue;
+                _selectedAromas[index] = newValue;
                 setState(() {});
               },
               items: aromas.map((e) {

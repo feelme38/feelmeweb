@@ -1,9 +1,10 @@
 import 'package:feelmeweb/data/models/response/checklist_info_response.dart';
 import 'package:feelmeweb/data/models/response/region_response.dart';
+import 'package:feelmeweb/data/models/response/task_types_response.dart';
 import 'package:feelmeweb/domain/checklists/get_last_checklists_usecase.dart';
 import 'package:feelmeweb/domain/regions/get_regions_usecase.dart';
+import 'package:feelmeweb/domain/tasks/get_task_types_usecase.dart';
 import 'package:feelmeweb/presentation/base_vm/base_search_view_model.dart';
-import 'package:flutter/material.dart';
 
 import '../../data/models/response/aroma_response.dart';
 import '../../data/models/response/customer_response.dart';
@@ -16,12 +17,14 @@ class CreateRouteViewModel extends BaseSearchViewModel {
   CreateRouteViewModel(this.userId) {
     loadRegions();
     loadAromas();
+    loadTaskTypes();
   }
 
   final _getRegionsUseCase = GetRegionsUseCase();
   final _getCustomersUseCase = GetCustomersUseCase();
   final _getLastChecklistsUseCase = GetLastChecklistsUseCase();
   final _getAromasUseCase = GetAromasUseCase();
+  final _getTaskTypesUseCase = GetTaskTypesUseCase();
 
   final String userId;
 
@@ -36,6 +39,10 @@ class CreateRouteViewModel extends BaseSearchViewModel {
 
   List<AromaResponse> _aromas = [];
   List<AromaResponse> get aromas => _aromas;
+
+  List<TaskTypeResponse> _taskTypes = [];
+  List<TaskTypeResponse> get taskTypes => _taskTypes;
+  TaskTypeResponse? selectedTaskType;
 
   String? selectedRegionId;
   String? selectedCustomerId;
@@ -68,6 +75,11 @@ class CreateRouteViewModel extends BaseSearchViewModel {
 
   void resetStage() {
     _creationStage = 1;
+    notifyListeners();
+  }
+
+  void selectNewTaskType(TaskTypeResponse? taskType) {
+    selectedTaskType = taskType;
     notifyListeners();
   }
 
@@ -131,6 +143,19 @@ class CreateRouteViewModel extends BaseSearchViewModel {
       addAlert(Alert(message ?? '$exception', style: AlertStyle.danger));
     }).doOnSuccess((value) {
       _aromas = value;
+      notifyListeners();
+    });
+    loadingOff();
+  }
+
+  void loadTaskTypes() async {
+    loadingOn();
+    (await executeUseCase<List<TaskTypeResponse>>(_getTaskTypesUseCase))
+        .doOnError((message, exception) {
+      addAlert(Alert(message ?? '$exception', style: AlertStyle.danger));
+    }).doOnSuccess((value) {
+      _taskTypes = value;
+      selectedTaskType = (value as List<TaskTypeResponse>).firstOrNull;
       notifyListeners();
     });
     loadingOff();

@@ -6,7 +6,7 @@ part 'checklist_info_response.g.dart';
 @JsonSerializable()
 class CheckListInfoResponse {
   final String? id;
-  final LocalDate createdAt;
+  final LocalDate? createdAt;
   final ChecklistAroma checklistAroma;
   final DeviceWorkSchedule? deviceWorkSchedule;
   final String? deviceId;

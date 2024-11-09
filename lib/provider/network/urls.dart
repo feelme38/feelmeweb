@@ -7,4 +7,5 @@ class Urls {
   static const customers = 'customers';
   static const regions = 'regions';
   static const lastChecklists = 'checklists/last';
+  static const taskTypes = 'task/types';
 }
