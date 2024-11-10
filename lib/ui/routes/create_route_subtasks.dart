@@ -22,6 +22,7 @@ class CreateRouteSubtasksWidget extends StatelessWidget {
     final aromas = context.watch<CreateRouteViewModel>().aromas;
     final taskTypes = context.watch<CreateRouteViewModel>().taskTypes;
     var selectedTaskType = context.watch<CreateRouteViewModel>().selectedTaskType;
+    final selectedSubtasks = context.watch<CreateRouteViewModel>().selectedSubtasks;
 
     return Row(
       children: [
@@ -120,10 +121,10 @@ class CreateRouteSubtasksWidget extends StatelessWidget {
                 flex: 1,
                 child: CreateRouteChooseSubtasksWidget(
                   checklists: checklists,
-                  selectedChecklists: const [],
+                  selectedSubtasks: selectedSubtasks,
                   aromas: aromas,
-                  toggleCallback: (checklist) {
-
+                  toggleCallback: (subtask) {
+                    viewModel.toggleSubtaskSelection(subtask);
                   },
                 ),
               ),

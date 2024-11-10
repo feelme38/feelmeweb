@@ -1,3 +1,5 @@
+import 'package:feelmeweb/core/extensions/base_class_extensions/list_ext.dart';
+import 'package:feelmeweb/data/models/request/subtask_body.dart';
 import 'package:feelmeweb/data/models/response/checklist_info_response.dart';
 import 'package:feelmeweb/data/models/response/region_response.dart';
 import 'package:feelmeweb/data/models/response/task_types_response.dart';
@@ -48,6 +50,8 @@ class CreateRouteViewModel extends BaseSearchViewModel {
   String? selectedCustomerId;
 
   final List<CustomerResponse> selectedCustomers = [];
+  final List<SubtaskBody> selectedSubtasks = [];
+
   CustomerResponse? selectedCustomer;
 
   int _creationStage = 1;
@@ -132,6 +136,15 @@ class CreateRouteViewModel extends BaseSearchViewModel {
       selectedCustomers.remove(customer);
     } else {
       selectedCustomers.add(customer);
+    }
+    notifyListeners();
+  }
+
+  void toggleSubtaskSelection(SubtaskBody subtask) {
+    if (selectedSubtasks.filter((e) => e.deviceId == subtask.deviceId).isNotEmpty) {
+      selectedSubtasks.removeWhere((e) => e.deviceId == subtask.deviceId);
+    } else {
+      selectedSubtasks.add(subtask);
     }
     notifyListeners();
   }

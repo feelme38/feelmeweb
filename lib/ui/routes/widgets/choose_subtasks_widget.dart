@@ -1,31 +1,28 @@
 
 import 'package:feelmeweb/core/extensions/base_class_extensions/string_ext.dart';
+import 'package:feelmeweb/data/models/request/subtask_body.dart';
 import 'package:feelmeweb/data/models/response/aroma_response.dart';
 import 'package:feelmeweb/data/models/response/checklist_info_response.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../common/app_table_widget.dart';
 
-typedef ToggleCustomerCallback = void Function(CheckListInfoResponse);
+typedef ToggleCustomerCallback = void Function(SubtaskBody);
 
 class CreateRouteChooseSubtasksWidget extends StatefulWidget {
 
-  CreateRouteChooseSubtasksWidget({
+  const CreateRouteChooseSubtasksWidget({
     super.key,
     required this.checklists,
-    required this.selectedChecklists,
+    required this.selectedSubtasks,
     required this.toggleCallback,
     required this.aromas
   });
 
   final List<CheckListInfoResponse> checklists;
-  final List<CheckListInfoResponse> selectedChecklists;
+  final List<SubtaskBody> selectedSubtasks;
   final List<AromaResponse> aromas;
   final ToggleCustomerCallback toggleCallback;
-
-  final TextEditingController estimatedTimeController = TextEditingController();
-  final TextEditingController expectedAromaVolumeController = TextEditingController();
-  final TextEditingController commentController = TextEditingController();
 
   @override
   State<CreateRouteChooseSubtasksWidget> createState() => _CreateRouteChooseSubtasksWidgetState();
@@ -33,10 +30,24 @@ class CreateRouteChooseSubtasksWidget extends StatefulWidget {
 
 class _CreateRouteChooseSubtasksWidgetState extends State<CreateRouteChooseSubtasksWidget> {
 
-  late final List<AromaResponse?> _selectedAromas = List<AromaResponse?>.filled(
-      widget.checklists.length,
-      widget.aromas.firstOrNull
-  );
+  late final List<TextEditingController> estimatedTimeControllers = List.generate(widget.checklists.length, (_) => TextEditingController());
+  late final List<TextEditingController> expectedAromaVolumeControllers = List.generate(widget.checklists.length, (_) => TextEditingController());
+  late final List<TextEditingController> commentControllers = List.generate(widget.checklists.length, (_) => TextEditingController());
+  late final List<AromaResponse?> _selectedAromas = List<AromaResponse?>.filled(widget.checklists.length, widget.aromas.firstOrNull);
+
+  @override
+  void dispose() {
+    for (var controller in estimatedTimeControllers) {
+      controller.dispose();
+    }
+    for (var controller in expectedAromaVolumeControllers) {
+      controller.dispose();
+    }
+    for (var controller in commentControllers) {
+      controller.dispose();
+    }
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -72,15 +83,32 @@ class _CreateRouteChooseSubtasksWidgetState extends State<CreateRouteChooseSubta
   ) => checklists.asMap().entries.map((entry) {
     int index = entry.key;
     CheckListInfoResponse checklist = entry.value;
-
     return DataRow(cells: [
       DataCell(
           Align(
             alignment: Alignment.center,
             child: Checkbox(
-              value: widget.selectedChecklists.map((e) => e.id).contains(checklist.id),
+              value: widget.selectedSubtasks.map((e) => e.deviceId).contains(checklist.deviceId),
+
               onChanged: (_) {
-                widget.toggleCallback.call(checklist);
+                AromaResponse? currentAroma = _selectedAromas[index];
+                String? deviceId = checklist.deviceId;
+                String estimatedCompletedTime = estimatedTimeControllers[index].text.orEmpty;
+                String expectedAromaVolume = expectedAromaVolumeControllers[index].text.orEmpty;
+                String comment = commentControllers[index].text.orEmpty;
+                if (currentAroma == null
+                    || deviceId == null
+                    || estimatedCompletedTime.isEmpty
+                    || expectedAromaVolume.isEmpty
+                ) return;
+                final SubtaskBody newSubtask = SubtaskBody(
+                    deviceId,
+                    comment,
+                    currentAroma.id,
+                    double.parse(expectedAromaVolume),
+                    int.parse(estimatedCompletedTime)
+                );
+                widget.toggleCallback.call(newSubtask);
                 setState(() {});
               },
             ),
@@ -162,7 +190,7 @@ class _CreateRouteChooseSubtasksWidgetState extends State<CreateRouteChooseSubta
                   ),
                 ),
               ),
-              controller: widget.estimatedTimeController,
+              controller: estimatedTimeControllers[index],
               style: const TextStyle(color: Colors.black, fontSize: 14),
             ),
           ),
@@ -232,7 +260,7 @@ class _CreateRouteChooseSubtasksWidgetState extends State<CreateRouteChooseSubta
                   ),
                 ),
               ),
-              controller: widget.expectedAromaVolumeController,
+              controller: expectedAromaVolumeControllers[index],
               style: const TextStyle(color: Colors.black, fontSize: 14),
             ),
           ),
@@ -273,7 +301,7 @@ class _CreateRouteChooseSubtasksWidgetState extends State<CreateRouteChooseSubta
                   ),
                 ),
               ),
-              controller: widget.commentController,
+              controller: commentControllers[index],
               style: const TextStyle(color: Colors.black, fontSize: 14),
             ),
           ),

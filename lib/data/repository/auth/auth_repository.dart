@@ -3,7 +3,7 @@ import 'package:feelmeweb/core/result/result_of.dart';
 import 'package:feelmeweb/data/sources/remote/auth_remote_source.dart';
 import 'package:injectable/injectable.dart';
 
-import '../../models/request/AuthBody.dart';
+import '../../models/request/auth_body.dart';
 
 @Singleton(as: AuthRepository)
 class AuthRepositoryImpl extends AuthRepository {

@@ -5,7 +5,7 @@ import 'package:feelmeweb/core/extensions/base_class_extensions/string_ext.dart'
 import 'package:feelmeweb/presentation/alert/alert.dart';
 
 import '../../core/result/result_of.dart';
-import '../../data/models/request/AuthBody.dart';
+import '../../data/models/request/auth_body.dart';
 import '../../domain/auth/auth_usecase.dart';
 import '../../presentation/base_vm/base_view_model.dart';
 

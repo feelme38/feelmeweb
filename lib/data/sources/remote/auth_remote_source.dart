@@ -4,7 +4,7 @@ import 'package:injectable/injectable.dart';
 import '../../../core/result/result_of.dart';
 import '../../../provider/network/network_provider.dart';
 import '../../../provider/network/urls.dart';
-import '../../models/request/AuthBody.dart';
+import '../../models/request/auth_body.dart';
 import '../../models/response/auth_response.dart';
 
 @singleton

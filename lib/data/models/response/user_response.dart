@@ -1,4 +1,3 @@
-import 'package:base_class_gen/copy_empty_annotations/copy_empty_annotations.dart';
 import 'package:json_annotation/json_annotation.dart';
 part 'user_response.g.dart';
 
