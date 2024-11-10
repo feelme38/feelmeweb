@@ -16,13 +16,15 @@ class CreateRouteChooseSubtasksWidget extends StatefulWidget {
     required this.checklists,
     required this.selectedSubtasks,
     required this.toggleCallback,
-    required this.aromas
+    required this.aromas,
+    required this.customerId
   });
 
   final List<CheckListInfoResponse> checklists;
   final List<SubtaskBody> selectedSubtasks;
   final List<AromaResponse> aromas;
   final ToggleCustomerCallback toggleCallback;
+  final String customerId;
 
   @override
   State<CreateRouteChooseSubtasksWidget> createState() => _CreateRouteChooseSubtasksWidgetState();
@@ -102,6 +104,7 @@ class _CreateRouteChooseSubtasksWidgetState extends State<CreateRouteChooseSubta
                     || expectedAromaVolume.isEmpty
                 ) return;
                 final SubtaskBody newSubtask = SubtaskBody(
+                    widget.customerId,
                     deviceId,
                     comment,
                     currentAroma.id,

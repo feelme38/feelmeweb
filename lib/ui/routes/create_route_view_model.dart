@@ -1,18 +1,24 @@
 import 'package:feelmeweb/core/extensions/base_class_extensions/list_ext.dart';
+import 'package:feelmeweb/data/models/request/route_body.dart';
 import 'package:feelmeweb/data/models/request/subtask_body.dart';
+import 'package:feelmeweb/data/models/request/tasks_body.dart';
 import 'package:feelmeweb/data/models/response/checklist_info_response.dart';
 import 'package:feelmeweb/data/models/response/region_response.dart';
 import 'package:feelmeweb/data/models/response/task_types_response.dart';
 import 'package:feelmeweb/domain/checklists/get_last_checklists_usecase.dart';
 import 'package:feelmeweb/domain/regions/get_regions_usecase.dart';
+import 'package:feelmeweb/domain/route/create_route_usecase.dart';
 import 'package:feelmeweb/domain/tasks/get_task_types_usecase.dart';
 import 'package:feelmeweb/presentation/base_vm/base_search_view_model.dart';
+import 'package:feelmeweb/presentation/navigation/route_generation.dart';
+import 'package:feelmeweb/presentation/navigation/route_names.dart';
 
 import '../../data/models/response/aroma_response.dart';
 import '../../data/models/response/customer_response.dart';
 import '../../domain/aromas/get_aromas_usecase.dart';
 import '../../domain/customers/get_customers_usecase.dart';
 import '../../presentation/alert/alert.dart';
+import '../../provider/di/di_provider.dart';
 
 class CreateRouteViewModel extends BaseSearchViewModel {
 
@@ -27,6 +33,9 @@ class CreateRouteViewModel extends BaseSearchViewModel {
   final _getLastChecklistsUseCase = GetLastChecklistsUseCase();
   final _getAromasUseCase = GetAromasUseCase();
   final _getTaskTypesUseCase = GetTaskTypesUseCase();
+  final _createRouteUseCase = CreateRouteUseCase();
+
+  final _router = getIt<RouteGenerator>().router;
 
   final String userId;
 
@@ -51,6 +60,7 @@ class CreateRouteViewModel extends BaseSearchViewModel {
 
   final List<CustomerResponse> selectedCustomers = [];
   final List<SubtaskBody> selectedSubtasks = [];
+  final Map<String, TasksBody> savedTasks = {};
 
   CustomerResponse? selectedCustomer;
 
@@ -143,10 +153,53 @@ class CreateRouteViewModel extends BaseSearchViewModel {
   void toggleSubtaskSelection(SubtaskBody subtask) {
     if (selectedSubtasks.filter((e) => e.deviceId == subtask.deviceId).isNotEmpty) {
       selectedSubtasks.removeWhere((e) => e.deviceId == subtask.deviceId);
+      if(selectedSubtasks.isEmpty) savedTasks.remove(selectedCustomerId);
     } else {
       selectedSubtasks.add(subtask);
     }
     notifyListeners();
+  }
+
+  void addTask() {
+    final String? typeId = selectedTaskType?.id;
+    final String? customerName = selectedCustomer?.name;
+    final String? customerId = selectedCustomerId;
+    final List<SubtaskBody> subtasks = selectedSubtasks.filter((e) => e.customerId == selectedCustomerId);
+    if (typeId == null
+        || customerName == null
+        || customerId == null
+        || subtasks.isEmpty
+    ) return;
+    final TasksBody taskBody = TasksBody(
+      customerName,
+      typeId,
+      customerId,
+      subtasks
+    );
+    savedTasks[customerId] = taskBody;
+    addAlert(Alert('Задание успешно сохранено', style: AlertStyle.success));
+    notifyListeners();
+  }
+
+  void createRoute() async {
+    final RouteBody routeBody = RouteBody(
+      userId,
+      savedTasks.values.toList()
+    );
+    loadingOn();
+    (await executeUseCaseParam<void, RouteBody>(_createRouteUseCase, routeBody))
+        .doOnError((message, exception) {
+    addAlert(Alert(message ?? '$exception', style: AlertStyle.danger));
+    }).doOnSuccess((value) {
+      addAlert(Alert('Маршрут успешно назначен', style: AlertStyle.success));
+      selectedSubtasks.clear();
+      savedTasks.clear();
+      Future.delayed(const Duration(milliseconds: 500), () {
+        _router.pushReplacement(RouteName.usersList);
+      });
+      notifyListeners();
+    });
+    loadingOff();
   }
 
   void loadAromas() async {

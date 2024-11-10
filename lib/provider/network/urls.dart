@@ -8,4 +8,5 @@ class Urls {
   static const regions = 'regions';
   static const lastChecklists = 'checklists/last';
   static const taskTypes = 'task/types';
+  static const createRoute = 'route';
 }

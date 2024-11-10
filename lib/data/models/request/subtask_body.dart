@@ -5,6 +5,7 @@ part 'subtask_body.g.dart';
 @JsonSerializable()
 class SubtaskBody {
 
+  final String? customerId;
   final String deviceId;
   final String comment;
   final String expectedAromaId;
@@ -12,6 +13,7 @@ class SubtaskBody {
   final int estimatedCompletedTime;
 
   SubtaskBody(
+      this.customerId,
       this.deviceId,
       this.comment,
       this.expectedAromaId,
@@ -19,5 +21,6 @@ class SubtaskBody {
       this.estimatedCompletedTime
   );
 
+  factory SubtaskBody.fromJson(Map<String, dynamic> json) => _$SubtaskBodyFromJson(json);
   Map<String, dynamic> toJson() => _$SubtaskBodyToJson(this);
 }
