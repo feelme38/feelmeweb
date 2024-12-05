@@ -1,25 +1,6 @@
-2024/11/10-12:21:37.534 a607 Reusing MANIFEST /private/var/folders/00/2zgv2p1x57gfh47rs1ttcvwm0000gn/T/flutter_tools.RkvvlP/flutter_tools_chrome_device.CunZKF/Default/shared_proto_db/MANIFEST-000001
-2024/11/10-12:21:37.534 a607 Recovering log #36
-2024/11/10-12:21:37.534 a607 Reusing old log /private/var/folders/00/2zgv2p1x57gfh47rs1ttcvwm0000gn/T/flutter_tools.RkvvlP/flutter_tools_chrome_device.CunZKF/Default/shared_proto_db/000036.log 
-2024/11/10-12:21:37.535 a607 Delete type=0 #13
-2024/11/10-12:21:37.535 a607 Delete type=0 #7
-2024/11/10-12:21:37.535 a607 Delete type=0 #4
-2024/11/10-12:21:37.535 a607 Delete type=0 #10
-2024/11/10-12:21:37.535 a607 Delete type=0 #29
-2024/11/10-12:21:37.535 a607 Delete type=0 #16
-2024/11/10-12:21:37.535 a607 Delete type=0 #3
-2024/11/10-12:21:37.535 a607 Delete type=2 #14
-2024/11/10-12:21:37.535 a607 Delete type=2 #17
-2024/11/10-12:21:37.535 a607 Delete type=2 #11
-2024/11/10-12:21:37.535 a607 Delete type=2 #8
-2024/11/10-12:21:37.535 a607 Delete type=2 #21
-2024/11/10-12:21:37.535 a607 Delete type=2 #27
-2024/11/10-12:21:37.535 a607 Delete type=2 #24
-2024/11/10-12:21:37.535 a607 Delete type=2 #30
-2024/11/10-12:21:37.535 a607 Delete type=0 #32
-2024/11/10-12:21:37.535 a607 Delete type=0 #26
-2024/11/10-12:21:37.535 a607 Delete type=0 #19
-2024/11/10-12:21:37.535 a607 Delete type=0 #23
-2024/11/10-12:23:45.385 b303 Level-0 table #40: started
-2024/11/10-12:23:45.402 b303 Level-0 table #40: 124880 bytes OK
-2024/11/10-12:23:45.410 b303 Delete type=0 #36
+2024/12/04-15:05:05.979 8c03 Reusing MANIFEST /private/var/folders/9d/ck83v_vx7m73mb2ykjfpdcz40000gn/T/flutter_tools.cv8bwy/flutter_tools_chrome_device.6pNpLr/Default/shared_proto_db/MANIFEST-000001
+2024/12/04-15:05:05.979 8c03 Recovering log #5
+2024/12/04-15:05:05.980 8c03 Reusing old log /private/var/folders/9d/ck83v_vx7m73mb2ykjfpdcz40000gn/T/flutter_tools.cv8bwy/flutter_tools_chrome_device.6pNpLr/Default/shared_proto_db/000005.log 
+2024/12/04-15:05:05.980 8c03 Delete type=0 #4
+2024/12/04-15:05:05.980 8c03 Delete type=0 #3
+2024/12/04-15:05:05.981 8c03 Delete type=2 #5

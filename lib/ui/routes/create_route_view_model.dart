@@ -21,7 +21,6 @@ import '../../presentation/alert/alert.dart';
 import '../../provider/di/di_provider.dart';
 
 class CreateRouteViewModel extends BaseSearchViewModel {
-
   CreateRouteViewModel(this.userId) {
     loadRegions();
     loadAromas();
@@ -40,24 +39,29 @@ class CreateRouteViewModel extends BaseSearchViewModel {
   final String userId;
 
   List<RegionResponse> _regions = [];
+
   List<RegionResponse> get regions => _regions;
 
   List<CustomerResponse> _customers = [];
+
   List<CustomerResponse> get customers => _customers;
 
   List<CheckListInfoResponse> _lastChecklists = [];
+
   List<CheckListInfoResponse> get lastChecklists => _lastChecklists;
 
   List<AromaResponse> _aromas = [];
+
   List<AromaResponse> get aromas => _aromas;
 
   List<TaskTypeResponse> _taskTypes = [];
+
   List<TaskTypeResponse> get taskTypes => _taskTypes;
   TaskTypeResponse? selectedTaskType;
 
   String? selectedRegionId;
   String? selectedCustomerId;
-
+  String? selectedAddressId;
   final List<CustomerResponse> selectedCustomers = [];
   final List<SubtaskBody> selectedSubtasks = [];
   final Map<String, TasksBody> savedTasks = {};
@@ -65,6 +69,7 @@ class CreateRouteViewModel extends BaseSearchViewModel {
   CustomerResponse? selectedCustomer;
 
   int _creationStage = 1;
+
   int get creationStage => _creationStage;
 
   void chooseDefaultRegion() {
@@ -77,7 +82,9 @@ class CreateRouteViewModel extends BaseSearchViewModel {
   void chooseDefaultCustomer() {
     if (selectedCustomers.isNotEmpty) {
       selectedCustomerId = selectedCustomers.first.id;
-      loadLastChecklistsInfo(customer: selectedCustomers.first);
+      selectedAddressId = selectedCustomers.first.addresses?.firstOrNull?.id;
+      loadLastChecklistsInfo(
+          customer: selectedCustomers.first, addressId: selectedAddressId);
     }
   }
 
@@ -113,7 +120,8 @@ class CreateRouteViewModel extends BaseSearchViewModel {
   void loadCustomers({String? regionId}) async {
     selectedRegionId = regionId;
     loadingOn();
-    (await executeUseCaseParam<List<CustomerResponse>, String?>(_getCustomersUseCase, regionId))
+    (await executeUseCaseParam<List<CustomerResponse>, String?>(
+            _getCustomersUseCase, regionId))
         .doOnError((message, exception) {
       addAlert(Alert(message ?? '$exception', style: AlertStyle.danger));
     }).doOnSuccess((value) {
@@ -123,11 +131,17 @@ class CreateRouteViewModel extends BaseSearchViewModel {
     loadingOff();
   }
 
-  void loadLastChecklistsInfo({CustomerResponse? customer}) async {
-    if(customer == null) return;
+  void loadLastChecklistsInfo(
+      {CustomerResponse? customer, String? addressId}) async {
+    if (customer == null) return;
+    if (customer.id == null) return;
     selectedCustomerId = customer.id;
     selectedCustomer = customer;
-    (await executeUseCaseParam<List<CheckListInfoResponse>, String>(_getLastChecklistsUseCase, customer.id))
+    selectedAddressId = addressId;
+    notifyListeners();
+    (await executeUseCaseParam<List<CheckListInfoResponse>,
+                GetLastChecklistParam>(_getLastChecklistsUseCase,
+            GetLastChecklistParam(selectedAddressId!, customer.id!)))
         .doOnError((message, exception) {
       addAlert(Alert(message ?? '$exception', style: AlertStyle.danger));
     }).doOnSuccess((value) {
@@ -151,9 +165,11 @@ class CreateRouteViewModel extends BaseSearchViewModel {
   }
 
   void toggleSubtaskSelection(SubtaskBody subtask) {
-    if (selectedSubtasks.filter((e) => e.deviceId == subtask.deviceId).isNotEmpty) {
+    if (selectedSubtasks
+        .filter((e) => e.deviceId == subtask.deviceId)
+        .isNotEmpty) {
       selectedSubtasks.removeWhere((e) => e.deviceId == subtask.deviceId);
-      if(selectedSubtasks.isEmpty) savedTasks.remove(selectedCustomerId);
+      if (selectedSubtasks.isEmpty) savedTasks.remove(selectedCustomerId);
     } else {
       selectedSubtasks.add(subtask);
     }
@@ -164,32 +180,25 @@ class CreateRouteViewModel extends BaseSearchViewModel {
     final String? typeId = selectedTaskType?.id;
     final String? customerName = selectedCustomer?.name;
     final String? customerId = selectedCustomerId;
-    final List<SubtaskBody> subtasks = selectedSubtasks.filter((e) => e.customerId == selectedCustomerId);
-    if (typeId == null
-        || customerName == null
-        || customerId == null
-        || subtasks.isEmpty
-    ) return;
-    final TasksBody taskBody = TasksBody(
-      customerName,
-      typeId,
-      customerId,
-      subtasks
-    );
+    final List<SubtaskBody> subtasks =
+        selectedSubtasks.filter((e) => e.customerId == selectedCustomerId);
+    if (typeId == null ||
+        customerName == null ||
+        customerId == null ||
+        subtasks.isEmpty) return;
+    final TasksBody taskBody =
+        TasksBody(customerName, typeId, customerId, subtasks);
     savedTasks[customerId] = taskBody;
     addAlert(Alert('Задание успешно сохранено', style: AlertStyle.success));
     notifyListeners();
   }
 
   void createRoute() async {
-    final RouteBody routeBody = RouteBody(
-      userId,
-      savedTasks.values.toList()
-    );
+    final RouteBody routeBody = RouteBody(userId, savedTasks.values.toList());
     loadingOn();
     (await executeUseCaseParam<void, RouteBody>(_createRouteUseCase, routeBody))
         .doOnError((message, exception) {
-    addAlert(Alert(message ?? '$exception', style: AlertStyle.danger));
+      addAlert(Alert(message ?? '$exception', style: AlertStyle.danger));
     }).doOnSuccess((value) {
       addAlert(Alert('Маршрут успешно назначен', style: AlertStyle.success));
       selectedSubtasks.clear();

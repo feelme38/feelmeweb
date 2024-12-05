@@ -65,31 +65,31 @@ class _CreateRouteChooseCustomersWidgetState extends State<CreateRouteChooseCust
       DataCell(
           Align(
             alignment: Alignment.center,
-            child: Text(customer.name),
+            child: Text(customer.name ?? ''),
           )
       ),
       DataCell(
           Align(
             alignment: Alignment.center,
-            child: Text(customer.phone),
+            child: Text(customer.phone ?? ''),
           )
       ),
       DataCell(
           Align(
             alignment: Alignment.center,
-            child: Text(customer.ownerName),
+            child: Text(customer.ownerName ?? ''),
           )
       ),
       DataCell(
           Align(
             alignment: Alignment.center,
-            child: Text(customer.preferredStartTime),
+            child: Text(customer.preferredStartTime ?? ''),
           )
       ),
       DataCell(
           Align(
             alignment: Alignment.center,
-            child: Text(customer.address),
+            child: Text(customer.addresses?.first.address ?? ''),
           )
       ),
       DataCell(

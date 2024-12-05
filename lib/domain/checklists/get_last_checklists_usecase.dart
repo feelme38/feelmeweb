@@ -5,13 +5,19 @@ import 'package:feelmeweb/data/repository/checklists/checklists_repository.dart'
 import '../../core/result/result_of.dart';
 import '../../provider/di/di_provider.dart';
 import '../base_use_case.dart';
+class GetLastChecklistParam {
+  final String customerId;
+  final String addressId;
 
-class GetLastChecklistsUseCase extends UseCaseParam<Result<List<CheckListInfoResponse>>, String> {
+  GetLastChecklistParam(this.addressId, this.customerId);
+}
+
+class GetLastChecklistsUseCase extends UseCaseParam<Result<List<CheckListInfoResponse>>, GetLastChecklistParam> {
 
   final _repository = getIt<ChecklistsRepository>();
 
   @override
-  Future<Result<List<CheckListInfoResponse>>> call(String param) {
+  Future<Result<List<CheckListInfoResponse>>> call(GetLastChecklistParam param) {
     return _repository.getLastCheckListInfo(param);
   }
 

@@ -7,6 +7,7 @@ class Urls {
   static const customers = 'customers';
   static const regions = 'regions';
   static const lastChecklists = 'checklists/last';
+  static const customerAddress = 'customer/address';
   static const taskTypes = 'task/types';
   static const createRoute = 'route';
 }

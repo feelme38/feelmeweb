@@ -1,4 +1,5 @@
 import 'package:feelmeweb/ui/common/app_drawer.dart';
+import 'package:feelmeweb/ui/map_ui/map_page.dart';
 import 'package:flutter/material.dart';
 
 
@@ -15,6 +16,7 @@ class MyHomePage extends StatelessWidget {
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
       drawer: getDrawer(context),
+      body: MapPage(),
     );
   }
 }

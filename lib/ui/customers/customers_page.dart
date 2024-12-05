@@ -8,7 +8,6 @@ import '../../presentation/widgets/search_widget.dart';
 import 'customers_view_model.dart';
 
 class CustomersPage extends StatelessWidget {
-
   const CustomersPage({super.key});
 
   static Widget create() => ChangeNotifierProvider(
@@ -24,20 +23,17 @@ class CustomersPage extends StatelessWidget {
         needAppBar: true,
         drawer: getDrawer(context),
         appBar: SearchWidget<CustomersViewModel>(
-            context.read<CustomersViewModel>().onSearch, () {},
-            needBottomEdge: true,
-            needBackButton: false,
+          context.read<CustomersViewModel>().onSearch,
+          () {},
+          needBottomEdge: true,
+          needBackButton: false,
         ),
-        child:  Align(
-          alignment: Alignment.topCenter,
-          child: SingleChildScrollView(
-            scrollDirection: Axis.vertical,
-            child: AppTableWidget(
-              dataColumns: viewModel.tableCustomersColumns,
-              dataRows: viewModel.getTableCustomersRows(customers),
-            ),
-          ),
-        )
-    );
+        child: Align(
+            alignment: Alignment.topCenter,
+            child: SingleChildScrollView(
+                scrollDirection: Axis.vertical,
+                child: AppTableWidget(
+                    dataColumns: viewModel.tableCustomersColumns,
+                    dataRows: viewModel.getTableCustomersRows(customers)))));
   }
 }
