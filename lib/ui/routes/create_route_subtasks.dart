@@ -130,19 +130,7 @@ class CreateRouteSubtasksWidget extends StatelessWidget {
                                     savedTasks.containsKey(selectedCustomer.id),
                                 textColor: Colors.white,
                                 buttonColor: AppColor.redDefect))),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(16, 0.0, 0.0, 32),
-                      child: BaseTextButton(
-                          buttonText: "Добавить оборудование",
-                          onTap: () {
 
-                          },
-                          weight: FontWeight.w500,
-                          fontSize: 14,
-                          enabled: savedTasks.containsKey(selectedCustomer.id),
-                          textColor: Colors.white,
-                          buttonColor: AppColor.redDefect),
-                    ),
                     const Spacer(),
                     Padding(
                         padding: const EdgeInsets.fromLTRB(0.0, 0.0, 18, 32),

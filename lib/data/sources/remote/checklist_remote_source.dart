@@ -19,8 +19,8 @@ class ChecklistRemoteSource {
     try {
       final response = await _networkProvider.dio.onGet(Urls.lastChecklists,
           queryParams: {
-            "customerId": body.customerId,
-            // 'addressId': body.addressId
+            // "customerId": body.customerId,
+            'addressId': body.addressId
           });
       var result = (response.data as List)
           .map((e) => CheckListInfoResponse.fromJson(e))

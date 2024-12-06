@@ -1,6 +1,8 @@
 import 'package:feelmeweb/data/models/response/address_dto.dart';
+import 'package:feelmeweb/data/models/response/device_powers.dart';
 import 'package:feelmeweb/data/models/response/region_response.dart';
 import 'package:feelmeweb/presentation/modals/widgets/add_address_dialog.dart';
+import 'package:feelmeweb/presentation/modals/widgets/add_device_dialog.dart';
 import 'package:feelmeweb/presentation/modals/widgets/addresses_dialog.dart';
 import 'package:feelmeweb/presentation/modals/widgets/create_user_dialog.dart';
 import 'package:feelmeweb/presentation/navigation/route_generation.dart';
@@ -12,6 +14,18 @@ import '../../main.dart';
 import '../../provider/di/di_provider.dart';
 
 class Dialogs {
+  static Future<void> createDeviceDialog(
+      BuildContext? fromContext,
+      List<DevicePowersResponse> powers,
+      List<DeviceModelsResponse> models) async {
+    final context = fromContext ?? getContext();
+    if (context != null) {
+      await showBaseDialog(
+          fromContext, AddDeviceDialog(models: models, powers: powers),
+          width: context.currentSize.width * 0.4);
+    }
+  }
+
   static Future<void> showCreateUserDialog(
       BuildContext? fromContext, CreateUserCallback callback) async {
     final context = fromContext ?? getContext();
@@ -60,9 +74,9 @@ class Dialogs {
                             borderRadius:
                                 BorderRadius.all(Radius.circular(Dimen.size4))),
                         padding: const EdgeInsets.only(
-                            left: Dimen.size24,
-                            right: Dimen.size24,
-                            top: Dimen.size24,
+                            left: Dimen.size16,
+                            right: Dimen.size16,
+                            top: Dimen.size16,
                             bottom: Dimen.size8),
                         child: content)));
           });

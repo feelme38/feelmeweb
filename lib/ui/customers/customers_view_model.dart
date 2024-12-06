@@ -1,7 +1,11 @@
+import 'package:base_class_gen/core/ext/build_context_ext.dart';
 import 'package:feelmeweb/data/models/response/customer_response.dart';
+import 'package:feelmeweb/data/models/response/device_powers.dart';
 import 'package:feelmeweb/data/models/response/region_response.dart';
 import 'package:feelmeweb/domain/customers/get_customers_usecase.dart';
 import 'package:feelmeweb/domain/devices/delete_device_usecase.dart';
+import 'package:feelmeweb/domain/devices/get_device_models_use_case.dart';
+import 'package:feelmeweb/domain/devices/get_device_powers_use_case.dart';
 import 'package:feelmeweb/domain/regions/get_regions_usecase.dart';
 import 'package:feelmeweb/presentation/base_screen/base_screen.dart';
 import 'package:feelmeweb/presentation/modals/dialogs.dart';
@@ -16,15 +20,19 @@ import 'widgets/devices_table_dialog_widget.dart';
 
 class CustomersViewModel extends BaseSearchViewModel {
   CustomersViewModel() {
+    loadDeviceCatalogs();
     loadCustomers();
   }
 
   final _getCustomersUseCase = GetCustomersUseCase();
   final _deleteDeviceUseCase = DeleteDeviceUseCase();
+  final _getDeviceModelsUseCase = GetDeviceModelsUseCase();
+  final _getDevicePowersUseCase = GetDevicePowersUseCase();
   final _addAddressUseCase = AddAddressUseCase();
   final _getRegionsUseCase = GetRegionsUseCase();
   final _currentCountDevices = <String, int>{};
-
+  List<DevicePowersResponse> powers = [];
+  List<DeviceModelsResponse> models = [];
   List<CustomerResponse> _customers = [];
   List<RegionResponse> regions = [];
 
@@ -133,29 +141,32 @@ class CustomersViewModel extends BaseSearchViewModel {
           DataCell(Row(
             children: [
               IconButton(
-                icon: const Icon(Icons.devices),
-                onPressed: () {
-                  final context =
-                      getIt<RouteGenerator>().navigatorKey.currentContext;
-                  if (context == null) return;
-                  Dialogs.showBaseDialog(
-                      context,
-                      DevicesTableDialogWidget(
-                          devices: customer.devices ?? [],
-                          removeCallback: (s, l) {
-                            deleteDevice(s);
-                            if (customer.id != null) {
-                              _currentCountDevices[customer.id!] = l;
-                            }
-                          })).then((_) {
-                    if (customer.devices?.length !=
-                        _currentCountDevices[customer.id]) {
-                      loadCustomers();
-                    }
-                  });
-                },
-                tooltip: 'Посмотреть оборудование',
-              ),
+                  icon: const Icon(Icons.devices),
+                  onPressed: () {
+                    final context =
+                        getIt<RouteGenerator>().navigatorKey.currentContext;
+                    if (context == null) return;
+                    Dialogs.showBaseDialog(
+                            context,
+                            DevicesTableDialogWidget(
+                                devices: customer.devices ?? [],
+                                removeCallback: (s, l) {
+                                  deleteDevice(s);
+                                  if (customer.id != null) {
+                                    _currentCountDevices[customer.id!] = l;
+                                  }
+                                },
+                                powers: powers,
+                                models: models),
+                            width: context.currentSize.width * 0.65)
+                        .then((_) {
+                      if (customer.devices?.length !=
+                          _currentCountDevices[customer.id]) {
+                        loadCustomers();
+                      }
+                    });
+                  },
+                  tooltip: 'Посмотреть оборудование'),
               IconButton(
                 icon: const Icon(Icons.edit),
                 onPressed: () {
@@ -174,6 +185,19 @@ class CustomersViewModel extends BaseSearchViewModel {
           )),
         ]);
       }).toList();
+
+  Future<void> loadDeviceCatalogs() async {
+    _getDeviceModelsUseCase().then((v) {
+      v.doOnSuccess((data) {
+        models = data;
+      });
+    });
+    _getDevicePowersUseCase().then((v) {
+      v.doOnSuccess((data) {
+        powers = data;
+      });
+    });
+  }
 
   @override
   String get title => 'Клиенты';

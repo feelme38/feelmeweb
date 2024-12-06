@@ -4,6 +4,9 @@ class Urls {
   static const users = 'users';
   static const aromas = 'aromas';
   static const device = 'device';
+  static const powers = 'device/powers';
+  static const deviceModels = 'device/models';
+
   static const customers = 'customers';
   static const customer = 'customer';
   static const regions = 'regions';
