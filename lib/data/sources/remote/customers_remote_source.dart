@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:feelmeweb/core/result/result_of.dart';
+import 'package:feelmeweb/data/models/request/create_user_body.dart';
 import 'package:feelmeweb/data/models/response/aroma_response.dart';
 import 'package:feelmeweb/data/models/response/customer_response.dart';
 import 'package:feelmeweb/data/models/response/user_response.dart';
@@ -31,8 +32,19 @@ class CustomersRemoteSource {
     }
   }
 
-  Future<Result<bool>> addCustomerAddress(
-      AddCustomerAddressBody body) async {
+  Future<Result<bool>> createCustomer(CreateUserBody body) async {
+    try {
+      await _networkProvider.dio.onWebPost(Urls.customer, data: body.toJson());
+
+      return Success(true);
+    } on DioException catch (e) {
+      return Failure(exception: e, message: e.message);
+    } on ConnectionException catch (e) {
+      return Failure(exception: e, message: e.message);
+    }
+  }
+
+  Future<Result<bool>> addCustomerAddress(AddCustomerAddressBody body) async {
     try {
       await _networkProvider.dio
           .onWebPost(Urls.customerAddress, data: body.toJson());

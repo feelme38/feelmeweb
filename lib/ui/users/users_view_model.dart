@@ -1,5 +1,7 @@
 import 'package:base_class_gen/core/ext/string_ext.dart';
+import 'package:feelmeweb/data/models/request/create_user_body.dart';
 import 'package:feelmeweb/data/models/response/user_response.dart';
+import 'package:feelmeweb/domain/users/create_user_usecase.dart';
 import 'package:feelmeweb/domain/users/get_users_usecase.dart';
 import 'package:feelmeweb/presentation/base_vm/base_search_view_model.dart';
 import 'package:feelmeweb/presentation/navigation/route_names.dart';
@@ -11,7 +13,6 @@ import '../../presentation/navigation/route_generation.dart';
 import '../../provider/di/di_provider.dart';
 
 class UsersViewModel extends BaseSearchViewModel {
-
   UsersViewModel() {
     loadUsers();
   }
@@ -19,6 +20,7 @@ class UsersViewModel extends BaseSearchViewModel {
   final _getUsersUseCase = GetUsersUseCase();
 
   List<UserResponse> _users = [];
+
   List<UserResponse> get users => _users;
 
   final List<DataColumn> _tableUsersColumns = [
@@ -29,11 +31,13 @@ class UsersViewModel extends BaseSearchViewModel {
     const DataColumn(label: Text('Статус маршрута')),
     const DataColumn(label: Text('')),
   ];
+
   List<DataColumn> get tableUsersColumns => _tableUsersColumns;
 
   void loadUsers() async {
     loadingOn();
-    (await executeUseCaseParam<List<UserResponse>, String?>(_getUsersUseCase, 'd73285b5-dd1a-43a4-8c04-4cb65f62af3a'))
+    (await executeUseCaseParam<List<UserResponse>, String?>(
+            _getUsersUseCase, 'd73285b5-dd1a-43a4-8c04-4cb65f62af3a'))
         .doOnError((message, exception) {
       addAlert(Alert(message ?? '$exception', style: AlertStyle.danger));
     }).doOnSuccess((value) {
@@ -48,76 +52,70 @@ class UsersViewModel extends BaseSearchViewModel {
     //refilter(state.defects);
   }
 
+  Future<void> createCustomer(CreateUserBody body) async {
+    CreateUserUseCase().call(body);
+  }
+
   String _renderRouteStatus(String? routeStatus) {
-    switch(routeStatus) {
-      case 'ASSIGNED': return 'Назначен';
-      case 'STARTED': return 'В работе';
-      case 'PAUSED': return 'Перерыв';
-      case 'FINISHED': return 'Закончен';
-      default: return 'Без маршрута';
+    switch (routeStatus) {
+      case 'ASSIGNED':
+        return 'Назначен';
+      case 'STARTED':
+        return 'В работе';
+      case 'PAUSED':
+        return 'Перерыв';
+      case 'FINISHED':
+        return 'Закончен';
+      default:
+        return 'Без маршрута';
     }
   }
 
-  List<DataRow> getTableUsersRows(List<UserResponse> users) => users.map((user) {
-    return DataRow(cells: [
-      DataCell(CircleAvatar(
-        backgroundImage: NetworkImage(
-            user.profileUrl.orEmpty
-        ),
-      )),
-      DataCell(
-          Align(
-            alignment: Alignment.center,
-            child: Text(user.name),
-          )
-      ),
-      DataCell(
-          Align(
-            alignment: Alignment.center,
-            child: Text(user.allTasksCount.toString()),
-          )
-      ),
-      DataCell(
-          Align(
-            alignment: Alignment.center,
-            child: Text(user.completedTasksCount.toString()),
-          )
-      ),
-      DataCell(
-          Align(
-            alignment: Alignment.center,
-            child: Text(_renderRouteStatus(user.routeStatus?.name)),
-          )
-      ),
-      DataCell(Row(
-        children: [
-          IconButton(
-            icon: const Icon(Icons.directions),
-            onPressed: () {
-              final context = getIt<RouteGenerator>().navigatorKey.currentContext;
-              if (context == null) return;
-              context.go(RouteName.customerCreateRoute, extra: user.id);
-            },
-            tooltip: 'Создать маршрут',
-          ),
-          IconButton(
-            icon: const Icon(Icons.edit),
-            onPressed: () {
-              // Логика редактирования пользователя
-            },
-            tooltip: 'Редактировать',
-          ),
-          IconButton(
-            icon: const Icon(Icons.delete),
-            onPressed: () {
-              // Логика удаления пользователя
-            },
-            tooltip: 'Удалить',
-          ),
-        ],
-      )),
-    ]);
-  }).toList();
+  List<DataRow> getTableUsersRows(List<UserResponse> users) =>
+      users.map((user) {
+        return DataRow(cells: [
+          DataCell(CircleAvatar(
+              backgroundImage: NetworkImage(user.profileUrl.orEmpty))),
+          DataCell(Align(alignment: Alignment.center, child: Text(user.name))),
+          DataCell(Align(
+              alignment: Alignment.center,
+              child: Text(user.allTasksCount.toString()))),
+          DataCell(Align(
+              alignment: Alignment.center,
+              child: Text(user.completedTasksCount.toString()))),
+          DataCell(Align(
+              alignment: Alignment.center,
+              child: Text(_renderRouteStatus(user.routeStatus?.name)))),
+          DataCell(Row(
+            children: [
+              IconButton(
+                icon: const Icon(Icons.directions),
+                onPressed: () {
+                  final context =
+                      getIt<RouteGenerator>().navigatorKey.currentContext;
+                  if (context == null) return;
+                  context.go(RouteName.customerCreateRoute, extra: user.id);
+                },
+                tooltip: 'Создать маршрут',
+              ),
+              IconButton(
+                icon: const Icon(Icons.edit),
+                onPressed: () {
+                  // Логика редактирования пользователя
+                },
+                tooltip: 'Редактировать',
+              ),
+              IconButton(
+                icon: const Icon(Icons.delete),
+                onPressed: () {
+                  // Логика удаления пользователя
+                },
+                tooltip: 'Удалить',
+              ),
+            ],
+          )),
+        ]);
+      }).toList();
 
   @override
   String get title => 'Сервисные инженеры';

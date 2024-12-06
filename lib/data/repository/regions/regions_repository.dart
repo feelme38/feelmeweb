@@ -1,4 +1,3 @@
-
 import 'package:feelmeweb/core/result/result_of.dart';
 import 'package:feelmeweb/data/models/response/region_response.dart';
 import 'package:injectable/injectable.dart';
@@ -7,18 +6,27 @@ import '../../sources/remote/regions_remote_source.dart';
 
 @Singleton(as: RegionsRepository)
 class RegionsRepositoryImpl extends RegionsRepository {
-
   final RegionsRemoteSource _regionsRemoteSource;
 
   RegionsRepositoryImpl(this._regionsRemoteSource);
 
+  List<RegionResponse> _regions = [];
+
   @override
   Future<Result<List<RegionResponse>>> getRegions() async {
-    return await _regionsRemoteSource.getRegions();
+    final result = await _regionsRemoteSource.getRegions();
+    if (result is Success<List<RegionResponse>>) {
+      _regions = result.data;
+    }
+    return result;
   }
 
+  @override
+  List<RegionResponse> get regions => _regions;
 }
 
 abstract class RegionsRepository {
   Future<Result<List<RegionResponse>>> getRegions();
+
+  List<RegionResponse> get regions;
 }

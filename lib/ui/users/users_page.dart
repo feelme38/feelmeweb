@@ -8,7 +8,6 @@ import '../../presentation/base_screen/base_screen.dart';
 import '../../presentation/widgets/search_widget.dart';
 
 class UsersPage extends StatelessWidget {
-
   const UsersPage({super.key});
 
   static Widget create() => ChangeNotifierProvider(
@@ -24,11 +23,12 @@ class UsersPage extends StatelessWidget {
         needAppBar: true,
         drawer: getDrawer(context),
         appBar: SearchWidget<UsersViewModel>(
-          context.read<UsersViewModel>().onSearch, () {},
+          context.read<UsersViewModel>().onSearch,
+          () {},
           needBottomEdge: true,
           needBackButton: false,
         ),
-        child:  Align(
+        child: Align(
           alignment: Alignment.topCenter,
           child: SingleChildScrollView(
             scrollDirection: Axis.vertical,
@@ -37,7 +37,6 @@ class UsersPage extends StatelessWidget {
               dataRows: viewModel.getTableUsersRows(users),
             ),
           ),
-        )
-    );
+        ));
   }
 }

@@ -1,7 +1,15 @@
+import 'package:feelmeweb/presentation/modals/dialogs.dart';
+import 'package:feelmeweb/presentation/modals/widgets/create_user_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-Drawer getDrawer(BuildContext context) {
+import '../../data/models/request/create_user_body.dart';
+import '../../domain/users/create_user_usecase.dart';
+
+Future<void> createCustomer(CreateUserBody body) async {
+  CreateUserUseCase().call(body);
+}
+Drawer getDrawer(BuildContext context, {Function()? reloadCallback}) {
   return Drawer(
     child: ListView(
       padding: EdgeInsets.zero,
@@ -52,11 +60,10 @@ Drawer getDrawer(BuildContext context) {
                 title: const Text('Добавить'),
                 onTap: () {
                   Navigator.pop(context);
-                  context.go('/users/add');
+                  Dialogs.showCreateUserDialog(context, createCustomer);
                 },
               ),
-            ]
-        ),
+            ]),
         ExpansionTile(
             leading: const Icon(Icons.local_florist),
             title: const Text('Ароматы'),
@@ -73,10 +80,10 @@ Drawer getDrawer(BuildContext context) {
                 onTap: () {
                   //context.go('/home'); // Переход на Home
                   Navigator.pop(context); // Закрытие drawer
+                  reloadCallback?.call();
                 },
               ),
-            ]
-        ),
+            ]),
         ExpansionTile(
             leading: const Icon(Icons.place),
             title: const Text('Районы'),
@@ -95,8 +102,7 @@ Drawer getDrawer(BuildContext context) {
                   Navigator.pop(context); // Закрытие drawer
                 },
               ),
-            ]
-        ),
+            ]),
         ExpansionTile(
             leading: const Icon(Icons.person),
             title: const Text('Клиенты'),
@@ -115,8 +121,7 @@ Drawer getDrawer(BuildContext context) {
                   Navigator.pop(context); // Закрытие drawer
                 },
               ),
-            ]
-        ),
+            ]),
         const Divider(),
         ListTile(
           leading: const Icon(Icons.logout),

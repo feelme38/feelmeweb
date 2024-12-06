@@ -2,6 +2,7 @@ import 'package:feelmeweb/data/models/response/address_dto.dart';
 import 'package:feelmeweb/data/models/response/region_response.dart';
 import 'package:feelmeweb/presentation/modals/widgets/add_address_dialog.dart';
 import 'package:feelmeweb/presentation/modals/widgets/addresses_dialog.dart';
+import 'package:feelmeweb/presentation/modals/widgets/create_user_dialog.dart';
 import 'package:feelmeweb/presentation/navigation/route_generation.dart';
 import 'package:flutter/material.dart';
 import 'package:feelmeweb/core/extensions/base_class_extensions/build_context_ext.dart';
@@ -11,6 +12,16 @@ import '../../main.dart';
 import '../../provider/di/di_provider.dart';
 
 class Dialogs {
+  static Future<void> showCreateUserDialog(
+      BuildContext? fromContext, CreateUserCallback callback) async {
+    final context = fromContext ?? getContext();
+    if (context != null) {
+      await showBaseDialog(
+          context, CreateUserDialog(createUserCallback: callback),
+          width: context.currentSize.width * 0.5);
+    }
+  }
+
   static Future<void> showAddressesDialog(
       BuildContext? fromContext,
       List<AddressDTO> addresses,
@@ -19,7 +30,7 @@ class Dialogs {
       String customerId) async {
     final context = fromContext ?? getContext();
     if (context != null) {
-      final result = await showBaseDialog(
+      await showBaseDialog(
           context,
           AddressesDialog(
             addresses: addresses,

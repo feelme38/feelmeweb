@@ -42,8 +42,7 @@ class CreateRouteSubtasksWidget extends StatelessWidget {
                 itemCount: selectedCustomers.length,
                 itemBuilder: (context, index) {
                   final customer = selectedCustomers[index];
-                  final customerWidgets =
-                      addressUI(customer, viewModel);
+                  final customerWidgets = addressUI(customer, viewModel);
                   return Column(children: customerWidgets);
                 })),
         Expanded(
@@ -131,6 +130,19 @@ class CreateRouteSubtasksWidget extends StatelessWidget {
                                     savedTasks.containsKey(selectedCustomer.id),
                                 textColor: Colors.white,
                                 buttonColor: AppColor.redDefect))),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 0.0, 0.0, 32),
+                      child: BaseTextButton(
+                          buttonText: "Добавить оборудование",
+                          onTap: () {
+
+                          },
+                          weight: FontWeight.w500,
+                          fontSize: 14,
+                          enabled: savedTasks.containsKey(selectedCustomer.id),
+                          textColor: Colors.white,
+                          buttonColor: AppColor.redDefect),
+                    ),
                     const Spacer(),
                     Padding(
                         padding: const EdgeInsets.fromLTRB(0.0, 0.0, 18, 32),
@@ -167,33 +179,28 @@ class CreateRouteSubtasksWidget extends StatelessWidget {
     });
   }
 
-  List<Widget> addressUI(CustomerResponse customer,
-      CreateRouteViewModel viewModel) {
+  List<Widget> addressUI(
+      CustomerResponse customer, CreateRouteViewModel viewModel) {
     final addresses = customer.addresses ?? [];
     final name = customer.name ?? '';
 
-    return addresses
-        .map((e) {
-          final isSelectedAddress = viewModel.selectedAddressId == e.id;
-          return Container(
-            decoration: BoxDecoration(
-                color: isSelectedAddress
-                    ? Colors.blue[100]
-                    : Colors.transparent),
-            child: ListTile(
-                title: Column(children: [
-                  Text(name, style: const TextStyle(fontSize: 18)),
-                  Text(e.address ?? '', style: const TextStyle(fontSize: 12))
-                ]),
-                tileColor: isSelectedAddress
-                    ? Colors.blue[100]
-                    : Colors.transparent,
-                onTap: () {
-                  viewModel.loadLastChecklistsInfo(
-                      customer: customer, addressId: e.id);
-                }),
-          );
-    })
-        .toList();
+    return addresses.map((e) {
+      final isSelectedAddress = viewModel.selectedAddressId == e.id;
+      return Container(
+        decoration: BoxDecoration(
+            color: isSelectedAddress ? Colors.blue[100] : Colors.transparent),
+        child: ListTile(
+            title: Column(children: [
+              Text(name, style: const TextStyle(fontSize: 18)),
+              Text(e.address ?? '', style: const TextStyle(fontSize: 12))
+            ]),
+            tileColor:
+                isSelectedAddress ? Colors.blue[100] : Colors.transparent,
+            onTap: () {
+              viewModel.loadLastChecklistsInfo(
+                  customer: customer, addressId: e.id);
+            }),
+      );
+    }).toList();
   }
 }
