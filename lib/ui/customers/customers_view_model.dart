@@ -123,7 +123,7 @@ class CustomersViewModel extends BaseSearchViewModel {
             child: Text(customer.preferredStartTime ?? ''),
           )),
           DataCell(IconButton(
-            icon: const Icon(Icons.location_on_rounded),
+            icon: const Icon(Icons.location_on),
             onPressed: () {
               final context =
                   getIt<RouteGenerator>().navigatorKey.currentContext;
