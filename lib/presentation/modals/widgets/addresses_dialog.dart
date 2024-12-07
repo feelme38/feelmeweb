@@ -32,9 +32,9 @@ class AddressesDialog extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.end,
         mainAxisSize: MainAxisSize.min,
         children: [
-          Row(
+          const Row(
             children: [
-              const Text('Адреса',
+              Text('Адреса',
                   style: TextStyle(
                       fontSize: 24,
                       color: Colors.black,
@@ -56,7 +56,16 @@ class AddressesDialog extends StatelessWidget {
                               fontWeight: FontWeight.w400,
                               decoration: TextDecoration.none,
                               fontSize: 18)),
-                      const Icon(Icons.delete_forever, size: 32)
+                      IconButton(
+                        icon: const Icon(Icons.delete),
+                        onPressed: () {
+                          //TODO: сделать удаление как для девайсов
+                          // devices.removeWhere((e) => e.id == device.id);
+                          // widget.removeCallback(device.id, devices.length);
+                          // setState(() {});
+                        },
+                        tooltip: 'Удалить',
+                      )
                     ]);
               },
               separatorBuilder: (context, index) {
