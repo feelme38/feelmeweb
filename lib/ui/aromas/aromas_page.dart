@@ -23,20 +23,14 @@ class AromasPage extends StatelessWidget {
         needAppBar: true,
         drawer: getDrawer(context, reloadCallback: viewModel.loadAromas),
         appBar: SearchWidget<AromasViewModel>(
-          context.read<AromasViewModel>().onSearch,
-          () {},
-          needBottomEdge: true,
-          needBackButton: false,
-        ),
+            context.read<AromasViewModel>().onSearch, () {},
+            needBottomEdge: true, needBackButton: false),
         child: Align(
-          alignment: Alignment.topCenter,
-          child: SingleChildScrollView(
-            scrollDirection: Axis.vertical,
-            child: AppTableWidget(
-              dataColumns: viewModel.tableAromasColumns,
-              dataRows: viewModel.getTableAromasRows(aromas),
-            ),
-          ),
-        ));
+            alignment: Alignment.topCenter,
+            child: SingleChildScrollView(
+                scrollDirection: Axis.vertical,
+                child: AppTableWidget(
+                    dataColumns: viewModel.tableAromasColumns,
+                    dataRows: viewModel.getTableAromasRows(aromas)))));
   }
 }

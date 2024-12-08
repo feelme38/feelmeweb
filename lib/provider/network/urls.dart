@@ -13,6 +13,7 @@ class Urls {
   static const customers = 'customers';
   static const customer = 'customer';
   static const regions = 'regions';
+  static const region = 'region';
   static const lastChecklists = 'checklists/last';
   static const customerAddress = 'customer/address';
   static const taskTypes = 'task/types';

@@ -19,10 +19,13 @@ class SearchWidget<T extends BaseSearchViewModel> extends StatelessWidget
       this.needBottomEdge = false,
       this.backArg,
       this.needBackButton = true,
-      super.key});
+      super.key,
+      this.notActiveTitleWidget});
+
   final bool needBackButton;
   final dynamic backArg;
   final Function(String?) onSearch;
+  final Widget? notActiveTitleWidget;
   final List<Widget> actions;
   final bool sized;
   final bool needBottomEdge;
@@ -68,7 +71,8 @@ class SearchWidget<T extends BaseSearchViewModel> extends StatelessWidget
                           vm.setSearchEnabled();
                         }
                       : () {
-                          if(vm.searchController.text.isEmpty && !needBackButton) vm.setSearchEnabled();
+                          if (vm.searchController.text.isEmpty &&
+                              !needBackButton) vm.setSearchEnabled();
                           vm.searchController.clear();
                           onSearch(vm.searchController.text);
                         },
@@ -122,6 +126,7 @@ class SearchWidget<T extends BaseSearchViewModel> extends StatelessWidget
   }
 
   Widget? titleWidget(BuildContext context) {
+    if (notActiveTitleWidget != null) return notActiveTitleWidget;
     var atLineSubTitle = context.watch<T>().atLineSubTitle;
     var subTitle = context.watch<T>().subTitle;
     var title = context.watch<T>().title;

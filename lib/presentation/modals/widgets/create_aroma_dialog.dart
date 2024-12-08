@@ -21,30 +21,35 @@ class _CreateAromaDialogState extends State<CreateAromaDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(children: [
-      BaseTextField(controller: controller, helperText: 'Название аромата'),
-      const SizedBox(height: 12),
-      SizedBox(
-          width: context.currentSize.width * 0.4,
-          child: Row(children: [
-            Expanded(
-                child: BaseTextButton(
-                    buttonText: 'Отмена',
-                    onTap: () {
-                      context.navigateUp(arg: true);
-                    },
-                    enabled: true,
-                    buttonColor: Colors.redAccent)),
-            const SizedBox(width: 20),
-            Expanded(
-                child: BaseTextButton(
-                    buttonText: 'Добавить',
-                    onTap: () {
-                      context.navigateUp();
-                      widget.callback(CreateAromaBody(name: controller.text));
-                    },
-                    enabled: true))
-          ]))
-    ]);
+    return Material(
+      color: Colors.white,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+          children: [
+        BaseTextField(controller: controller, helperText: 'Название аромата'),
+        const SizedBox(height: 12),
+        SizedBox(
+            width: context.currentSize.width * 0.4,
+            child: Row(children: [
+              Expanded(
+                  child: BaseTextButton(
+                      buttonText: 'Отмена',
+                      onTap: () {
+                        context.navigateUp(arg: true);
+                      },
+                      enabled: true,
+                      buttonColor: Colors.redAccent)),
+              const SizedBox(width: 20),
+              Expanded(
+                  child: BaseTextButton(
+                      buttonText: 'Добавить',
+                      onTap: () {
+                        context.navigateUp();
+                        widget.callback(CreateAromaBody(name: controller.text));
+                      },
+                      enabled: true))
+            ]))
+      ]),
+    );
   }
 }

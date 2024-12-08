@@ -1,4 +1,6 @@
 import 'package:feelmeweb/data/models/request/create_aroma_body.dart';
+import 'package:feelmeweb/data/models/request/create_region_body.dart';
+import 'package:feelmeweb/domain/regions/create_region_usecase.dart';
 import 'package:feelmeweb/presentation/modals/dialogs.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -8,8 +10,10 @@ import '../../domain/aromas/create_aroma_use_case.dart';
 import '../../domain/customers/create_customer_usecase.dart';
 import '../../domain/users/create_user_usecase.dart';
 
-Future<void> createCustomer(CreateCustomerBody body) async {
+Future<void> createCustomer(CreateCustomerBody body,
+    Function()? reloadCallback) async {
   await CreateCustomerUseCase().call(body);
+  reloadCallback?.call();
 }
 
 Future<void> createUser(CreateUserBody body, Function()? reloadCallback) async {
@@ -17,9 +21,15 @@ Future<void> createUser(CreateUserBody body, Function()? reloadCallback) async {
   reloadCallback?.call();
 }
 
-Future<void> createAroma(
-    CreateAromaBody body, Function()? reloadCallback) async {
+Future<void> createAroma(CreateAromaBody body,
+    Function()? reloadCallback) async {
   await CreateAromaUseCase().call(body);
+  reloadCallback?.call();
+}
+
+Future<void> createRegion(CreateRegionBody body,
+    Function()? reloadCallback) async {
+  await CreateRegionUseCase().call(body);
   reloadCallback?.call();
 }
 
@@ -98,6 +108,8 @@ Drawer getDrawer(BuildContext context, {Function()? reloadCallback}) {
                 onTap: () {
                   //context.go('/home'); // Переход на Home
                   Navigator.pop(context); // Закрытие drawer
+                  Dialogs.createRegionDialog(
+                      context, (body) => createRegion(body, reloadCallback));
                 },
               ),
             ]),
@@ -117,6 +129,8 @@ Drawer getDrawer(BuildContext context, {Function()? reloadCallback}) {
                 onTap: () {
                   //context.go('/home'); // Переход на Home
                   Navigator.pop(context); // Закрытие drawer
+                  Dialogs.showCreateCustomerDialog(
+                      context, (body) => createCustomer(body, reloadCallback));
                 },
               ),
             ]),

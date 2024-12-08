@@ -16,6 +16,7 @@ import 'package:feelmeweb/presentation/theme/dimen.dart';
 
 import '../../main.dart';
 import '../../provider/di/di_provider.dart';
+import 'widgets/create_region_dialog.dart';
 
 class Dialogs {
   static Future<void> createDeviceDialog(
@@ -55,10 +56,17 @@ class Dialogs {
     final context = fromContext ?? getContext();
     if (context != null) {
       await showBaseDialog(context, CreateAromaDialog(callback: callback),
-          width: context.currentSize.width * 0.4);
+          width: context.currentSize.width * 0.35);
     }
   }
-
+  static Future<void> createRegionDialog(
+      BuildContext? fromContext, CreateRegionCallback callback) async {
+    final context = fromContext ?? getContext();
+    if (context != null) {
+      await showBaseDialog(context, CreateRegionDialog(callback: callback),
+          width: context.currentSize.width * 0.35);
+    }
+  }
   static Future<void> showCreateCustomerDialog(
       BuildContext? fromContext, CreateCustomerCallback callback) async {
     final context = fromContext ?? getContext();

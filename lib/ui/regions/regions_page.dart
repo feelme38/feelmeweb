@@ -8,7 +8,6 @@ import '../../presentation/widgets/search_widget.dart';
 import 'regions_view_model.dart';
 
 class RegionsPage extends StatelessWidget {
-
   const RegionsPage({super.key});
 
   static Widget create() => ChangeNotifierProvider(
@@ -22,22 +21,19 @@ class RegionsPage extends StatelessWidget {
     return BaseScreen<RegionsViewModel>(
         needBackButton: false,
         needAppBar: true,
-        drawer: getDrawer(context),
+        drawer: getDrawer(context, reloadCallback: viewModel.loadRegions),
         appBar: SearchWidget<RegionsViewModel>(
-          context.read<RegionsViewModel>().onSearch, () {},
+          context.read<RegionsViewModel>().onSearch,
+          () {},
           needBottomEdge: true,
           needBackButton: false,
         ),
-        child:  Align(
-          alignment: Alignment.topCenter,
-          child: SingleChildScrollView(
-            scrollDirection: Axis.vertical,
-            child: AppTableWidget(
-              dataColumns: viewModel.tableRegionsColumns,
-              dataRows: viewModel.getTableRegionsRows(regions),
-            ),
-          ),
-        )
-    );
+        child: Align(
+            alignment: Alignment.topCenter,
+            child: SingleChildScrollView(
+                scrollDirection: Axis.vertical,
+                child: AppTableWidget(
+                    dataColumns: viewModel.tableRegionsColumns,
+                    dataRows: viewModel.getTableRegionsRows(regions)))));
   }
 }

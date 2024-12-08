@@ -7,10 +7,12 @@ import 'package:feelmeweb/presentation/alert/alert.dart';
 import '../../core/result/result_of.dart';
 import '../../data/models/request/auth_body.dart';
 import '../../domain/auth/auth_usecase.dart';
+import '../../domain/customers/get_customers_usecase.dart';
+import '../../domain/regions/get_regions_usecase.dart';
+import '../../domain/users/get_users_usecase.dart';
 import '../../presentation/base_vm/base_view_model.dart';
 
 class AuthViewModel extends BaseViewModel {
-
   final TextEditingController loginController = TextEditingController()
     ..text = kDebugMode ? 'fff@fff.ru' : '';
   final TextEditingController passwordController = TextEditingController()
@@ -24,7 +26,9 @@ class AuthViewModel extends BaseViewModel {
   late final FocusNode passwordNode = FocusNode()
     ..addListener(nodePassListener);
   final _authUseCase = AuthUseCase();
-
+  final _getCustomersUseCase = GetCustomersUseCase();
+  final _getRegionsUseCase = GetRegionsUseCase();
+  final _getUsersUseCase = GetUsersUseCase();
   bool loginHasFocus = true;
   bool passHasFocus = false;
   bool authFailed = false;
@@ -51,6 +55,8 @@ class AuthViewModel extends BaseViewModel {
 
   Future<AuthResult> doSuccess() async {
     authFailed = false;
+    await _getCustomersUseCase();
+    await _getRegionsUseCase();
     return AuthResult.success;
   }
 

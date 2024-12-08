@@ -1,5 +1,7 @@
 import 'package:base_class_gen/core/ext/string_ext.dart';
+import 'package:feelmeweb/data/models/response/roles_response.dart';
 import 'package:feelmeweb/data/models/response/user_response.dart';
+import 'package:feelmeweb/data/repository/users/users_repository.dart';
 import 'package:feelmeweb/domain/users/get_users_usecase.dart';
 import 'package:feelmeweb/presentation/base_vm/base_search_view_model.dart';
 import 'package:feelmeweb/presentation/navigation/route_names.dart';
@@ -13,14 +15,26 @@ import '../../provider/di/di_provider.dart';
 
 class UsersViewModel extends BaseSearchViewModel {
   UsersViewModel() {
-    loadUsers();
+    _getRolesUseCase().then((_) {
+      selectedRole = getIt<UsersRepository>().roles.first;
+      loadUsers();
+    });
   }
 
+  RolesResponse? selectedRole;
+
+  List<RolesResponse> get roles => getIt<UsersRepository>().roles;
   final _getUsersUseCase = GetUsersUseCase();
   final _getRolesUseCase = GetRolesUseCase();
   List<UserResponse> _users = [];
 
   List<UserResponse> get users => _users;
+
+  void updateSelectedRole(String? id) {
+    selectedRole = roles.firstWhere((element) => element.id == id);
+    notifyListeners();
+    loadUsers();
+  }
 
   final List<DataColumn> _tableUsersColumns = [
     const DataColumn(label: Text('')),
@@ -35,9 +49,8 @@ class UsersViewModel extends BaseSearchViewModel {
 
   void loadUsers() async {
     loadingOn();
-    await _getRolesUseCase();
     (await executeUseCaseParam<List<UserResponse>, String?>(
-            _getUsersUseCase, 'd73285b5-dd1a-43a4-8c04-4cb65f62af3a'))
+            _getUsersUseCase, selectedRole?.id))
         .doOnError((message, exception) {
       addAlert(Alert(message ?? '$exception', style: AlertStyle.danger));
     }).doOnSuccess((value) {

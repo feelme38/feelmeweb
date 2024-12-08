@@ -1,5 +1,5 @@
 import 'package:base_class_gen/core/ext/build_context_ext.dart';
-import 'package:base_class_gen/core/result_of.dart';
+import 'package:feelmeweb/core/result/result_of.dart';
 import 'package:feelmeweb/data/models/request/add_device_body.dart';
 import 'package:feelmeweb/data/models/response/customer_response.dart';
 import 'package:feelmeweb/data/models/response/device_powers.dart';
@@ -9,7 +9,6 @@ import 'package:feelmeweb/domain/devices/delete_device_usecase.dart';
 import 'package:feelmeweb/domain/devices/get_device_models_use_case.dart';
 import 'package:feelmeweb/domain/devices/get_device_powers_use_case.dart';
 import 'package:feelmeweb/domain/regions/get_regions_usecase.dart';
-import 'package:feelmeweb/presentation/base_screen/base_screen.dart';
 import 'package:feelmeweb/presentation/modals/dialogs.dart';
 import 'package:feelmeweb/presentation/navigation/route_generation.dart';
 import 'package:flutter/material.dart';
