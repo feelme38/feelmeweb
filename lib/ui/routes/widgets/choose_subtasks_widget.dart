@@ -1,4 +1,3 @@
-
 import 'package:feelmeweb/core/extensions/base_class_extensions/string_ext.dart';
 import 'package:feelmeweb/data/models/request/subtask_body.dart';
 import 'package:feelmeweb/data/models/response/aroma_response.dart';
@@ -10,15 +9,13 @@ import '../../common/app_table_widget.dart';
 typedef ToggleCustomerCallback = void Function(SubtaskBody);
 
 class CreateRouteChooseSubtasksWidget extends StatefulWidget {
-
-  const CreateRouteChooseSubtasksWidget({
-    super.key,
-    required this.checklists,
-    required this.selectedSubtasks,
-    required this.toggleCallback,
-    required this.aromas,
-    required this.customerId
-  });
+  const CreateRouteChooseSubtasksWidget(
+      {super.key,
+      required this.checklists,
+      required this.selectedSubtasks,
+      required this.toggleCallback,
+      required this.aromas,
+      required this.customerId});
 
   final List<CheckListInfoResponse> checklists;
   final List<SubtaskBody> selectedSubtasks;
@@ -27,25 +24,35 @@ class CreateRouteChooseSubtasksWidget extends StatefulWidget {
   final String customerId;
 
   @override
-  State<CreateRouteChooseSubtasksWidget> createState() => _CreateRouteChooseSubtasksWidgetState();
+  State<CreateRouteChooseSubtasksWidget> createState() =>
+      _CreateRouteChooseSubtasksWidgetState();
 }
 
-class _CreateRouteChooseSubtasksWidgetState extends State<CreateRouteChooseSubtasksWidget> {
-
-  late final List<TextEditingController> estimatedTimeControllers = List.generate(widget.checklists.length, (_) => TextEditingController());
-  late final List<TextEditingController> expectedAromaVolumeControllers = List.generate(widget.checklists.length, (_) => TextEditingController());
-  late final List<TextEditingController> commentControllers = List.generate(widget.checklists.length, (_) => TextEditingController());
-  late final List<AromaResponse?> _selectedAromas = List<AromaResponse?>.filled(widget.checklists.length, widget.aromas.firstOrNull);
+class _CreateRouteChooseSubtasksWidgetState
+    extends State<CreateRouteChooseSubtasksWidget> {
+  late final List<TextEditingController> estimatedTimeControllers =
+      List.generate(
+          List.from(widget.checklists).length, (_) => TextEditingController());
+  late final List<TextEditingController> expectedAromaVolumeControllers =
+      List.generate(
+          List.from(widget.checklists).length, (_) => TextEditingController());
+  late final List<TextEditingController> commentControllers = List.generate(
+      List.from(widget.checklists).length, (_) => TextEditingController());
+  late final List<AromaResponse?> _selectedAromas = List<AromaResponse?>.filled(
+      List.from(widget.checklists).length, widget.aromas.firstOrNull);
 
   @override
   void dispose() {
     for (var controller in estimatedTimeControllers) {
+      controller.clear();
       controller.dispose();
     }
     for (var controller in expectedAromaVolumeControllers) {
+      controller.clear();
       controller.dispose();
     }
     for (var controller in commentControllers) {
+      controller.clear();
       controller.dispose();
     }
     super.dispose();
@@ -80,127 +87,120 @@ class _CreateRouteChooseSubtasksWidgetState extends State<CreateRouteChooseSubta
   ];
 
   List<DataRow> _getTableChecklistRows(
-      List<CheckListInfoResponse> checklists,
-      List<AromaResponse> aromas
-  ) => checklists.asMap().entries.map((entry) {
-    int index = entry.key;
-    CheckListInfoResponse checklist = entry.value;
-    return DataRow(cells: [
-      DataCell(
-          Align(
+          List<CheckListInfoResponse> checklists, List<AromaResponse> aromas) =>
+      checklists.asMap().entries.map((entry) {
+        int index = entry.key;
+        CheckListInfoResponse checklist = entry.value;
+        return DataRow(cells: [
+          DataCell(Align(
             alignment: Alignment.center,
             child: Checkbox(
-              value: widget.selectedSubtasks.map((e) => e.deviceId).contains(checklist.deviceId),
-
+              value: widget.selectedSubtasks
+                  .map((e) => e.deviceId)
+                  .contains(checklist.deviceId),
               onChanged: (_) {
                 AromaResponse? currentAroma = _selectedAromas[index];
                 String? deviceId = checklist.deviceId;
-                String estimatedCompletedTime = estimatedTimeControllers[index].text.orEmpty;
-                String expectedAromaVolume = expectedAromaVolumeControllers[index].text.orEmpty;
+                String estimatedCompletedTime =
+                    estimatedTimeControllers[index].text.orEmpty;
+                String expectedAromaVolume =
+                    expectedAromaVolumeControllers[index].text.orEmpty;
                 String comment = commentControllers[index].text.orEmpty;
-                if (currentAroma == null
-                    || deviceId == null
-                    || estimatedCompletedTime.isEmpty
-                    || expectedAromaVolume.isEmpty
-                ) return;
+                if (currentAroma == null ||
+                    deviceId == null ||
+                    estimatedCompletedTime.isEmpty ||
+                    expectedAromaVolume.isEmpty) return;
                 final SubtaskBody newSubtask = SubtaskBody(
                     widget.customerId,
                     deviceId,
                     comment,
                     currentAroma.id,
                     double.parse(expectedAromaVolume),
-                    int.parse(estimatedCompletedTime)
-                );
+                    int.parse(estimatedCompletedTime));
                 widget.toggleCallback.call(newSubtask);
                 setState(() {});
               },
             ),
-          )
-      ),
-      DataCell(
-          Align(
+          )),
+          DataCell(Align(
             alignment: Alignment.center,
             child: Text(checklist.deviceModel.orDash()),
-          )
-      ),
-      DataCell(
-          Align(
+          )),
+          DataCell(Align(
             alignment: Alignment.center,
             child: Text(checklist.checklistAroma.newAromaName.orDash()),
-          )
-      ),
-      DataCell(
-          Align(
+          )),
+          DataCell(Align(
             alignment: Alignment.center,
             child: Text(checklist.checklistAroma.volumeMl.toString().orDash()),
-          )
-      ),
-      DataCell(
-          Align(
+          )),
+          DataCell(Align(
             alignment: Alignment.center,
             child: Text(checklist.deviceLocation.orDash()),
-          )
-      ),
-      const DataCell(
-          Align(
+          )),
+          const DataCell(Align(
             alignment: Alignment.center,
             child: Text('Режим работы'),
-          )
-      ),
-      DataCell(
-          Align(
+          )),
+          DataCell(Align(
             alignment: Alignment.center,
             child: Text(checklist.contract.orDash()),
-          )
-      ),
-      DataCell(
-        Align(
-          alignment: Alignment.center,
-          child: SizedBox(
-            width: 100,
-            child: TextFormField(
-              maxLines: 1,
-              maxLength: 10,
-              keyboardType: const TextInputType.numberWithOptions(decimal: true),
-              inputFormatters: [
-                FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*$')), // Разрешает только цифры
-              ],
-              textAlignVertical: TextAlignVertical.center,
-              decoration: InputDecoration(
-                counterText: "",
-                isDense: true, // уменьшает высоту поля
-                contentPadding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0), // регулирует отступы
-                labelStyle: const TextStyle(color: Colors.black, fontSize: 14),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(4.0), // скругленные углы
-                  borderSide: const BorderSide(
-                    color: Colors.grey, // цвет границы
-                    width: 1.5, // толщина границы
+          )),
+          DataCell(
+            Align(
+              alignment: Alignment.center,
+              child: SizedBox(
+                width: 100,
+                child: TextFormField(
+                  maxLines: 1,
+                  maxLength: 10,
+                  keyboardType:
+                      const TextInputType.numberWithOptions(decimal: true),
+                  inputFormatters: [
+                    FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*$')),
+                    // Разрешает только цифры
+                  ],
+                  textAlignVertical: TextAlignVertical.center,
+                  decoration: InputDecoration(
+                    counterText: "",
+                    isDense: true,
+                    // уменьшает высоту поля
+                    contentPadding: const EdgeInsets.symmetric(
+                        vertical: 8.0, horizontal: 4.0),
+                    // регулирует отступы
+                    labelStyle:
+                        const TextStyle(color: Colors.black, fontSize: 14),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(4.0),
+                      // скругленные углы
+                      borderSide: const BorderSide(
+                        color: Colors.grey, // цвет границы
+                        width: 1.5, // толщина границы
+                      ),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(4.0),
+                      borderSide: const BorderSide(
+                        color: Colors.grey,
+                        // цвет границы, когда поле не в фокусе
+                        width: 1.5,
+                      ),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(4.0),
+                      borderSide: const BorderSide(
+                        color: Colors.blue, // цвет границы, когда поле в фокусе
+                        width: 1.5,
+                      ),
+                    ),
                   ),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(4.0),
-                  borderSide: const BorderSide(
-                    color: Colors.grey, // цвет границы, когда поле не в фокусе
-                    width: 1.5,
-                  ),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(4.0),
-                  borderSide: const BorderSide(
-                    color: Colors.blue, // цвет границы, когда поле в фокусе
-                    width: 1.5,
-                  ),
+                  controller: estimatedTimeControllers[index],
+                  style: const TextStyle(color: Colors.black, fontSize: 14),
                 ),
               ),
-              controller: estimatedTimeControllers[index],
-              style: const TextStyle(color: Colors.black, fontSize: 14),
             ),
           ),
-        ),
-      ),
-      DataCell(
-          Align(
+          DataCell(Align(
             alignment: Alignment.center,
             child: DropdownButton(
               value: _selectedAromas[index],
@@ -221,95 +221,109 @@ class _CreateRouteChooseSubtasksWidgetState extends State<CreateRouteChooseSubta
               dropdownColor: Colors.white,
               style: const TextStyle(color: Colors.black, fontSize: 16),
             ),
-          )
-      ),
-      DataCell(
-        Align(
-          alignment: Alignment.center,
-          child: SizedBox(
-            width: 100,
-            child: TextFormField(
-              maxLines: 1,
-              maxLength: 10,
-              keyboardType: const TextInputType.numberWithOptions(decimal: true),
-              inputFormatters: [
-                FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*$')), // Разрешает только цифры
-              ],
-              textAlignVertical: TextAlignVertical.center,
-              decoration: InputDecoration(
-                counterText: "",
-                isDense: true, // уменьшает высоту поля
-                contentPadding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0), // регулирует отступы
-                labelStyle: const TextStyle(color: Colors.black, fontSize: 14),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(4.0), // скругленные углы
-                  borderSide: const BorderSide(
-                    color: Colors.grey, // цвет границы
-                    width: 1.5, // толщина границы
+          )),
+          DataCell(
+            Align(
+              alignment: Alignment.center,
+              child: SizedBox(
+                width: 100,
+                child: TextFormField(
+                  maxLines: 1,
+                  maxLength: 10,
+                  keyboardType:
+                      const TextInputType.numberWithOptions(decimal: true),
+                  inputFormatters: [
+                    FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*$')),
+                    // Разрешает только цифры
+                  ],
+                  textAlignVertical: TextAlignVertical.center,
+                  decoration: InputDecoration(
+                    counterText: "",
+                    isDense: true,
+                    // уменьшает высоту поля
+                    contentPadding: const EdgeInsets.symmetric(
+                        vertical: 8.0, horizontal: 4.0),
+                    // регулирует отступы
+                    labelStyle:
+                        const TextStyle(color: Colors.black, fontSize: 14),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(4.0),
+                      // скругленные углы
+                      borderSide: const BorderSide(
+                        color: Colors.grey, // цвет границы
+                        width: 1.5, // толщина границы
+                      ),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(4.0),
+                      borderSide: const BorderSide(
+                        color: Colors.grey,
+                        // цвет границы, когда поле не в фокусе
+                        width: 1.5,
+                      ),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(4.0),
+                      borderSide: const BorderSide(
+                        color: Colors.blue, // цвет границы, когда поле в фокусе
+                        width: 1.5,
+                      ),
+                    ),
                   ),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(4.0),
-                  borderSide: const BorderSide(
-                    color: Colors.grey, // цвет границы, когда поле не в фокусе
-                    width: 1.5,
-                  ),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(4.0),
-                  borderSide: const BorderSide(
-                    color: Colors.blue, // цвет границы, когда поле в фокусе
-                    width: 1.5,
-                  ),
-                ),
-              ),
-              controller: expectedAromaVolumeControllers[index],
-              style: const TextStyle(color: Colors.black, fontSize: 14),
-            ),
-          ),
-        ),
-      ),
-      DataCell(
-        Align(
-          alignment: Alignment.center,
-          child: SizedBox(
-            width: 300,
-            child: TextFormField(
-              minLines: 1,
-              maxLines: null,
-              textAlignVertical: TextAlignVertical.center,
-              decoration: InputDecoration(
-                isDense: true, // уменьшает высоту поля
-                contentPadding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0), // регулирует отступы
-                labelStyle: const TextStyle(color: Colors.black, fontSize: 14),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(4.0), // скругленные углы
-                  borderSide: const BorderSide(
-                    color: Colors.grey, // цвет границы
-                    width: 1.5, // толщина границы
-                  ),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(4.0),
-                  borderSide: const BorderSide(
-                    color: Colors.grey, // цвет границы, когда поле не в фокусе
-                    width: 1.5,
-                  ),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(4.0),
-                  borderSide: const BorderSide(
-                    color: Colors.blue, // цвет границы, когда поле в фокусе
-                    width: 1.5,
-                  ),
+                  controller: expectedAromaVolumeControllers[index],
+                  style: const TextStyle(color: Colors.black, fontSize: 14),
                 ),
               ),
-              controller: commentControllers[index],
-              style: const TextStyle(color: Colors.black, fontSize: 14),
             ),
           ),
-        ),
-      ),
-    ]);
-  }).toList();
+          DataCell(
+            Align(
+              alignment: Alignment.center,
+              child: SizedBox(
+                width: 300,
+                child: TextFormField(
+                  minLines: 1,
+                  maxLines: null,
+                  textAlignVertical: TextAlignVertical.center,
+                  decoration: InputDecoration(
+                    isDense: true,
+                    // уменьшает высоту поля
+                    contentPadding: const EdgeInsets.symmetric(
+                        vertical: 8.0, horizontal: 4.0),
+                    // регулирует отступы
+                    labelStyle:
+                        const TextStyle(color: Colors.black, fontSize: 14),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(4.0),
+                      // скругленные углы
+                      borderSide: const BorderSide(
+                        color: Colors.grey, // цвет границы
+                        width: 1.5, // толщина границы
+                      ),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(4.0),
+                      borderSide: const BorderSide(
+                        color: Colors.grey,
+                        // цвет границы, когда поле не в фокусе
+                        width: 1.5,
+                      ),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(4.0),
+                      borderSide: const BorderSide(
+                        color: Colors.blue, // цвет границы, когда поле в фокусе
+                        width: 1.5,
+                      ),
+                    ),
+                  ),
+                  controller: commentControllers[index],
+                  style: const TextStyle(color: Colors.black, fontSize: 14),
+                ),
+              ),
+            ),
+          ),
+        ]);
+      }).toList();
+
 }

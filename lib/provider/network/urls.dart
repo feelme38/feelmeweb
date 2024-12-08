@@ -3,6 +3,7 @@ class Urls {
   static const login = 'login';
   static const users = 'users';
   static const roles = 'roles';
+  static const routesToday = 'routes/today';
   static const signUpUser = 'signup';
   static const aromas = 'aromas';
   static const aroma = 'aroma';

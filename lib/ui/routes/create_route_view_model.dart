@@ -135,18 +135,17 @@ class CreateRouteViewModel extends BaseSearchViewModel {
       {CustomerResponse? customer, String? addressId}) async {
     if (customer == null) return;
     if (customer.id == null) return;
+    loadingOn();
     selectedCustomerId = customer.id;
     selectedCustomer = customer;
-    selectedAddressId = addressId;
-    notifyListeners();
+
     (await executeUseCaseParam<List<CheckListInfoResponse>,
                 GetLastChecklistParam>(_getLastChecklistsUseCase,
-            GetLastChecklistParam(selectedAddressId!, customer.id!)))
-        .doOnError((message, exception) {
-      addAlert(Alert(message ?? '$exception', style: AlertStyle.danger));
-    }).doOnSuccess((value) {
+            GetLastChecklistParam(addressId!, customer.id!)))
+        .doOnSuccess((value) {
+      selectedAddressId = addressId;
       _lastChecklists = value;
-      notifyListeners();
+      loadingOff();
     });
   }
 
