@@ -1,4 +1,6 @@
 import 'package:base_class_gen/core/ext/build_context_ext.dart';
+import 'package:base_class_gen/core/result_of.dart';
+import 'package:feelmeweb/data/models/request/add_device_body.dart';
 import 'package:feelmeweb/data/models/response/customer_response.dart';
 import 'package:feelmeweb/data/models/response/device_powers.dart';
 import 'package:feelmeweb/data/models/response/region_response.dart';
@@ -13,6 +15,7 @@ import 'package:feelmeweb/presentation/navigation/route_generation.dart';
 import 'package:flutter/material.dart';
 import '../../data/models/request/add_customer_address.dart';
 import '../../domain/address/add_address_usecase.dart';
+import '../../domain/devices/create_device_usecase.dart';
 import '../../presentation/alert/alert.dart';
 import '../../presentation/base_vm/base_search_view_model.dart';
 import '../../provider/di/di_provider.dart';
@@ -29,6 +32,7 @@ class CustomersViewModel extends BaseSearchViewModel {
   final _getDeviceModelsUseCase = GetDeviceModelsUseCase();
   final _getDevicePowersUseCase = GetDevicePowersUseCase();
   final _addAddressUseCase = AddAddressUseCase();
+  final _addDeviceUseCase = CreateDeviceUseCase();
   final _getRegionsUseCase = GetRegionsUseCase();
   final _currentCountDevices = <String, int>{};
   List<DevicePowersResponse> powers = [];
@@ -89,6 +93,12 @@ class CustomersViewModel extends BaseSearchViewModel {
         _currentCountDevices[e.id!] = e.devices?.length ?? 0;
       }
     }
+  }
+
+  Future<void> addDevice(AddDeviceBody body, String? customerId) async {
+    loadingOn();
+    executeUseCaseParam<Result<bool>, AddDeviceBody>(
+        _addDeviceUseCase, body.copyWith(customerId: customerId));
   }
 
   void deleteDevice(String deviceId) async {
@@ -157,7 +167,10 @@ class CustomersViewModel extends BaseSearchViewModel {
                                   }
                                 },
                                 powers: powers,
-                                models: models),
+                                models: models,
+                                addresses: customer.addresses ?? [],
+                                addDeviceCallback: (body) =>
+                                    addDevice(body, customer.id)),
                             width: context.currentSize.width * 0.65)
                         .then((_) {
                       if (customer.devices?.length !=

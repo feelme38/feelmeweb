@@ -2,6 +2,7 @@
 
 import 'package:feelmeweb/data/models/response/user_response.dart';
 import 'package:feelmeweb/domain/regions/get_regions_usecase.dart';
+import 'package:feelmeweb/domain/users/get_roles_usecase.dart';
 import 'package:feelmeweb/domain/users/get_users_usecase.dart';
 
 import '../../domain/customers/get_customers_usecase.dart';
@@ -16,6 +17,7 @@ class RootHomeViewModel extends BaseViewModel {
   final _getCustomersUseCase = GetCustomersUseCase();
   final _getUsersUseCase = GetUsersUseCase();
   final _getRegionsUseCase = GetRegionsUseCase();
+
   List<UserResponse> _users = [];
   List<UserResponse> get users => _users;
 

@@ -1,9 +1,13 @@
+import 'package:feelmeweb/data/models/request/create_user_body.dart';
 import 'package:feelmeweb/data/models/response/address_dto.dart';
 import 'package:feelmeweb/data/models/response/device_powers.dart';
 import 'package:feelmeweb/data/models/response/region_response.dart';
+import 'package:feelmeweb/data/repository/users/users_repository.dart';
 import 'package:feelmeweb/presentation/modals/widgets/add_address_dialog.dart';
 import 'package:feelmeweb/presentation/modals/widgets/add_device_dialog.dart';
 import 'package:feelmeweb/presentation/modals/widgets/addresses_dialog.dart';
+import 'package:feelmeweb/presentation/modals/widgets/create_aroma_dialog.dart';
+import 'package:feelmeweb/presentation/modals/widgets/create_customer_dialog.dart';
 import 'package:feelmeweb/presentation/modals/widgets/create_user_dialog.dart';
 import 'package:feelmeweb/presentation/navigation/route_generation.dart';
 import 'package:flutter/material.dart';
@@ -17,21 +21,50 @@ class Dialogs {
   static Future<void> createDeviceDialog(
       BuildContext? fromContext,
       List<DevicePowersResponse> powers,
-      List<DeviceModelsResponse> models) async {
+      List<DeviceModelsResponse> models,
+      List<AddressDTO> addresses,
+      AddDeviceCallback addDeviceCallback) async {
     final context = fromContext ?? getContext();
     if (context != null) {
       await showBaseDialog(
-          fromContext, AddDeviceDialog(models: models, powers: powers),
+          fromContext,
+          AddDeviceDialog(
+              models: models,
+              powers: powers,
+              callback: addDeviceCallback,
+              addresses: addresses),
           width: context.currentSize.width * 0.4);
     }
   }
 
   static Future<void> showCreateUserDialog(
-      BuildContext? fromContext, CreateUserCallback callback) async {
+      BuildContext? fromContext, CreateUserCallback createUserCallback) async {
     final context = fromContext ?? getContext();
     if (context != null) {
       await showBaseDialog(
-          context, CreateUserDialog(createUserCallback: callback),
+          context,
+          CreateUserDialog(
+              roles: getIt<UsersRepository>().roles,
+              createUserCallback: createUserCallback),
+          width: context.currentSize.width * 0.4);
+    }
+  }
+
+  static Future<void> createAromaDialog(
+      BuildContext? fromContext, CreateAromaCallback callback) async {
+    final context = fromContext ?? getContext();
+    if (context != null) {
+      await showBaseDialog(context, CreateAromaDialog(callback: callback),
+          width: context.currentSize.width * 0.4);
+    }
+  }
+
+  static Future<void> showCreateCustomerDialog(
+      BuildContext? fromContext, CreateCustomerCallback callback) async {
+    final context = fromContext ?? getContext();
+    if (context != null) {
+      await showBaseDialog(
+          context, CreateCustomerDialog(createUserCallback: callback),
           width: context.currentSize.width * 0.5);
     }
   }

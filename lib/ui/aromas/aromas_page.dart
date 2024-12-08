@@ -8,7 +8,6 @@ import '../../presentation/widgets/search_widget.dart';
 import 'aromas_view_model.dart';
 
 class AromasPage extends StatelessWidget {
-
   const AromasPage({super.key});
 
   static Widget create() => ChangeNotifierProvider(
@@ -22,13 +21,14 @@ class AromasPage extends StatelessWidget {
     return BaseScreen<AromasViewModel>(
         needBackButton: false,
         needAppBar: true,
-        drawer: getDrawer(context),
+        drawer: getDrawer(context, reloadCallback: viewModel.loadAromas),
         appBar: SearchWidget<AromasViewModel>(
-          context.read<AromasViewModel>().onSearch, () {},
+          context.read<AromasViewModel>().onSearch,
+          () {},
           needBottomEdge: true,
           needBackButton: false,
         ),
-        child:  Align(
+        child: Align(
           alignment: Alignment.topCenter,
           child: SingleChildScrollView(
             scrollDirection: Axis.vertical,
@@ -37,7 +37,6 @@ class AromasPage extends StatelessWidget {
               dataRows: viewModel.getTableAromasRows(aromas),
             ),
           ),
-        )
-    );
+        ));
   }
 }

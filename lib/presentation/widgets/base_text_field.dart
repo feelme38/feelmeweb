@@ -120,7 +120,7 @@ class BaseTextField extends StatelessWidget {
                   padding: EdgeInsets.only(
                       left: Dimen.size12,
                       right: Dimen.size12,
-                      bottom: Dimen.size12,
+                      bottom: helperText != null ? Dimen.size12 : 0,
                       top: helperText != null ? helperTopIndent : Dimen.size2),
                   decoration: BoxDecoration(
                       color: background,

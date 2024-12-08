@@ -1,7 +1,9 @@
 import 'package:base_class_gen/core/ext/build_context_ext.dart';
 import 'package:feelmeweb/core/extensions/base_class_extensions/string_ext.dart';
+import 'package:feelmeweb/data/models/response/address_dto.dart';
 import 'package:feelmeweb/data/models/response/device_powers.dart';
 import 'package:feelmeweb/presentation/modals/dialogs.dart';
+import 'package:feelmeweb/presentation/modals/widgets/add_device_dialog.dart';
 import 'package:flutter/material.dart';
 
 import '../../../data/models/response/device_response.dart';
@@ -17,12 +19,16 @@ class DevicesTableDialogWidget extends StatefulWidget {
       required this.devices,
       required this.removeCallback,
       required this.powers,
-      required this.models});
+      required this.addresses,
+      required this.models,
+      required this.addDeviceCallback});
 
   final List<DevicePowersResponse> powers;
   final List<DeviceModelsResponse> models;
+  final List<AddressDTO> addresses;
   final List<DeviceResponse> devices;
   final RemoveDeviceCallback removeCallback;
+  final AddDeviceCallback addDeviceCallback;
 
   @override
   State<DevicesTableDialogWidget> createState() =>
@@ -53,7 +59,11 @@ class _DevicesTableDialogWidgetState extends State<DevicesTableDialogWidget> {
                           onTap: () {
                             context.navigateUp();
                             Dialogs.createDeviceDialog(
-                                context, widget.powers, widget.models);
+                                context,
+                                widget.powers,
+                                widget.models,
+                                widget.addresses,
+                                widget.addDeviceCallback);
                           },
                           weight: FontWeight.w500,
                           fontSize: 14,

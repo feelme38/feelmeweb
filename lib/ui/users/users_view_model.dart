@@ -1,13 +1,12 @@
 import 'package:base_class_gen/core/ext/string_ext.dart';
-import 'package:feelmeweb/data/models/request/create_user_body.dart';
 import 'package:feelmeweb/data/models/response/user_response.dart';
-import 'package:feelmeweb/domain/users/create_user_usecase.dart';
 import 'package:feelmeweb/domain/users/get_users_usecase.dart';
 import 'package:feelmeweb/presentation/base_vm/base_search_view_model.dart';
 import 'package:feelmeweb/presentation/navigation/route_names.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../domain/users/get_roles_usecase.dart';
 import '../../presentation/alert/alert.dart';
 import '../../presentation/navigation/route_generation.dart';
 import '../../provider/di/di_provider.dart';
@@ -18,7 +17,7 @@ class UsersViewModel extends BaseSearchViewModel {
   }
 
   final _getUsersUseCase = GetUsersUseCase();
-
+  final _getRolesUseCase = GetRolesUseCase();
   List<UserResponse> _users = [];
 
   List<UserResponse> get users => _users;
@@ -36,6 +35,7 @@ class UsersViewModel extends BaseSearchViewModel {
 
   void loadUsers() async {
     loadingOn();
+    await _getRolesUseCase();
     (await executeUseCaseParam<List<UserResponse>, String?>(
             _getUsersUseCase, 'd73285b5-dd1a-43a4-8c04-4cb65f62af3a'))
         .doOnError((message, exception) {
@@ -50,10 +50,6 @@ class UsersViewModel extends BaseSearchViewModel {
   void onSearch(String? text) {
     clearEnabled = text != null && text.isNotEmpty;
     //refilter(state.defects);
-  }
-
-  Future<void> createCustomer(CreateUserBody body) async {
-    CreateUserUseCase().call(body);
   }
 
   String _renderRouteStatus(String? routeStatus) {

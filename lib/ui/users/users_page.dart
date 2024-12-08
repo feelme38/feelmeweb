@@ -21,22 +21,17 @@ class UsersPage extends StatelessWidget {
     return BaseScreen<UsersViewModel>(
         needBackButton: false,
         needAppBar: true,
-        drawer: getDrawer(context),
+        drawer: getDrawer(context, reloadCallback: viewModel.loadUsers),
         appBar: SearchWidget<UsersViewModel>(
-          context.read<UsersViewModel>().onSearch,
-          () {},
-          needBottomEdge: true,
-          needBackButton: false,
-        ),
+            context.read<UsersViewModel>().onSearch, () {},
+            needBottomEdge: true, needBackButton: false),
         child: Align(
           alignment: Alignment.topCenter,
           child: SingleChildScrollView(
-            scrollDirection: Axis.vertical,
-            child: AppTableWidget(
-              dataColumns: viewModel.tableUsersColumns,
-              dataRows: viewModel.getTableUsersRows(users),
-            ),
-          ),
+              scrollDirection: Axis.vertical,
+              child: AppTableWidget(
+                  dataColumns: viewModel.tableUsersColumns,
+                  dataRows: viewModel.getTableUsersRows(users))),
         ));
   }
 }

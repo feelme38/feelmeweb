@@ -28,7 +28,7 @@ class CustomersRepositoryImpl extends CustomersRepository {
   }
 
   @override
-  Future<Result<bool>> createCustomer(CreateUserBody body) {
+  Future<Result<bool>> createCustomer(CreateCustomerBody body) {
     return _customersRemoteSource.createCustomer(body);
   }
 }
@@ -36,7 +36,7 @@ class CustomersRepositoryImpl extends CustomersRepository {
 abstract class CustomersRepository {
   Future<Result<List<CustomerResponse>>> getCustomers({String? regionId});
 
-  Future<Result<bool>> createCustomer(CreateUserBody body);
+  Future<Result<bool>> createCustomer(CreateCustomerBody body);
 
   Future<Result<bool>> addAddress(AddCustomerAddressBody body);
 }
