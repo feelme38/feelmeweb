@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:math';
 
 import 'package:base_class_gen/core/log_writer_interceptor.dart';
@@ -7,11 +8,32 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class MapHelper {
   static const _apiKey = 'AIzaSyBLDSwffh9WtEJIz3MFLH30lETQFo5kbh0';
-  static final _dio = Dio()
+  static const _osmBaseUrl = 'http://router.project-osrm.org';
+
+  static String _osmPointsReq(String coordinates) =>
+      '/route/v1/driving/$coordinates?overview=full&geometries=geojson';
+
+  static Dio _dio({bool isOsm = true}) => Dio()
     ..options = BaseOptions(
-      baseUrl: 'https://maps.googleapis.com/',
+      baseUrl: isOsm ? _osmBaseUrl : 'https://maps.googleapis.com/',
     )
     ..interceptors.addAll([LogWriterInterceptor()]);
+
+  static Future<Set<Polyline>> osmPolylineList(List<LatLng> points) async {
+    // Формируем список координат для маршрута
+    final coordinates =
+        points.map((point) => "${point.longitude},${point.latitude}").join(';');
+    final request = _osmPointsReq(coordinates);
+    final result = await _dio().get(request);
+    final routes = result.data['routes'] as List;
+    List<LatLng> pointValues = [];
+    for (var item in routes) {
+      for (var coord in item['geometry']['coordinates']) {
+        pointValues.add(LatLng(coord[1], coord[0]));
+      }
+    }
+    return createPolyline(pointValues);
+  }
 
   static double calculateDistance(LatLng point1, LatLng point2) {
     const earthRadius = 6371e3; // Радиус Земли в метрах
@@ -26,20 +48,23 @@ class MapHelper {
 
     return earthRadius * c;
   }
+
   static Set<Circle> createCircles(List<LatLng> points) {
     return points
         .asMap()
         .entries
         .map((entry) => Circle(
-      circleId: CircleId("circle_${entry.key}"),
-      center: entry.value,
-      radius: 50, // Радиус круга в метрах
-      fillColor: Colors.blue.withOpacity(0.5),
-      strokeColor: Colors.blue,
-      strokeWidth: 2,
-    ))
+              circleId: CircleId("circle_${entry.key}"),
+              center: entry.value,
+              radius: 50,
+              // Радиус круга в метрах
+              fillColor: Colors.blue.withOpacity(0.5),
+              strokeColor: Colors.blue,
+              strokeWidth: 2,
+            ))
         .toSet();
   }
+
   static Set<Polyline> createPolyline(List<LatLng> points) {
     return {
       Polyline(
@@ -61,7 +86,7 @@ class MapHelper {
       print('from $from');
       Map<String, dynamic> queryParams = {};
 
-      final result = await _dio.get(
+      final result = await _dio(isOsm: false).get(
           'maps/api/directions/json?origin=${from.latitude},${from.longitude}&destination=${from.latitude},${from.longitude}&waypoints=optimize:true|$waypoints&key$_apiKey',
           options: Options(responseType: ResponseType.json));
       // final points = result.data['routes'][0]['overview_polyline']['points'];

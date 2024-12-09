@@ -52,7 +52,7 @@ class MapPageViewModel extends BaseViewModel {
       }
     }
     if (points.isNotEmpty) {
-      polylineList.addAll(MapHelper.createPolyline(points));
+      polylineList.addAll(await MapHelper.osmPolylineList(points));
       circles.addAll(MapHelper.createCircles(points));
       notifyListeners();
     }
