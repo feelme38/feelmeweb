@@ -16,6 +16,7 @@ class MapPageViewModel extends BaseViewModel {
   List<TodayRouteResponse> routes = [];
   List<Polyline> polylineList = [];
   List<Circle> circles = [];
+  List<Marker> markers = [];
 
   Future<void> loadRoutes() async {
     loadingOn();
@@ -38,13 +39,23 @@ class MapPageViewModel extends BaseViewModel {
 
   Future<void> loadPolylineList() async {
     List<LatLng> points = [];
+    List<TodayRouteEngineer> engineerLocation = [];
     for (var route in routes) {
+
+      final engineer = route.engineer;
+      if(engineer != null) {
+        final lat = engineer.lastLat;
+        final lon = engineer.lastLon;
+        if (lat != null && lon != null) {
+          engineerLocation.add(engineer);
+        }
+      }
+
       for (var task in route.tasks ?? <TodayRouteTask>[]) {
         final address = task.address;
         if (address != null) {
           final lat = address.lat;
           final lon = address.lng;
-
           if (lat != null && lon != null) {
             points.add(LatLng(lat, lon));
           }
@@ -52,8 +63,10 @@ class MapPageViewModel extends BaseViewModel {
       }
     }
     if (points.isNotEmpty) {
+      final color = MapHelper.getRandomColor();
       polylineList.addAll(await MapHelper.osmPolylineList(points));
-      circles.addAll(MapHelper.createCircles(points));
+      circles.addAll(MapHelper.createCircles(points, color: color));
+      markers.addAll(MapHelper.createMarkers(engineerLocation));
       notifyListeners();
     }
   }

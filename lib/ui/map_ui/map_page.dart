@@ -45,6 +45,7 @@ class _MapPageState extends State<MapPage> {
     return GoogleMap(
         polylines: context.watch<MapPageViewModel>().polylineList.toSet(),
         circles: context.watch<MapPageViewModel>().circles.toSet(),
+        markers: context.watch<MapPageViewModel>().markers.toSet(),
         initialCameraPosition: CameraPosition(
             target:
                 LatLng(initialRoute!.address!.lat!, initialRoute.address!.lng!),
