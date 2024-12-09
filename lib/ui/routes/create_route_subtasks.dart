@@ -118,7 +118,7 @@ class CreateRouteSubtasksWidget extends StatelessWidget {
                           onTap: () => viewModel.createRoute(),
                           weight: FontWeight.w500,
                           fontSize: 14,
-                          enabled: savedTasks.containsKey(selectedCustomer.id),
+                          enabled: savedTasks.containsKey(selectedAddress),
                           textColor: Colors.white,
                           buttonColor: AppColor.redDefect))),
               const Spacer(),
