@@ -95,9 +95,12 @@ class CustomersViewModel extends BaseSearchViewModel {
   }
 
   Future<void> addDevice(AddDeviceBody body, String? customerId) async {
-    loadingOn();
-    executeUseCaseParam<Result<bool>, AddDeviceBody>(
-        _addDeviceUseCase, body.copyWith(customerId: customerId));
+    (await executeUseCaseParam(_addDeviceUseCase, body.copyWith(customerId: customerId)))
+        .doOnError((message, exception) {
+      addAlert(Alert(message ?? '$exception', style: AlertStyle.danger));
+    }).doOnSuccess((value) {
+      loadCustomers();
+    });
   }
 
   void deleteDevice(String deviceId) async {

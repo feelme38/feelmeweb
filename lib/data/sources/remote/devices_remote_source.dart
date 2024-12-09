@@ -18,8 +18,8 @@ class DevicesRemoteSource {
 
   Future<Result<bool>> createDevice(AddDeviceBody body) async {
     try {
-      await _networkProvider.dio.onPost(Urls.device, data: body.toJson());
-      return EmptyResult();
+      await _networkProvider.dio.onWebPost(Urls.device, data: body.toJson());
+      return Success(true);
     } on DioException catch (e) {
       return Failure(exception: e, message: e.message);
     } on ConnectionException catch (e) {

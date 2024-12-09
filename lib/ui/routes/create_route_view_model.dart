@@ -179,14 +179,16 @@ class CreateRouteViewModel extends BaseSearchViewModel {
     final String? typeId = selectedTaskType?.id;
     final String? customerName = selectedCustomer?.name;
     final String? customerId = selectedCustomerId;
+    final String? addressId = selectedAddressId;
     final List<SubtaskBody> subtasks =
         selectedSubtasks.filter((e) => e.customerId == selectedCustomerId);
     if (typeId == null ||
         customerName == null ||
         customerId == null ||
+        addressId == null ||
         subtasks.isEmpty) return;
     final TasksBody taskBody =
-        TasksBody(customerName, typeId, customerId, subtasks);
+        TasksBody(customerName, typeId, customerId, addressId, subtasks);
     savedTasks[customerId] = taskBody;
     addAlert(Alert('Задание успешно сохранено', style: AlertStyle.success));
     notifyListeners();
