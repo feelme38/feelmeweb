@@ -14,9 +14,9 @@ class MapHelper {
     final random = Random();
     return Color.fromARGB(
       255, // Прозрачность (255 - полностью непрозрачный)
-      random.nextInt(256), // Красный (0-255)
-      random.nextInt(256), // Зеленый (0-255)
-      random.nextInt(256), // Синий (0-255)
+      random.nextInt(255), // Красный (0-255)
+      random.nextInt(255), // Зеленый (0-255)
+      random.nextInt(255), // Синий (0-255)
     );
   }
 
@@ -29,12 +29,14 @@ class MapHelper {
     )
     ..interceptors.addAll([LogWriterInterceptor()]);
 
-  static Future<Set<Polyline>> osmPolylineList(List<LatLng> points) async {
+  static Future<Set<Polyline>> osmPolylineList(
+      List<LatLng> points, String? id, Function(String?) onPress) async {
     // Формируем список координат для маршрута
     final coordinates =
         points.map((point) => "${point.longitude},${point.latitude}").join(';');
     final request = _osmPointsReq(coordinates);
     final result = await _dio().get(request);
+    print('result ${result.data}');
     final routes = result.data['routes'] as List;
     List<LatLng> pointValues = [];
     for (var item in routes) {
@@ -42,7 +44,7 @@ class MapHelper {
         pointValues.add(LatLng(coord[1], coord[0]));
       }
     }
-    return createPolyline(pointValues);
+    return createPolyline(pointValues, id, onPress);
   }
 
   static double calculateDistance(LatLng point1, LatLng point2) {
@@ -59,7 +61,8 @@ class MapHelper {
     return earthRadius * c;
   }
 
-  static Set<Circle> createCircles(List<LatLng> points, {required Color color}) {
+  static Set<Circle> createCircles(List<LatLng> points,
+      {required Color color}) {
     return points
         .asMap()
         .entries
@@ -80,27 +83,23 @@ class MapHelper {
         .asMap()
         .entries
         .map((entry) => Marker(
-      markerId: MarkerId("marker_${entry.key}"),
-      infoWindow: InfoWindow(title: "Сервисный инженер", snippet: entry.value.name),
-      position: LatLng(entry.value.lastLat!, entry.value.lastLon!),
-    ))
+              markerId: MarkerId("marker_${entry.key}"),
+              infoWindow: InfoWindow(
+                  title: "Сервисный инженер", snippet: entry.value.name),
+              position: LatLng(entry.value.lastLat!, entry.value.lastLon!),
+            ))
         .toSet();
   }
 
-  static Set<Polyline> createPolyline(List<LatLng> points) {
+  static Set<Polyline> createPolyline(
+      List<LatLng> points, String? id, Function(String?) onPress) {
     return {
       Polyline(
-        polylineId: PolylineId("route$points"),
-        points: points,
-        color: getRandomColor(),
-        width: 5,
-        onTap: () => {
-          Dialogs.showBaseDialog(
-              Dialogs.getContext(),
-              SizedBox()
-          )
-        }
-      ),
+          polylineId: PolylineId("route$id"),
+          points: points,
+          color: getRandomColor(),
+          width: 5,
+          onTap: ()=> onPress(id)),
     };
   }
 }
