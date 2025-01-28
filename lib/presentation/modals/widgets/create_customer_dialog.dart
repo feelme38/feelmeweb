@@ -36,7 +36,7 @@ class _AddAddressDialogState extends State<CreateCustomerDialog> {
             children: [
               BaseTextField(
                 controller: nameController,
-                helperText: 'ФИО',
+                helperText: 'Наименование организации',
               ),
               const SizedBox(height: 12),
               BaseTextField(

@@ -56,7 +56,7 @@ class AddressesDialog extends StatelessWidget {
                               fontWeight: FontWeight.w400,
                               decoration: TextDecoration.none,
                               fontSize: 18)),
-                      IconButton(
+                      regions.isEmpty ? const SizedBox() : IconButton(
                         icon: const Icon(Icons.delete),
                         onPressed: () {
                           //TODO: сделать удаление как для девайсов
@@ -73,27 +73,31 @@ class AddressesDialog extends StatelessWidget {
               },
               itemCount: addresses.length),
           const SizedBox(height: 24),
-          SizedBox(
-            width: context.currentSize.width * 0.2,
-            child: BaseTextButton(
-                buttonText: 'Добавить новый адрес',
-                onTap: () {
-                  context.navigateUp();
-                  Dialogs.showBaseDialog(
-                    context,
-                    AddAddressDialog(
-                        regions: regions,
-                        customerId: customerId,
-                        addCallback: addCustomerCallback),
-                    width: context.currentSize.width * 0.4,
-                  ).then((value) {
-                    if (value == true) {
-                      Dialogs.showAddressesDialog(fromContext, addresses,
-                          regions, addCustomerCallback, customerId);
-                    }
-                  });
-                },
-                enabled: true),
+          Builder(
+            builder: (context) {
+              return regions.isEmpty ? const SizedBox() : SizedBox(
+                width: context.currentSize.width * 0.2,
+                child: BaseTextButton(
+                    buttonText: 'Добавить новый адрес',
+                    onTap: () {
+                      context.navigateUp();
+                      Dialogs.showBaseDialog(
+                        context,
+                        AddAddressDialog(
+                            regions: regions,
+                            customerId: customerId,
+                            addCallback: addCustomerCallback),
+                        width: context.currentSize.width * 0.4,
+                      ).then((value) {
+                        if (value == true) {
+                          Dialogs.showAddressesDialog(fromContext, addresses,
+                              regions, addCustomerCallback, customerId);
+                        }
+                      });
+                    },
+                    enabled: true),
+              );
+            }
           )
         ]);
   }

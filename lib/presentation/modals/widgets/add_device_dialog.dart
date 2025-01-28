@@ -120,7 +120,7 @@ class _AddDeviceDialogState extends State<AddDeviceDialog> {
                           onTap: context.navigateUp,
                           enabled: true,
                           buttonColor: Colors.redAccent)),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 12, width: 20),
                   Expanded(
                       child: BaseTextButton(
                           buttonText: 'Добавить',

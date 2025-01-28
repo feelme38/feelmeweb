@@ -50,9 +50,6 @@ class CustomersViewModel extends BaseSearchViewModel {
     const DataColumn(
         label: Text('Директор'), headingRowAlignment: MainAxisAlignment.center),
     const DataColumn(
-        label: Text('Вр. посещения'),
-        headingRowAlignment: MainAxisAlignment.center),
-    const DataColumn(
         label: Text('Адреса'), headingRowAlignment: MainAxisAlignment.center),
     const DataColumn(label: Text('')),
   ];
@@ -129,10 +126,6 @@ class CustomersViewModel extends BaseSearchViewModel {
           DataCell(Align(
             alignment: Alignment.center,
             child: Text(customer.ownerName ?? ''),
-          )),
-          DataCell(Align(
-            alignment: Alignment.center,
-            child: Text(customer.preferredStartTime ?? ''),
           )),
           DataCell(IconButton(
             icon: const Icon(Icons.location_on),

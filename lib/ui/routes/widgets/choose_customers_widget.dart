@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 
 import '../../../data/models/response/customer_response.dart';
+import '../../../presentation/modals/dialogs.dart';
+import '../../../presentation/navigation/route_generation.dart';
+import '../../../provider/di/di_provider.dart';
 import '../../common/app_table_widget.dart';
 
 typedef ToggleCustomerCallback = void Function(CustomerResponse);
@@ -43,9 +46,6 @@ class _CreateRouteChooseCustomersWidgetState
     const DataColumn(
         label: Text('Директор'), headingRowAlignment: MainAxisAlignment.center),
     const DataColumn(
-        label: Text('Вр. посещения'),
-        headingRowAlignment: MainAxisAlignment.center),
-    const DataColumn(
         label: Text('Адрес'), headingRowAlignment: MainAxisAlignment.center),
     const DataColumn(label: Text('')),
   ];
@@ -65,15 +65,21 @@ class _CreateRouteChooseCustomersWidgetState
             alignment: Alignment.center,
             child: Text(customer.ownerName ?? ''),
           )),
-          DataCell(Align(
-            alignment: Alignment.center,
-            child: Text(customer.preferredStartTime ?? ''),
-          )),
-          DataCell(Align(
-            alignment: Alignment.center,
-            child: customer.addresses?.isNotEmpty == true
-                ? Text(customer.addresses?.first.address ?? '')
-                : const SizedBox(),
+          DataCell(IconButton(
+            icon: const Icon(Icons.location_on),
+            onPressed: () {
+              final context =
+                  getIt<RouteGenerator>().navigatorKey.currentContext;
+              if (context == null) return;
+              Dialogs.showAddressesDialog(
+                getIt<RouteGenerator>().navigatorKey.currentContext,
+                customer.addresses ?? [],
+                [],
+                (v) => {},
+                customer.id!,
+              );
+            },
+            tooltip: 'Посмотреть адреса',
           )),
           DataCell(Align(
             alignment: Alignment.center,
