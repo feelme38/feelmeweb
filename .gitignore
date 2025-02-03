@@ -1,6 +1,6 @@
 .gradle
-.idea
-.dart_tool
+/.idea
+/.dart_tool
 build/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
