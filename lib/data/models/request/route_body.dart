@@ -4,15 +4,13 @@ part 'route_body.g.dart';
 
 @JsonSerializable()
 class RouteBody {
-
+  final String? routeId;
   final String userId;
   final List<TasksBody> tasks;
 
-  RouteBody(
-      this.userId,
-      this.tasks
-      );
+  RouteBody(this.userId, this.tasks, {this.routeId});
 
-  factory RouteBody.fromJson(Map<String, dynamic> json) => _$RouteBodyFromJson(json);
+  factory RouteBody.fromJson(Map<String, dynamic> json) =>
+      _$RouteBodyFromJson(json);
   Map<String, dynamic> toJson() => _$RouteBodyToJson(this);
 }

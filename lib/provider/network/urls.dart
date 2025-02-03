@@ -15,8 +15,14 @@ class Urls {
   static const customer = 'customer';
   static const regions = 'regions';
   static const region = 'region';
+  static const checklists = 'checklists';
   static const lastChecklists = 'checklists/last';
   static const customerAddress = 'customer/address';
+  static const task = 'task';
   static const taskTypes = 'task/types';
-  static const createRoute = 'route';
+  static const subtask = 'subtask';
+  static const route = 'route';
+  static const routeStatus = 'route/status';
+
+  static const inventory = 'inventory';
 }

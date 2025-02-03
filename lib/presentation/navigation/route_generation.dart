@@ -1,16 +1,21 @@
+import 'package:feelmeweb/presentation/navigation/route_names.dart';
 import 'package:feelmeweb/ui/aromas/aromas_page.dart';
+import 'package:feelmeweb/ui/checklists/checklists_page.dart';
 import 'package:feelmeweb/ui/customers/customers_page.dart';
+import 'package:feelmeweb/ui/inventory/inventory_page.dart';
 import 'package:feelmeweb/ui/regions/regions_page.dart';
+import 'package:feelmeweb/ui/route_info/route_info_page.dart';
+import 'package:feelmeweb/ui/routes/create/create_route_choose_customers.dart';
+import 'package:feelmeweb/ui/routes/edit/edit_route_page.dart';
 import 'package:feelmeweb/ui/users/users_page.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:feelmeweb/presentation/navigation/route_names.dart';
 import 'package:injectable/injectable.dart';
+
 import '../../provider/di/di_provider.dart';
 import '../../provider/network/auth_preferences.dart';
 import '../../ui/authorization/auth_page.dart';
 import '../../ui/home/root_home.dart';
-import '../../ui/routes/create_route_choose_customers.dart';
 
 @singleton
 class RouteGenerator {
@@ -19,7 +24,8 @@ class RouteGenerator {
   }
   late final GoRouter router;
   final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
-  Future<bool> hasToken() async => (await getIt<AuthPreferences>().getToken())?.isNotEmpty ?? false;
+  Future<bool> hasToken() async =>
+      (await getIt<AuthPreferences>().getToken())?.isNotEmpty ?? false;
 
   void setup() {
     router = GoRouter(
@@ -30,7 +36,7 @@ class RouteGenerator {
           path: RouteName.auth,
           redirect: (context, state) async {
             var hasTokenValue = await hasToken();
-            if(hasTokenValue) {
+            if (hasTokenValue) {
               return RouteName.home;
             } else {
               return RouteName.auth;
@@ -44,8 +50,7 @@ class RouteGenerator {
             path: RouteName.home,
             builder: (BuildContext context, GoRouterState state) {
               return MyHomePage.create();
-            }
-        ),
+            }),
         GoRoute(
           path: RouteName.usersList,
           builder: (BuildContext context, GoRouterState state) {
@@ -71,14 +76,55 @@ class RouteGenerator {
           },
         ),
         GoRoute(
+          path: RouteName.checklists,
+          builder: (BuildContext context, GoRouterState state) {
+            return ChecklistsPage.create();
+          },
+        ),
+        GoRoute(
           path: RouteName.customerCreateRoute,
           builder: (BuildContext context, GoRouterState state) {
+            final extra = state.extra as Map<String, dynamic>?;
+            final userId = extra?['userId'] as String?;
+            final routeId = extra?['routeId'] as String?;
+            if (userId == null) return UsersPage.create();
+            return CreateRouteChooseCustomersPage.create(userId, routeId);
+          },
+        ),
+        GoRoute(
+          path: RouteName.customerEditRoute,
+          builder: (BuildContext context, GoRouterState state) {
             final userId = state.extra as String?;
-            if(userId == null) return UsersPage.create();
-            return CreateRouteChooseCustomersPage.create(userId);
+            if (userId == null) return UsersPage.create();
+            return EditRoutePage.create(userId);
+          },
+        ),
+        GoRoute(
+          path: RouteName.routeInfo,
+          builder: (BuildContext context, GoRouterState state) {
+            final userId = state.extra as String?;
+            if (userId == null) return UsersPage.create();
+            return RouteInfoPage.create(userId);
+          },
+        ),
+        GoRoute(
+          path: RouteName.inventory,
+          builder: (BuildContext context, GoRouterState state) {
+            return InventoryPage.create();
           },
         ),
       ],
     );
+  }
+
+  void popUntilPath(BuildContext context, String routePath) {
+    while (router
+            .routerDelegate.currentConfiguration.matches.last.matchedLocation !=
+        routePath) {
+      if (!context.canPop()) {
+        return;
+      }
+      context.pop();
+    }
   }
 }

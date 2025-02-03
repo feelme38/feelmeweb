@@ -10,8 +10,8 @@ import '../../domain/aromas/create_aroma_use_case.dart';
 import '../../domain/customers/create_customer_usecase.dart';
 import '../../domain/users/create_user_usecase.dart';
 
-Future<void> createCustomer(CreateCustomerBody body,
-    Function()? reloadCallback) async {
+Future<void> createCustomer(
+    CreateCustomerBody body, Function()? reloadCallback) async {
   await CreateCustomerUseCase().call(body);
   reloadCallback?.call();
 }
@@ -21,14 +21,14 @@ Future<void> createUser(CreateUserBody body, Function()? reloadCallback) async {
   reloadCallback?.call();
 }
 
-Future<void> createAroma(CreateAromaBody body,
-    Function()? reloadCallback) async {
+Future<void> createAroma(
+    CreateAromaBody body, Function()? reloadCallback) async {
   await CreateAromaUseCase().call(body);
   reloadCallback?.call();
 }
 
-Future<void> createRegion(CreateRegionBody body,
-    Function()? reloadCallback) async {
+Future<void> createRegion(
+    CreateRegionBody body, Function()? reloadCallback) async {
   await CreateRegionUseCase().call(body);
   reloadCallback?.call();
 }
@@ -134,6 +134,14 @@ Drawer getDrawer(BuildContext context, {Function()? reloadCallback}) {
                 },
               ),
             ]),
+        ListTile(
+          leading: const Icon(Icons.checklist_outlined),
+          title: const Text('Чек-листы'),
+          onTap: () {
+            Navigator.pop(context);
+            context.go("/check-lists");
+          },
+        ),
         const Divider(),
         ListTile(
           leading: const Icon(Icons.logout),
