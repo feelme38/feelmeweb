@@ -1,5 +1,6 @@
 import 'package:feelmeweb/core/result/result_of.dart';
 import 'package:feelmeweb/data/models/request/create_user_body.dart';
+import 'package:feelmeweb/data/models/response/active_customer_response.dart';
 import 'package:feelmeweb/data/models/response/customer_response.dart';
 import 'package:injectable/injectable.dart';
 
@@ -18,6 +19,12 @@ class CustomersRepositoryImpl extends CustomersRepository {
   }
 
   @override
+  Future<Result<List<ActiveCustomerResponse>>> getActiveCustomers(
+      String userId) {
+    return _customersRemoteSource.getActiveCustomers(userId);
+  }
+
+  @override
   Future<Result<bool>> addAddress(AddCustomerAddressBody body) {
     return _customersRemoteSource.addCustomerAddress(body);
   }
@@ -30,6 +37,9 @@ class CustomersRepositoryImpl extends CustomersRepository {
 
 abstract class CustomersRepository {
   Future<Result<List<CustomerResponse>>> getCustomers({String? regionId});
+
+  Future<Result<List<ActiveCustomerResponse>>> getActiveCustomers(
+      String userId);
 
   Future<Result<bool>> createCustomer(CreateCustomerBody body);
 

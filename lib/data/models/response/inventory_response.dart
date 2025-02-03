@@ -60,7 +60,8 @@ class Device {
     this.aroma,
   });
 
-  factory Device.fromJson(Map<String, dynamic> json) => _$DeviceFromJson(json);
+  factory Device.fromJson(Map<String, dynamic> json) =>
+      _$DeviceFromJson(json['device'] ?? json);
 
   Map<String, dynamic> toJson() => _$DeviceToJson(this);
 }

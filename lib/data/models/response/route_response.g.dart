@@ -68,6 +68,13 @@ Subtask _$SubtaskFromJson(Map<String, dynamic> json) => Subtask(
       isNeedChangeBattery: json['isNeedChangeBattery'] as bool,
       subtaskStatus: json['subtaskStatus'] as String,
       estimatedCompletedTime: json['estimatedCompletedTime'] as int,
+      startAt: json['startAt'] as String?,
+      endAt: json['endAt'] as String?,
+      arrivalTime: json['arrivalTime'] as String?,
+      checklist: json['checklist'] == null
+          ? null
+          : CheckListInfoResponse.fromJson(
+              json['checklist'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$SubtaskToJson(Subtask instance) => <String, dynamic>{
@@ -80,6 +87,10 @@ Map<String, dynamic> _$SubtaskToJson(Subtask instance) => <String, dynamic>{
       'isNeedChangeBattery': instance.isNeedChangeBattery,
       'subtaskStatus': instance.subtaskStatus,
       'estimatedCompletedTime': instance.estimatedCompletedTime,
+      'startAt': instance.startAt,
+      'endAt': instance.endAt,
+      'arrivalTime': instance.arrivalTime,
+      'checklist': instance.checklist,
     };
 
 TaskType _$TaskTypeFromJson(Map<String, dynamic> json) => TaskType(

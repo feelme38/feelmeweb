@@ -1,3 +1,5 @@
+import 'dart:html' as html;
+
 import 'package:feelmeweb/core/extensions/base_class_extensions/string_ext.dart';
 import 'package:feelmeweb/data/models/response/route_response.dart';
 import 'package:flutter/material.dart';
@@ -5,9 +7,9 @@ import 'package:flutter/material.dart';
 import '../../common/app_table_widget.dart';
 
 class RouteInfoWidget extends StatefulWidget {
-  const RouteInfoWidget({super.key, required this.tasks});
+  const RouteInfoWidget({super.key, required this.subtasks});
 
-  final List<Task> tasks;
+  final List<Subtask> subtasks;
 
   @override
   State<RouteInfoWidget> createState() => _RouteInfoWidgetState();
@@ -20,36 +22,51 @@ class _RouteInfoWidgetState extends State<RouteInfoWidget> {
       scrollDirection: Axis.vertical,
       child: AppTableWidget(
         dataColumns: _tableCustomersColumns,
-        dataRows: getTableRouteInfoRows(widget.tasks),
+        dataRows: getTableRouteInfoRows(widget.subtasks),
       ),
     );
   }
 
   final List<DataColumn> _tableCustomersColumns = [
     const DataColumn(
-        label: Text('Дата прохождения'),
+        label: Text('Чек-лист'), headingRowAlignment: MainAxisAlignment.center),
+    const DataColumn(
+        label: Text('Время начала работ'),
         headingRowAlignment: MainAxisAlignment.center),
     const DataColumn(
-        label: Text('Имя клиента'),
+        label: Text('Время окончания работ'),
         headingRowAlignment: MainAxisAlignment.center),
     const DataColumn(
-        label: Text('Ссылка на PDF'),
+        label: Text('Ориентировочное время прибытия'),
         headingRowAlignment: MainAxisAlignment.center),
   ];
 
-  List<DataRow> getTableRouteInfoRows(List<Task> tasks) => tasks.map((task) {
+  List<DataRow> getTableRouteInfoRows(List<Subtask> subtasks) =>
+      subtasks.map((subtask) {
         return DataRow(cells: [
           DataCell(Align(
             alignment: Alignment.center,
-            child: Text(task.completedTime.toString().orDash()),
+            child: IconButton(
+                icon: const Icon(Icons.insert_drive_file_outlined),
+                onPressed: subtask.checklist != null
+                    ? () {
+                        final pdfUrl = subtask.checklist?.pdfUrl ?? '';
+                        html.window.open(pdfUrl, '_blank');
+                      }
+                    : null,
+                tooltip: 'Скачать PDF'),
           )),
-          const DataCell(Align(
+          DataCell(Align(
             alignment: Alignment.center,
-            child: Text(''),
+            child: Text(subtask.startAt.orDash()),
           )),
-          const DataCell(Align(
+          DataCell(Align(
             alignment: Alignment.center,
-            child: Text(''),
+            child: Text(subtask.endAt.orDash()),
+          )),
+          DataCell(Align(
+            alignment: Alignment.center,
+            child: Text(subtask.arrivalTime.orDash()),
           )),
         ]);
       }).toList();

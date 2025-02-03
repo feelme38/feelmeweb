@@ -111,7 +111,9 @@ class RouteGenerator {
         GoRoute(
           path: RouteName.inventory,
           builder: (BuildContext context, GoRouterState state) {
-            return InventoryPage.create();
+            final userId = state.extra as String?;
+
+            return InventoryPage.create(userId!);
           },
         ),
       ],

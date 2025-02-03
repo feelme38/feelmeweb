@@ -2,7 +2,6 @@ import 'package:feelmeweb/core/result/result_of.dart';
 import 'package:feelmeweb/data/models/request/route_body.dart';
 import 'package:feelmeweb/data/models/request/route_update_body.dart';
 import 'package:feelmeweb/data/models/response/route_response.dart';
-import 'package:feelmeweb/domain/route/change_route_status_usecase.dart';
 import 'package:feelmeweb/domain/route/get_user_route_usecase.dart';
 import 'package:injectable/injectable.dart';
 

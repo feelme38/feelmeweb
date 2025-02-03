@@ -1,10 +1,11 @@
 import 'dart:convert';
 import 'dart:io';
+
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dio/dio.dart';
+import 'package:feelmeweb/provider/network/urls.dart';
 import 'package:flutter/foundation.dart';
 import 'package:injectable/injectable.dart';
-import 'package:feelmeweb/provider/network/urls.dart';
 
 import 'auth_interceptor.dart';
 import 'auth_preferences.dart';
@@ -58,7 +59,7 @@ extension NetworkError on DioException {
   }
 }
 
-extension ResultError<T> on DioError {
+extension ResultError<T> on DioException {
   String? getErrorMessage() {
     const errorDescription = 'description';
     final responseData = response?.data;
@@ -148,9 +149,12 @@ extension DioExt<T> on Dio {
   }
 
   Future<Response<T>> onPut(String path,
-      {Map<String, dynamic>? data, Options? options}) async {
+      {Map<String, dynamic>? data,
+      Map<String, dynamic>? queryParams,
+      Options? options}) async {
     if (await hasInternet()) {
-      return put<T>(path, data: data, options: options)
+      return put<T>(path,
+              queryParameters: queryParams, data: data, options: options)
           .timeout(const Duration(seconds: 10), onTimeout: () {
         throw ConnectionException();
       });

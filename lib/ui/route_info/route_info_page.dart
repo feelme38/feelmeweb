@@ -20,7 +20,7 @@ class RouteInfoPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final route = context.watch<RouteInfoViewModel>().route;
+    final activeCustomers = context.watch<RouteInfoViewModel>().activeCustomers;
     final viewModel = context.read<RouteInfoViewModel>();
 
     return BaseScreen<RouteInfoViewModel>(
@@ -35,29 +35,24 @@ class RouteInfoPage extends StatelessWidget {
           Expanded(
             child: Row(
               children: [
-                if (route != null)
-                  Expanded(
-                    child: ListView.builder(
-                      itemCount:
-                          route.tasks.map((e) => e.client).toSet().length ?? 0,
-                      itemBuilder: (context, index) {
-                        final client = route.tasks
-                            .map((e) => e.client)
-                            .toSet()
-                            .toList()[index];
-                        final isSelectedClient =
-                            viewModel.selectedCustomer == client;
-                        return ListTile(
-                            title: Text(client.name),
-                            tileColor: isSelectedClient
-                                ? Colors.blue[100]
-                                : Colors.transparent,
-                            onTap: () {
-                              viewModel.chooseCustomer(client);
-                            });
-                      },
-                    ),
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: activeCustomers.length,
+                    itemBuilder: (context, index) {
+                      final client = activeCustomers[index].customer;
+                      final isSelectedClient =
+                          viewModel.selectedCustomer == client;
+                      return ListTile(
+                          title: Text(client.name),
+                          tileColor: isSelectedClient
+                              ? Colors.blue[100]
+                              : Colors.transparent,
+                          onTap: () {
+                            viewModel.chooseCustomer(client);
+                          });
+                    },
                   ),
+                ),
                 Expanded(
                   flex: 4,
                   child: Column(
@@ -65,11 +60,11 @@ class RouteInfoPage extends StatelessWidget {
                     children: [
                       Expanded(
                         child: RouteInfoWidget(
-                          tasks: route?.tasks
-                                  .where((e) =>
-                                      e.client == viewModel.selectedCustomer)
-                                  .toList() ??
-                              [],
+                          subtasks: activeCustomers
+                              .where((e) =>
+                                  e.customer == viewModel.selectedCustomer)
+                              .expand((e) => e.subtasks)
+                              .toList(),
                         ),
                       )
                     ],
@@ -85,7 +80,8 @@ class RouteInfoPage extends StatelessWidget {
               width: 200,
               child: BaseTextButton(
                   buttonText: "Инвентарь СИ",
-                  onTap: () => context.go(RouteName.inventory),
+                  onTap: () =>
+                      context.go(RouteName.inventory, extra: viewModel.userId),
                   weight: FontWeight.w500,
                   fontSize: 14,
                   enabled: true,

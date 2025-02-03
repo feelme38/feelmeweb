@@ -1,3 +1,4 @@
+import 'package:feelmeweb/data/models/response/checklist_info_response.dart';
 import 'package:feelmeweb/data/models/response/last_checklist_info_response.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -107,6 +108,10 @@ class Subtask {
   final bool isNeedChangeBattery;
   final String subtaskStatus;
   final int estimatedCompletedTime;
+  final String? startAt;
+  final String? endAt;
+  final String? arrivalTime;
+  final CheckListInfoResponse? checklist;
 
   Subtask({
     required this.id,
@@ -118,6 +123,10 @@ class Subtask {
     required this.isNeedChangeBattery,
     required this.subtaskStatus,
     required this.estimatedCompletedTime,
+    this.startAt,
+    this.endAt,
+    this.arrivalTime,
+    this.checklist,
   });
 
   factory Subtask.fromJson(Map<String, dynamic> json) =>
@@ -134,6 +143,9 @@ class Subtask {
     bool? isNeedChangeBattery,
     String? subtaskStatus,
     int? estimatedCompletedTime,
+    String? startAt,
+    String? endAt,
+    String? arrivalTime,
   }) {
     return Subtask(
       id: id ?? this.id,
@@ -146,6 +158,9 @@ class Subtask {
       subtaskStatus: subtaskStatus ?? this.subtaskStatus,
       estimatedCompletedTime:
           estimatedCompletedTime ?? this.estimatedCompletedTime,
+      startAt: startAt ?? this.startAt,
+      endAt: endAt ?? this.endAt,
+      arrivalTime: arrivalTime ?? this.arrivalTime,
     );
   }
 }

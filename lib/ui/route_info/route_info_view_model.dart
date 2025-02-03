@@ -1,21 +1,22 @@
+import 'package:feelmeweb/data/models/response/active_customer_response.dart';
 import 'package:feelmeweb/data/models/response/route_response.dart';
-import 'package:feelmeweb/domain/route/get_user_route_usecase.dart';
+import 'package:feelmeweb/domain/customers/get_active_customers_usecase.dart';
 import 'package:feelmeweb/presentation/base_vm/base_search_view_model.dart';
 
 import '../../presentation/alert/alert.dart';
 
 class RouteInfoViewModel extends BaseSearchViewModel {
   RouteInfoViewModel(this.userId) {
-    loadRoute();
+    loadActiveCustomers();
   }
 
-  final _getUserRouteUseCase = GetUserRouteUseCase();
+  final _getActiveCustomersUseCase = GetActiveCustomersUseCase();
 
   final String userId;
 
-  RouteResponse? _route;
+  List<ActiveCustomerResponse> _activeCustomers = [];
 
-  RouteResponse? get route => _route;
+  List<ActiveCustomerResponse> get activeCustomers => _activeCustomers;
 
   late Client selectedCustomer;
 
@@ -24,15 +25,15 @@ class RouteInfoViewModel extends BaseSearchViewModel {
     notifyListeners();
   }
 
-  Future loadRoute() async {
+  Future loadActiveCustomers() async {
     loadingOn();
-    (await executeUseCaseParam<RouteResponse, GetUserRouteParam>(
-            _getUserRouteUseCase, GetUserRouteParam(userId)))
+    (await executeUseCaseParam<List<ActiveCustomerResponse>, String>(
+            _getActiveCustomersUseCase, userId))
         .doOnError((message, exception) {
       addAlert(Alert(message ?? '$exception', style: AlertStyle.danger));
     }).doOnSuccess((value) {
-      _route = (value as RouteResponse);
-      selectedCustomer = _route!.tasks.first.client;
+      _activeCustomers = value;
+      selectedCustomer = _activeCustomers.first.customer;
       notifyListeners();
     });
     loadingOff();
