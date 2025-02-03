@@ -85,7 +85,16 @@ class UsersViewModel extends BaseSearchViewModel {
         return DataRow(cells: [
           DataCell(CircleAvatar(
               backgroundImage: NetworkImage(user.profileUrl.orEmpty))),
-          DataCell(Align(alignment: Alignment.center, child: Text(user.name))),
+          DataCell(Align(
+              alignment: Alignment.center,
+              child: InkWell(
+                  onTap: () {
+                    final context =
+                        getIt<RouteGenerator>().navigatorKey.currentContext;
+                    if (context == null) return;
+                    context.go(RouteName.routeInfo, extra: user.id);
+                  },
+                  child: Text(user.name)))),
           DataCell(Align(
               alignment: Alignment.center,
               child: Text(user.allTasksCount.toString()))),
@@ -98,29 +107,35 @@ class UsersViewModel extends BaseSearchViewModel {
           DataCell(Row(
             children: [
               IconButton(
-                icon: const Icon(Icons.directions),
-                onPressed: () {
-                  final context =
-                      getIt<RouteGenerator>().navigatorKey.currentContext;
-                  if (context == null) return;
-                  context.go(RouteName.customerCreateRoute, extra: user.id);
-                },
-                tooltip: 'Создать маршрут',
-              ),
+                  icon: const Icon(Icons.directions),
+                  onPressed: () {
+                    final context =
+                        getIt<RouteGenerator>().navigatorKey.currentContext;
+                    if (context == null) return;
+                    context.go(
+                      RouteName.customerCreateRoute,
+                      extra: {'userId': user.id},
+                    );
+                  },
+                  tooltip: 'Создать маршрут'),
+              if (![RouteStatus.CANCELED, RouteStatus.FINISHED, null]
+                  .contains(user.routeStatus))
+                IconButton(
+                  icon: const Icon(Icons.edit),
+                  onPressed: () {
+                    final context =
+                        getIt<RouteGenerator>().navigatorKey.currentContext;
+                    if (context == null) return;
+                    context.go(RouteName.customerEditRoute, extra: user.id);
+                  },
+                  tooltip: 'Редактировать',
+                ),
               IconButton(
-                icon: const Icon(Icons.edit),
-                onPressed: () {
-                  // Логика редактирования пользователя
-                },
-                tooltip: 'Редактировать',
-              ),
-              IconButton(
-                icon: const Icon(Icons.delete),
-                onPressed: () {
-                  // Логика удаления пользователя
-                },
-                tooltip: 'Удалить',
-              ),
+                  icon: const Icon(Icons.delete),
+                  onPressed: () {
+                    // Логика удаления пользователя
+                  },
+                  tooltip: 'Удалить'),
             ],
           )),
         ]);

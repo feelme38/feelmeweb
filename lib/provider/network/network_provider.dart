@@ -94,7 +94,6 @@ extension ResponseValue<T> on Response<T> {
 }
 
 extension DioExt<T> on Dio {
-
   Future<Response<T>> onDelete(String path,
       {Map<String, dynamic>? queryParams, Options? options}) async {
     if (await hasInternet()) {
@@ -143,6 +142,30 @@ extension DioExt<T> on Dio {
             responseType: ResponseType.plain,
           ));
       return response;
+    } else {
+      throw ConnectionException();
+    }
+  }
+
+  Future<Response<T>> onPut(String path,
+      {Map<String, dynamic>? data, Options? options}) async {
+    if (await hasInternet()) {
+      return put<T>(path, data: data, options: options)
+          .timeout(const Duration(seconds: 10), onTimeout: () {
+        throw ConnectionException();
+      });
+    } else {
+      throw ConnectionException();
+    }
+  }
+
+  Future<Response<T>> onPatch(String path,
+      {Map<String, dynamic>? data, Options? options}) async {
+    if (await hasInternet()) {
+      return patch<T>(path, data: data, options: options)
+          .timeout(const Duration(seconds: 10), onTimeout: () {
+        throw ConnectionException();
+      });
     } else {
       throw ConnectionException();
     }

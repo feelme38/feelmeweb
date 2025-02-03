@@ -34,4 +34,5 @@ const _$RouteStatusEnumMap = {
   RouteStatus.STARTED: 'STARTED',
   RouteStatus.PAUSED: 'PAUSED',
   RouteStatus.FINISHED: 'FINISHED',
+  RouteStatus.CANCELED: 'CANCELED',
 };

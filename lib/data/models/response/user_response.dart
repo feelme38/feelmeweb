@@ -20,13 +20,11 @@ class UserResponse {
       this.completedTasksCount,
       this.routeStatus,
       this.routeId,
-      this.activeTaskId
-  );
+      this.activeTaskId);
 
-  factory UserResponse.fromJson(Map<String, dynamic> json) => _$UserResponseFromJson(json);
+  factory UserResponse.fromJson(Map<String, dynamic> json) =>
+      _$UserResponseFromJson(json);
 }
 
 @JsonEnum()
-enum RouteStatus {
-  ASSIGNED, STARTED, PAUSED, FINISHED
-}
+enum RouteStatus { ASSIGNED, STARTED, PAUSED, FINISHED, CANCELED }

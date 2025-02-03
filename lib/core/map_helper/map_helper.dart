@@ -3,7 +3,6 @@ import 'dart:math';
 import 'package:base_class_gen/core/log_writer_interceptor.dart';
 import 'package:dio/dio.dart';
 import 'package:feelmeweb/data/models/response/today_routes_response.dart';
-import 'package:feelmeweb/presentation/modals/dialogs.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
@@ -99,7 +98,7 @@ class MapHelper {
           points: points,
           color: getRandomColor(),
           width: 5,
-          onTap: ()=> onPress(id)),
+          onTap: () => onPress(id)),
     };
   }
 }
