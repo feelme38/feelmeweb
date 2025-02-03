@@ -103,7 +103,7 @@ class EditRoutePage extends StatelessWidget {
                             RouteName.customerCreateRoute,
                             extra: {
                               'userId': viewModel.userId,
-                              'routeId': viewModel.route!.id
+                              'isUpdate': true
                             },
                           ),
                       weight: FontWeight.w500,

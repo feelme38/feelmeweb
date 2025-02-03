@@ -47,3 +47,4 @@ bin/
 
 # FVM Version Cache
 .fvm/
+.fvmrc

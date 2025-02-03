@@ -86,9 +86,10 @@ class RouteGenerator {
           builder: (BuildContext context, GoRouterState state) {
             final extra = state.extra as Map<String, dynamic>?;
             final userId = extra?['userId'] as String?;
-            final routeId = extra?['routeId'] as String?;
+            final isUpdate = extra?['isUpdate'] as bool?;
             if (userId == null) return UsersPage.create();
-            return CreateRouteChooseCustomersPage.create(userId, routeId);
+            return CreateRouteChooseCustomersPage.create(
+                userId, isUpdate ?? false);
           },
         ),
         GoRoute(

@@ -15,9 +15,11 @@ TasksBody _$TasksBodyFromJson(Map<String, dynamic> json) => TasksBody(
       (json['subtasks'] as List<dynamic>)
           .map((e) => SubtaskBody.fromJson(e as Map<String, dynamic>))
           .toList(),
+      id: json['id'] as String?,
     );
 
 Map<String, dynamic> _$TasksBodyToJson(TasksBody instance) => <String, dynamic>{
+      'id': instance.id,
       'name': instance.name,
       'visitTime': instance.visitTime.toIso8601String(),
       'typeId': instance.typeId,

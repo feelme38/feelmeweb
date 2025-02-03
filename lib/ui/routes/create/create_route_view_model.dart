@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:feelmeweb/core/extensions/base_class_extensions/list_ext.dart';
 import 'package:feelmeweb/data/models/request/route_body.dart';
 import 'package:feelmeweb/data/models/request/subtask_body.dart';
@@ -6,12 +7,14 @@ import 'package:feelmeweb/data/models/response/aroma_response.dart';
 import 'package:feelmeweb/data/models/response/customer_response.dart';
 import 'package:feelmeweb/data/models/response/last_checklist_info_response.dart';
 import 'package:feelmeweb/data/models/response/region_response.dart';
+import 'package:feelmeweb/data/models/response/route_response.dart';
 import 'package:feelmeweb/data/models/response/task_types_response.dart';
 import 'package:feelmeweb/domain/aromas/get_aromas_usecase.dart';
 import 'package:feelmeweb/domain/checklists/get_last_checklists_usecase.dart';
 import 'package:feelmeweb/domain/customers/get_customers_usecase.dart';
 import 'package:feelmeweb/domain/regions/get_regions_usecase.dart';
 import 'package:feelmeweb/domain/route/create_route_usecase.dart';
+import 'package:feelmeweb/domain/route/get_user_route_usecase.dart';
 import 'package:feelmeweb/domain/route/update_route_usecase.dart';
 import 'package:feelmeweb/domain/tasks/get_task_types_usecase.dart';
 import 'package:feelmeweb/presentation/alert/alert.dart';
@@ -20,9 +23,13 @@ import 'package:feelmeweb/presentation/navigation/route_generation.dart';
 import 'package:feelmeweb/presentation/navigation/route_names.dart';
 import 'package:feelmeweb/provider/di/di_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 
 class CreateRouteViewModel extends BaseSearchViewModel {
-  CreateRouteViewModel(this.userId, this.routeId) {
+  CreateRouteViewModel(this.userId, this.isUpdate) {
+    if (isUpdate) {
+      getUserRoute();
+    }
     loadRegions();
     loadAromas();
     loadTaskTypes();
@@ -35,11 +42,12 @@ class CreateRouteViewModel extends BaseSearchViewModel {
   final _getTaskTypesUseCase = GetTaskTypesUseCase();
   final _createRouteUseCase = CreateRouteUseCase();
   final _updateRouteUseCase = UpdateRouteUseCase();
+  final _getUserRouteUseCase = GetUserRouteUseCase();
 
   final _router = getIt<RouteGenerator>().router;
 
   final String userId;
-  final String? routeId;
+  final bool isUpdate;
 
   List<RegionResponse> _regions = [];
 
@@ -141,11 +149,9 @@ class CreateRouteViewModel extends BaseSearchViewModel {
     if (customer.id == null) return;
     loadingOn();
 
-    //for (var subtask in selectedSubtasks) {
-    //  if (!savedTasks.values.any((e) => e.subtasks.contains(subtask))) {
-    //    selectedSubtasks.remove(subtask);
-    //  }
-    //}
+    // Удаляем из selectedSubtasks те, которых нет в savedTasks
+    selectedSubtasks.removeWhere((subtask) =>
+        !savedTasks.values.any((task) => task.subtasks.contains(subtask)));
 
     visitTimeController.clear();
     selectNewTaskType(taskTypes.first);
@@ -181,9 +187,9 @@ class CreateRouteViewModel extends BaseSearchViewModel {
         .filter((e) => e.deviceId == subtask.deviceId)
         .isNotEmpty) {
       selectedSubtasks.removeWhere((e) => e.deviceId == subtask.deviceId);
-      if (selectedSubtasks.isEmpty) savedTasks.remove(selectedCustomerId);
+      if (selectedSubtasks.isEmpty) savedTasks.remove(selectedAddressId);
     } else {
-      selectedSubtasks.add(subtask);
+      selectedSubtasks.add(subtask.copyWith(addressId: selectedAddressId));
     }
     notifyListeners();
   }
@@ -194,8 +200,8 @@ class CreateRouteViewModel extends BaseSearchViewModel {
     final String? customerName = selectedCustomer?.name;
     final String? customerId = selectedCustomerId;
     final String? addressId = selectedAddressId;
-    final List<SubtaskBody> subtasks =
-        selectedSubtasks.filter((e) => e.customerId == selectedCustomerId);
+    final List<SubtaskBody> subtasks = selectedSubtasks.filter(
+        (e) => e.customerId == selectedCustomerId && e.addressId == addressId);
     if (visitTime == null ||
         typeId == null ||
         customerName == null ||
@@ -227,23 +233,87 @@ class CreateRouteViewModel extends BaseSearchViewModel {
     loadingOff();
   }
 
-  void updateRoute() async {
-    final RouteBody routeBody =
-        RouteBody(routeId: routeId, userId, savedTasks.values.toList());
+  Future updateRoute() async {
     loadingOn();
-    (await executeUseCaseParam<void, RouteBody>(_updateRouteUseCase, routeBody))
-        .doOnError((message, exception) {
-      addAlert(Alert(message ?? '$exception', style: AlertStyle.danger));
-    }).doOnSuccess((value) {
-      addAlert(Alert('Маршрут успешно обновлён', style: AlertStyle.success));
-      selectedSubtasks.clear();
-      savedTasks.clear();
-      Future.delayed(const Duration(milliseconds: 500), () {
-        // Перейти на customerEditRoute
-        _router.pushReplacement(RouteName.customerEditRoute, extra: userId);
+    final route = await getUserRoute();
+    if (route == null) {
+      addAlert(Alert(
+          'Ошибка обновления маршрута. Действующий маршрут не найден',
+          style: AlertStyle.danger));
+    } else {
+      for (var entry in savedTasks.entries) {
+        final String addressId = entry.key;
+        final TasksBody newTask = entry.value;
+
+        Task? existsTask =
+            route.tasks.firstWhereOrNull((e) => e.address.id == addressId);
+
+        if (existsTask != null) {
+          // Обновляем newTask, присваивая новый объект
+          savedTasks[addressId] = newTask.copyWith(
+            id: existsTask.id,
+            subtasks: [
+              ...existsTask.subtasks.map(
+                (subtask) => SubtaskBody(
+                  id: subtask.id,
+                  newTask.clientId,
+                  subtask.device.id,
+                  subtask.comment,
+                  subtask.expectedAroma.id,
+                  subtask.expectedAromaVolume,
+                  subtask.estimatedCompletedTime,
+                ),
+              ),
+              ...newTask.subtasks, // Сохраняем старые подзадачи
+            ],
+          );
+        }
+      }
+
+      // Добавляем существующие таски, если их нет в savedTasks
+      for (var task in route.tasks) {
+        if (!savedTasks.containsKey(task.address.id)) {
+          savedTasks[task.address.id] = TasksBody(
+            task.client.name,
+            DateTime.now(),
+            task.taskType.id,
+            task.client.id,
+            task.address.id,
+            task.subtasks
+                .map(
+                  (subtask) => SubtaskBody(
+                    task.client.id,
+                    subtask.device.id,
+                    subtask.comment,
+                    subtask.expectedAroma.id,
+                    subtask.expectedAromaVolume,
+                    subtask.estimatedCompletedTime,
+                  ),
+                )
+                .toList(),
+          );
+        }
+      }
+
+      final RouteBody routeBody =
+          RouteBody(routeId: route.id, userId, savedTasks.values.toList());
+
+      (await executeUseCaseParam<void, RouteBody>(
+              _updateRouteUseCase, routeBody))
+          .doOnError((message, exception) {
+        addAlert(Alert(message ?? '$exception', style: AlertStyle.danger));
+      }).doOnSuccess((value) {
+        addAlert(Alert('Маршрут успешно обновлён', style: AlertStyle.success));
+        selectedSubtasks.clear();
+        savedTasks.clear();
+        Future.delayed(const Duration(milliseconds: 500), () {
+          // Перейти на customerEditRoute
+          _router.pushReplacement(RouteName.customerEditRoute, extra: userId);
+        });
+        notifyListeners();
       });
-      notifyListeners();
-    });
+    }
+
     loadingOff();
   }
 
@@ -272,6 +342,19 @@ class CreateRouteViewModel extends BaseSearchViewModel {
     loadingOff();
   }
 
+  Future<RouteResponse?> getUserRoute() async {
+    RouteResponse? route;
+
+    (await executeUseCaseParam<RouteResponse, GetUserRouteParam>(
+            _getUserRouteUseCase, GetUserRouteParam(userId)))
+        .doOnError((message, exception) {
+      addAlert(Alert(message ?? '$exception', style: AlertStyle.danger));
+    }).doOnSuccess((value) {
+      route = value;
+    });
+    return route;
+  }
+
   void updateVisitTime() {
     notifyListeners();
   }
@@ -292,7 +375,7 @@ class CreateRouteViewModel extends BaseSearchViewModel {
   }
 
   @override
-  String get title => routeId != null
+  String get title => isUpdate
       ? 'Редактирование маршрутного листа'
       : 'Создание маршрутного листа';
 }

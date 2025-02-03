@@ -125,6 +125,7 @@ class CreateRouteSubtasksWidget extends StatelessWidget {
             Expanded(
                 flex: 1,
                 child: CreateRouteChooseSubtasksWidget(
+                    selectedAddress: selectedAddress ?? '',
                     customerId: selectedCustomer.id ?? '',
                     checklists: checklists,
                     selectedSubtasks: selectedSubtasks,
@@ -139,15 +140,15 @@ class CreateRouteSubtasksWidget extends StatelessWidget {
                   child: SizedBox(
                       width: 200,
                       child: BaseTextButton(
-                          buttonText: viewModel.routeId != null
+                          buttonText: viewModel.isUpdate
                               ? "Обновить маршрут"
                               : "Создать маршрут",
-                          onTap: () => viewModel.routeId != null
+                          onTap: () => viewModel.isUpdate
                               ? viewModel.updateRoute()
                               : viewModel.createRoute(),
                           weight: FontWeight.w500,
                           fontSize: 14,
-                          enabled: savedTasks.containsKey(selectedAddress),
+                          enabled: savedTasks.keys.isNotEmpty,
                           //enabled: true,
                           textColor: Colors.white,
                           buttonColor: AppColor.redDefect))),
@@ -175,12 +176,41 @@ class CreateRouteSubtasksWidget extends StatelessWidget {
                           },
                           weight: FontWeight.w500,
                           fontSize: 14,
-                          enabled: selectedSubtasks
-                                  .filter((e) =>
-                                      e.customerId == selectedCustomer.id)
-                                  .isNotEmpty &&
-                              viewModel.parseTime(visitTimeController.text) !=
-                                  null,
+                          enabled: selectedSubtasks.any((subtask) {
+                            final bool isSameCustomer =
+                                subtask.customerId == selectedCustomer.id;
+                            final bool isDifferentAddress =
+                                subtask.addressId != selectedAddress;
+
+                            // Получаем список устройств, уже добавленных к выбранному адресу
+                            final Set<String> existingDeviceIds = viewModel
+                                .savedTasks.values
+                                .where(
+                                    (task) => task.addressId == selectedAddress)
+                                .expand((task) => task.subtasks)
+                                .map((sub) => sub.deviceId)
+                                .toSet();
+
+                            // Проверяем, есть ли устройство в already saved subtasks
+                            final bool isDeviceAbsentAtSelectedAddress =
+                                !existingDeviceIds.contains(subtask.deviceId);
+
+                            // Фильтруем selectedSubtasks по текущему адресу и проверяем, есть ли среди них устройства, которых нет в savedTasks
+                            final bool hasNewSubtasksForAddress = viewModel
+                                .selectedSubtasks
+                                .where(
+                                    (sub) => sub.addressId == selectedAddress)
+                                .any((sub) =>
+                                    !existingDeviceIds.contains(sub.deviceId));
+
+                            final bool isVisitTimeValid =
+                                viewModel.parseTime(visitTimeController.text) !=
+                                    null;
+
+                            return isDeviceAbsentAtSelectedAddress &&
+                                isVisitTimeValid &&
+                                hasNewSubtasksForAddress;
+                          }),
                           textColor: Colors.white,
                           buttonColor: AppColor.primary)))
             ])

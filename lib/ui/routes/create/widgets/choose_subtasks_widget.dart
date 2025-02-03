@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:feelmeweb/core/extensions/base_class_extensions/string_ext.dart';
 import 'package:feelmeweb/data/models/request/subtask_body.dart';
 import 'package:feelmeweb/data/models/response/aroma_response.dart';
@@ -5,6 +6,7 @@ import 'package:feelmeweb/data/models/response/last_checklist_info_response.dart
 import 'package:feelmeweb/ui/common/app_table_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get_it/get_it.dart';
 
 typedef ToggleCustomerCallback = void Function(SubtaskBody);
 
@@ -15,13 +17,15 @@ class CreateRouteChooseSubtasksWidget extends StatefulWidget {
       required this.selectedSubtasks,
       required this.toggleCallback,
       required this.aromas,
-      required this.customerId});
+      required this.customerId,
+      required this.selectedAddress});
 
   final List<LastCheckListInfoResponse> checklists;
   final List<SubtaskBody> selectedSubtasks;
   final List<AromaResponse> aromas;
   final ToggleCustomerCallback toggleCallback;
   final String customerId;
+  final String selectedAddress;
 
   @override
   State<CreateRouteChooseSubtasksWidget> createState() =>
@@ -92,14 +96,26 @@ class _CreateRouteChooseSubtasksWidgetState
       checklists.asMap().entries.map((entry) {
         int index = entry.key;
         LastCheckListInfoResponse checklist = entry.value;
+        SubtaskBody? subtask = widget.selectedSubtasks.firstWhereOrNull((e) =>
+            e.addressId == widget.selectedAddress &&
+            e.deviceId == checklist.deviceId);
+
+        if (subtask != null) {
+          estimatedTimeControllers[index].text =
+              subtask.estimatedCompletedTime.toString();
+          _selectedAromas[index] =
+              aromas.firstWhere((e) => e.id == subtask.expectedAromaId);
+          expectedAromaVolumeControllers[index].text =
+              subtask.expectedAromaVolume.toString();
+          commentControllers[index].text = subtask.comment;
+        }
+
         return DataRow(cells: [
           DataCell(Align(
             alignment: Alignment.center,
             child: Checkbox(
-              value: widget.selectedSubtasks
-                  .map((e) => e.deviceId)
-                  .contains(checklist.deviceId),
-              onChanged: (_) {
+              value: subtask != null,
+              onChanged: (isChecked) {
                 AromaResponse? currentAroma = _selectedAromas[index];
                 String? deviceId = checklist.deviceId;
                 String estimatedCompletedTime =
@@ -119,6 +135,12 @@ class _CreateRouteChooseSubtasksWidgetState
                     double.parse(expectedAromaVolume),
                     int.parse(estimatedCompletedTime));
                 widget.toggleCallback.call(newSubtask);
+                if (isChecked != true) {
+                  _selectedAromas[index] = aromas.first;
+                  estimatedTimeControllers[index].clear();
+                  expectedAromaVolumeControllers[index].clear();
+                  commentControllers[index].clear();
+                }
                 setState(() {});
               },
             ),
@@ -129,12 +151,12 @@ class _CreateRouteChooseSubtasksWidgetState
           )),
           DataCell(Align(
             alignment: Alignment.center,
-            child: Text(checklist.checklistAroma?.newAromaName.orDash() ?? ''),
+            child: Text(checklist.checklistAroma.newAromaName.orDash() ?? ''),
           )),
           DataCell(Align(
             alignment: Alignment.center,
             child: Text(
-                checklist.checklistAroma?.volumeMl.toString().orDash() ?? ''),
+                checklist.checklistAroma.volumeMl.toString().orDash() ?? ''),
           )),
           DataCell(Align(
             alignment: Alignment.center,
