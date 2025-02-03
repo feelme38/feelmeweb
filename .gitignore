@@ -1,5 +1,9 @@
 .gradle
 build/
+.dart_tool/
+.idea/
+.flutter-plugins
+.flutter-plugins-dependencies
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
