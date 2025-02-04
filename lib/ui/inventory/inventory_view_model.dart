@@ -62,6 +62,41 @@ class InventoryViewModel extends BaseSearchViewModel {
       //    'device_${device.id}', () => TextEditingController(text: '1'));
     }
 
+// Создаем Map для группировки ароматов по названию и подсчета общего количества
+    Map<String, double> groupedAromas = {};
+
+// Проходим по каждому аромату в inventory.aromas
+    for (var aroma in inventory.aromas) {
+      // Получаем название аромата
+      String? aromaName = aroma.aroma?.name;
+
+      // Если название аромата не null, добавляем его в Map
+      if (aromaName != null) {
+        // Если аромат уже есть в Map, добавляем количество к существующему значению
+        if (groupedAromas.containsKey(aromaName)) {
+          groupedAromas[aromaName] =
+              (groupedAromas[aromaName] ?? 0) + (aroma.quantity ?? 0);
+        } else {
+          // Если аромата еще нет в Map, добавляем его с текущим количеством
+          groupedAromas[aromaName] = aroma.quantity ?? 0;
+        }
+      }
+    }
+
+    // Теперь работаем с groupedAromas для заполнения checkboxValues и textControllers
+    for (var entry in groupedAromas.entries) {
+      String aromaKey = 'aroma_${entry.key}'; // Ключ на основе названия аромата
+
+      // Добавляем ключ в checkboxValues, если его еще нет
+      checkboxValues.putIfAbsent(aromaKey, () => false);
+
+      // Добавляем TextEditingController для текстового поля с суммарным количеством
+      textControllers.putIfAbsent(
+        aromaKey,
+        () => TextEditingController(text: entry.value.toString()),
+      );
+    }
+
     for (var aroma in inventory.aromas) {
       checkboxValues.putIfAbsent('aroma_${aroma.aroma?.name}', () => false);
       textControllers.putIfAbsent('aroma_${aroma.aroma?.name}',
