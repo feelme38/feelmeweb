@@ -273,6 +273,7 @@ class CreateRouteViewModel extends BaseSearchViewModel {
       for (var task in route.tasks) {
         if (!savedTasks.containsKey(task.address.id)) {
           savedTasks[task.address.id] = TasksBody(
+            id: task.id,
             task.client.name,
             DateTime.now(),
             task.taskType.id,
@@ -281,6 +282,7 @@ class CreateRouteViewModel extends BaseSearchViewModel {
             task.subtasks
                 .map(
                   (subtask) => SubtaskBody(
+                    id: subtask.id,
                     task.client.id,
                     subtask.device.id,
                     subtask.comment,
