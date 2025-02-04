@@ -57,13 +57,13 @@ class InventoryViewModel extends BaseSearchViewModel {
   // Инициализируем контроллеры с актуальными значениями из инвентаря
   void _initializeControllers(InventoryResponse inventory) {
     for (var device in inventory.devices) {
-      checkboxValues.putIfAbsent('device_${device.id}', () => true);
-      textControllers.putIfAbsent(
-          'device_${device.id}', () => TextEditingController(text: '1'));
+      checkboxValues.putIfAbsent('device_${device.id}', () => false);
+      //textControllers.putIfAbsent(
+      //    'device_${device.id}', () => TextEditingController(text: '1'));
     }
 
     for (var aroma in inventory.aromas) {
-      checkboxValues.putIfAbsent('aroma_${aroma.aroma?.name}', () => true);
+      checkboxValues.putIfAbsent('aroma_${aroma.aroma?.name}', () => false);
       textControllers.putIfAbsent('aroma_${aroma.aroma?.name}',
           () => TextEditingController(text: aroma.quantity?.toString() ?? '0'));
     }
@@ -77,11 +77,10 @@ class InventoryViewModel extends BaseSearchViewModel {
     for (var device in _inventory?.devices ?? []) {
       String key = 'device_${device.id}';
       bool? checkboxValue = checkboxValues[key];
-      String currentQuantity = textControllers[key]?.text ?? '1';
 
-      // Устройство должно быть удалено, если количество 0 и чекбокс снят
-      if (checkboxValue == false && double.tryParse(currentQuantity) == 0) {
-        updatedDevices.add(device); // Устройство удаляется
+      if (checkboxValue == true) {
+        // Если чекбокс отмечен, просто добавляем устройство
+        updatedDevices.add(device);
       }
     }
 
@@ -90,26 +89,22 @@ class InventoryViewModel extends BaseSearchViewModel {
       String key = 'aroma_${aroma.aroma?.name}';
       bool? checkboxValue = checkboxValues[key];
       String currentQuantity = textControllers[key]?.text ?? '0';
+      double current = double.tryParse(currentQuantity) ?? 0;
 
-      if (checkboxValue == false) {
-        double current = double.tryParse(currentQuantity) ?? 0;
-        if (current < aroma.quantity!) {
-          // Если количество уменьшилось, добавляем аромат с уменьшенным количеством
-          updatedAromas.add(AromaQuantity(
-            aroma: aroma.aroma,
-            quantity: aroma.quantity! - current, // Убираем разницу
-          ));
-        }
+      if (checkboxValue == true) {
+        // Если чекбокс отмечен, добавляем весь аромат с его количеством
+        updatedAromas.add(
+          AromaQuantity(aroma: aroma.aroma, quantity: current),
+        );
       }
     }
 
     return InventoryResponse(
-      materials: [], // если есть такие данные, добавьте их
-      instruments: [], // если есть такие данные, добавьте их
-      other: [], // если есть такие данные, добавьте их
-      aromas: updatedAromas,
-      devices: updatedDevices,
-    );
+        materials: [],
+        instruments: [],
+        other: [],
+        aromas: updatedAromas,
+        devices: updatedDevices);
   }
 
   void onSearch(String? text) {

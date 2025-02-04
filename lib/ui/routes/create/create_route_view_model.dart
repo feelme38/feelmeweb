@@ -23,7 +23,6 @@ import 'package:feelmeweb/presentation/navigation/route_generation.dart';
 import 'package:feelmeweb/presentation/navigation/route_names.dart';
 import 'package:feelmeweb/provider/di/di_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:get_it/get_it.dart';
 
 class CreateRouteViewModel extends BaseSearchViewModel {
   CreateRouteViewModel(this.userId, this.isUpdate) {

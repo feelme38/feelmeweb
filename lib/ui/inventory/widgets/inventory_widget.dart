@@ -80,7 +80,7 @@ class _InventoryWidgetState extends State<InventoryWidget> {
             onChanged: (value) {
               setState(() {
                 widget.checkboxValues[key] = value ?? false;
-                if (value == true) {
+                if (value == false) {
                   widget.textControllers[key]?.text = quantity;
                 }
               });
@@ -88,68 +88,72 @@ class _InventoryWidgetState extends State<InventoryWidget> {
           )),
           DataCell(Text(name)),
           DataCell(
-            Align(
-              alignment: Alignment.center,
-              child: SizedBox(
-                width: 100,
-                child: TextFormField(
-                  textAlign: TextAlign.center,
-                  maxLines: 1,
-                  maxLength: 10,
-                  keyboardType:
-                      const TextInputType.numberWithOptions(decimal: true),
-                  inputFormatters: [
-                    FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*$')),
-                  ],
-                  textAlignVertical: TextAlignVertical.center,
-                  decoration: InputDecoration(
-                    counterText: "",
-                    isDense: true,
-                    contentPadding: const EdgeInsets.symmetric(
-                        vertical: 8.0, horizontal: 4.0),
-                    labelStyle:
-                        const TextStyle(color: Colors.black, fontSize: 14),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(4.0),
-                      borderSide:
-                          const BorderSide(color: Colors.grey, width: 1.5),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(4.0),
-                      borderSide:
-                          const BorderSide(color: Colors.grey, width: 1.5),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(4.0),
-                      borderSide:
-                          const BorderSide(color: Colors.blue, width: 1.5),
-                    ),
-                    hintText: 'Кол-во',
-                  ),
-                  controller: widget.textControllers[key],
-                  style: const TextStyle(color: Colors.black, fontSize: 14),
-                  enabled: !(widget.checkboxValues[key] ?? true),
-                  onChanged: (value) {
-                    // Если поле пустое, устанавливаем '0'
-                    if (value.isEmpty ?? false) {
-                      widget.textControllers[key]?.text = '0';
-                      return;
-                    }
+            !key.contains('device')
+                ? Align(
+                    alignment: Alignment.center,
+                    child: SizedBox(
+                      width: 100,
+                      child: TextFormField(
+                        textAlign: TextAlign.center,
+                        maxLines: 1,
+                        maxLength: 10,
+                        keyboardType: const TextInputType.numberWithOptions(
+                            decimal: true),
+                        inputFormatters: [
+                          FilteringTextInputFormatter.allow(
+                              RegExp(r'^\d*\.?\d*$')),
+                        ],
+                        textAlignVertical: TextAlignVertical.center,
+                        decoration: InputDecoration(
+                          counterText: "",
+                          isDense: true,
+                          contentPadding: const EdgeInsets.symmetric(
+                              vertical: 8.0, horizontal: 4.0),
+                          labelStyle: const TextStyle(
+                              color: Colors.black, fontSize: 14),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(4.0),
+                            borderSide: const BorderSide(
+                                color: Colors.grey, width: 1.5),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(4.0),
+                            borderSide: const BorderSide(
+                                color: Colors.grey, width: 1.5),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(4.0),
+                            borderSide: const BorderSide(
+                                color: Colors.blue, width: 1.5),
+                          ),
+                          hintText: 'Кол-во',
+                        ),
+                        controller: widget.textControllers[key],
+                        style:
+                            const TextStyle(color: Colors.black, fontSize: 14),
+                        //enabled: (widget.checkboxValues[key] ?? true),
+                        onChanged: (value) {
+                          // Если поле пустое, устанавливаем '0'
+                          if (value.isEmpty) {
+                            widget.textControllers[key]?.text = '0';
+                            return;
+                          }
 
-                    // Если значение меньше 0, то возвращаем 0
-                    double? inputValue = double.tryParse(value ?? '');
-                    if (inputValue != null) {
-                      if (inputValue < 0) {
-                        widget.textControllers[key]?.text = '0';
-                      } else if (inputValue > maxQuantity) {
-                        widget.textControllers[key]?.text =
-                            maxQuantity.toString();
-                      }
-                    }
-                  },
-                ),
-              ),
-            ),
+                          // Если значение меньше 0, то возвращаем 0
+                          double? inputValue = double.tryParse(value ?? '');
+                          if (inputValue != null) {
+                            if (inputValue < 0) {
+                              widget.textControllers[key]?.text = '0';
+                            } else if (inputValue > maxQuantity) {
+                              widget.textControllers[key]?.text =
+                                  maxQuantity.toString();
+                            }
+                          }
+                        },
+                      ),
+                    ),
+                  )
+                : const SizedBox(),
           ),
         ],
       ),
