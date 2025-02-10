@@ -141,11 +141,11 @@ Map<String, dynamic> _$AddressToJson(Address instance) => <String, dynamic>{
 
 Device _$DeviceFromJson(Map<String, dynamic> json) => Device(
       id: json['id'] as String,
-      powerType: json['powerType'] as String,
-      model: json['model'] as String,
-      aromaVolume: (json['aromaVolume'] as num).toDouble(),
-      contract: json['contract'] as String,
-      place: json['place'] as String,
+      powerType: json['powerType'] as String?,
+      model: json['model'] as String?,
+      aromaVolume: (json['aromaVolume'] as num?)?.toDouble(),
+      contract: json['contract'] as String?,
+      place: json['place'] as String?,
       aroma: json['aroma'] == null
           ? null
           : Aroma.fromJson(json['aroma'] as Map<String, dynamic>),

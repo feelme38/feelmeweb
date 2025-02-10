@@ -223,11 +223,11 @@ class Address {
 @JsonSerializable()
 class Device {
   final String id;
-  final String powerType;
-  final String model;
-  final double aromaVolume;
-  final String contract;
-  final String place;
+  final String? powerType;
+  final String? model;
+  final double? aromaVolume;
+  final String? contract;
+  final String? place;
   final Aroma? aroma;
 
   Device({
