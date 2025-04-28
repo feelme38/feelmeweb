@@ -1,8 +1,8 @@
+import 'package:feelmeweb/core/extensions/base_class_extensions/build_context_ext.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
-import 'package:feelmeweb/core/extensions/base_class_extensions/build_context_ext.dart';
 
 import '../theme/dimen.dart';
 import '../theme/theme_colors.dart';
@@ -168,9 +168,10 @@ class BaseTextField extends StatelessWidget {
                       CupertinoButton(
                           padding: const EdgeInsets.only(top: Dimen.size5_5),
                           onPressed: () => onObscureToggle!(),
-                          child: Icon(obscure != true
-                              ? Icons.visibility_off
-                              : Icons.visibility,
+                          child: Icon(
+                              obscure != true
+                                  ? Icons.visibility_off
+                                  : Icons.visibility,
                               color: AppColor.basicDarkGrey,
                               size: 24)),
                     if (suffix != null) suffix!

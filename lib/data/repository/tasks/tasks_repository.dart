@@ -1,4 +1,3 @@
-import 'package:feelmeweb/data/models/response/task_types_response.dart';
 import 'package:feelmeweb/domain/tasks/delete_task_usecase.dart';
 import 'package:injectable/injectable.dart';
 
@@ -12,17 +11,11 @@ class TasksRepositoryImpl extends TasksRepository {
   TasksRepositoryImpl(this._tasksRemoteSource);
 
   @override
-  Future<Result<List<TaskTypeResponse>>> getTypes() async {
-    return await _tasksRemoteSource.getTypes();
-  }
-
-  @override
   Future<Result<bool>> deleteTask(DeleteTaskParam param) async {
     return await _tasksRemoteSource.deleteTask(param);
   }
 }
 
 abstract class TasksRepository {
-  Future<Result<List<TaskTypeResponse>>> getTypes();
   Future<Result<bool>> deleteTask(DeleteTaskParam param);
 }

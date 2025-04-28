@@ -1,5 +1,6 @@
 import 'package:feelmeweb/data/models/request/tasks_body.dart';
 import 'package:json_annotation/json_annotation.dart';
+
 part 'route_body.g.dart';
 
 @JsonSerializable()

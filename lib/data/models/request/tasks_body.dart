@@ -7,19 +7,17 @@ part 'tasks_body.g.dart';
 class TasksBody {
   final String? id;
   final String name;
-  final DateTime visitTime;
-  final String typeId;
   final String clientId;
   final String addressId;
+  final DateTime? visitDateTime;
   final List<SubtaskBody> subtasks;
 
-  TasksBody(
-    this.name,
-    this.visitTime,
-    this.typeId,
-    this.clientId,
-    this.addressId,
-    this.subtasks, {
+  TasksBody({
+    required this.name,
+    required this.clientId,
+    required this.addressId,
+    required this.subtasks,
+    required this.visitDateTime,
     this.id, // Оставляем id как необязательный именованный параметр
   });
 
@@ -31,20 +29,24 @@ class TasksBody {
   TasksBody copyWith({
     String? id,
     String? name,
-    DateTime? visitTime,
+    Object? visitDateTime = _unset, // <= отличие!
     String? typeId,
     String? clientId,
     String? addressId,
     List<SubtaskBody>? subtasks,
   }) {
     return TasksBody(
-      name ?? this.name,
-      visitTime ?? this.visitTime,
-      typeId ?? this.typeId,
-      clientId ?? this.clientId,
-      addressId ?? this.addressId,
-      subtasks ?? this.subtasks,
+      name: name ?? this.name,
+      clientId: clientId ?? this.clientId,
+      addressId: addressId ?? this.addressId,
+      subtasks: subtasks ?? this.subtasks,
       id: id ?? this.id, // Исправленный порядок
+      visitDateTime: visitDateTime == _unset
+          ? this.visitDateTime
+          : visitDateTime as DateTime?,
     );
   }
 }
+
+// Вне класса (глобально в файле)
+const _unset = Object();

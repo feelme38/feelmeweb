@@ -31,6 +31,7 @@ class RouteRemoteSource {
 
   Future<Result<bool>> createRoute({required RouteBody body}) async {
     try {
+      print(body.toJson());
       await _networkProvider.dio.onWebPost(Urls.route, data: body.toJson());
       return Success(true);
     } on DioException catch (e) {

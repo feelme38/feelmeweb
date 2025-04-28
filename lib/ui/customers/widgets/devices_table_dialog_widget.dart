@@ -8,7 +8,6 @@ import 'package:flutter/material.dart';
 
 import '../../../data/models/response/device_response.dart';
 import '../../../presentation/buttons/base_text_button.dart';
-import '../../../presentation/theme/theme_colors.dart';
 import '../../common/app_table_widget.dart';
 
 typedef RemoveDeviceCallback = void Function(String, int);

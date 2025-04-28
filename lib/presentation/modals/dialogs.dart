@@ -1,20 +1,23 @@
-import 'package:feelmeweb/data/models/request/create_user_body.dart';
+import 'package:feelmeweb/core/extensions/base_class_extensions/build_context_ext.dart';
+import 'package:feelmeweb/data/models/request/subtask_body.dart';
 import 'package:feelmeweb/data/models/response/address_dto.dart';
+import 'package:feelmeweb/data/models/response/aroma_response.dart';
 import 'package:feelmeweb/data/models/response/device_powers.dart';
+import 'package:feelmeweb/data/models/response/last_checklist_info_response.dart';
 import 'package:feelmeweb/data/models/response/region_response.dart';
+import 'package:feelmeweb/data/models/response/task_types_response.dart';
 import 'package:feelmeweb/data/repository/users/users_repository.dart';
 import 'package:feelmeweb/presentation/modals/widgets/add_address_dialog.dart';
 import 'package:feelmeweb/presentation/modals/widgets/add_device_dialog.dart';
 import 'package:feelmeweb/presentation/modals/widgets/addresses_dialog.dart';
 import 'package:feelmeweb/presentation/modals/widgets/create_aroma_dialog.dart';
 import 'package:feelmeweb/presentation/modals/widgets/create_customer_dialog.dart';
+import 'package:feelmeweb/presentation/modals/widgets/create_subtask_dialog_widget.dart';
 import 'package:feelmeweb/presentation/modals/widgets/create_user_dialog.dart';
 import 'package:feelmeweb/presentation/navigation/route_generation.dart';
-import 'package:flutter/material.dart';
-import 'package:feelmeweb/core/extensions/base_class_extensions/build_context_ext.dart';
 import 'package:feelmeweb/presentation/theme/dimen.dart';
+import 'package:flutter/material.dart';
 
-import '../../main.dart';
 import '../../provider/di/di_provider.dart';
 import 'widgets/create_region_dialog.dart';
 
@@ -59,6 +62,7 @@ class Dialogs {
           width: context.currentSize.width * 0.35);
     }
   }
+
   static Future<void> createRegionDialog(
       BuildContext? fromContext, CreateRegionCallback callback) async {
     final context = fromContext ?? getContext();
@@ -67,6 +71,7 @@ class Dialogs {
           width: context.currentSize.width * 0.35);
     }
   }
+
   static Future<void> showCreateCustomerDialog(
       BuildContext? fromContext, CreateCustomerCallback callback) async {
     final context = fromContext ?? getContext();
@@ -123,6 +128,26 @@ class Dialogs {
           });
       dismissCallback?.call(null);
       return result;
+    }
+  }
+
+  static Future<void> createSubtaskDialog(BuildContext? fromContext,
+      {required LastCheckListInfoResponse checklist,
+      required List<AromaResponse> aromas,
+      required List<SubtaskTypeResponse> subtaskTypes,
+      required CreateSubtaskCallback createSubtaskCallback,
+      SubtaskBody? subtask}) async {
+    final context = fromContext ?? getContext();
+    if (context != null) {
+      await showBaseDialog(
+          fromContext,
+          CreateSubtaskDialogWidget(
+              subtask: subtask,
+              checklist: checklist,
+              aromas: aromas,
+              subtaskTypes: subtaskTypes,
+              callback: createSubtaskCallback),
+          width: context.currentSize.width * 0.4);
     }
   }
 

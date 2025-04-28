@@ -11,7 +11,8 @@ class SubtaskBody {
   final String comment;
   final String expectedAromaId;
   final double expectedAromaVolume;
-  final int estimatedCompletedTime;
+  final String volumeFormula;
+  final String typeId;
 
   SubtaskBody(
     this.customerId,
@@ -19,7 +20,8 @@ class SubtaskBody {
     this.comment,
     this.expectedAromaId,
     this.expectedAromaVolume,
-    this.estimatedCompletedTime, {
+    this.volumeFormula,
+    this.typeId, {
     this.id,
     this.addressId,
   });
@@ -38,7 +40,8 @@ class SubtaskBody {
     String? comment,
     String? expectedAromaId,
     double? expectedAromaVolume,
-    int? estimatedCompletedTime,
+    String? volumeFormula,
+    String? typeId,
   }) {
     return SubtaskBody(
       customerId ?? this.customerId,
@@ -46,7 +49,8 @@ class SubtaskBody {
       comment ?? this.comment,
       expectedAromaId ?? this.expectedAromaId,
       expectedAromaVolume ?? this.expectedAromaVolume,
-      estimatedCompletedTime ?? this.estimatedCompletedTime,
+      volumeFormula ?? this.volumeFormula,
+      typeId ?? this.typeId,
       id: id ?? this.id,
       addressId: addressId ?? this.addressId,
     );

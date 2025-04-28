@@ -20,8 +20,8 @@ class Urls {
   static const lastChecklists = 'checklists/last';
   static const customerAddress = 'customer/address';
   static const task = 'task';
-  static const taskTypes = 'task/types';
   static const subtask = 'subtask';
+  static const subtaskTypes = 'subtask/types';
   static const route = 'route';
   static const routeStatus = 'route/status';
 

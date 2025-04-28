@@ -24,7 +24,8 @@ class ChecklistRemoteSource {
         'addressId': body.addressId
       });
       var result = (response.data as List)
-          .map((e) => LastCheckListInfoResponse.fromJson(e))
+          .map((e) => LastCheckListInfoResponse.fromJson(e)
+              .copyWith(addressId: body.addressId, customerId: body.customerId))
           .toList();
       return Success(result);
     } on DioException catch (e) {

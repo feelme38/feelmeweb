@@ -2,7 +2,6 @@ import 'package:feelmeweb/core/extensions/base_class_extensions/build_context_ex
 import 'package:feelmeweb/data/models/request/create_aroma_body.dart';
 import 'package:feelmeweb/presentation/buttons/base_text_button.dart';
 import 'package:feelmeweb/presentation/widgets/base_text_field.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 typedef CreateAromaCallback = void Function(CreateAromaBody);
@@ -17,16 +16,16 @@ class CreateAromaDialog extends StatefulWidget {
 }
 
 class _CreateAromaDialogState extends State<CreateAromaDialog> {
-  final controller = TextEditingController();
+  final nameController = TextEditingController();
+  final typeController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return Material(
       color: Colors.white,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-          children: [
-        BaseTextField(controller: controller, helperText: 'Название аромата'),
+      child: Column(mainAxisSize: MainAxisSize.min, children: [
+        BaseTextField(
+            controller: nameController, helperText: 'Название аромата'),
         const SizedBox(height: 12),
         SizedBox(
             width: context.currentSize.width * 0.4,
@@ -45,7 +44,9 @@ class _CreateAromaDialogState extends State<CreateAromaDialog> {
                       buttonText: 'Добавить',
                       onTap: () {
                         context.navigateUp();
-                        widget.callback(CreateAromaBody(name: controller.text));
+                        widget.callback(CreateAromaBody(
+                            name: nameController.text,
+                            type: typeController.text));
                       },
                       enabled: true))
             ]))

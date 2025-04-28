@@ -136,6 +136,7 @@ extension DioExt<T> on Dio {
   Future<Response<T>> onWebPost(String path,
       {Map<String, dynamic>? data}) async {
     if (await hasInternet()) {
+      print(json.encode(data));
       var response = await post<T>(path,
           data: data,
           options: Options(

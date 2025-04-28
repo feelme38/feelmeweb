@@ -19,10 +19,10 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
-        routerConfig: getIt<RouteGenerator>().router,
-        debugShowCheckedModeBanner: false,
-        title: 'Панель управления системой',
-        theme: AppTheme.dataLight,
+      routerConfig: getIt<RouteGenerator>().router,
+      debugShowCheckedModeBanner: false,
+      title: 'Панель управления системой',
+      theme: AppTheme.dataLight,
     );
   }
 }

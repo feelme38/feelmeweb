@@ -1,5 +1,6 @@
 import 'package:feelmeweb/data/models/response/checklist_info_response.dart';
 import 'package:feelmeweb/data/models/response/last_checklist_info_response.dart';
+import 'package:feelmeweb/data/models/response/task_types_response.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'route_response.g.dart';
@@ -45,7 +46,7 @@ class RouteResponse {
 class Task {
   final String id;
   final String name;
-  final TaskType taskType;
+
   final Client client;
   final String taskStatus;
   final int completedTime;
@@ -53,11 +54,11 @@ class Task {
   final List<Subtask> subtasks;
   final String routeId;
   final List<LastCheckListInfoResponse> checkListInfo;
+  final DateTime? visitDateTime;
 
   Task({
     required this.id,
     required this.name,
-    required this.taskType,
     required this.client,
     required this.taskStatus,
     required this.completedTime,
@@ -65,6 +66,7 @@ class Task {
     required this.subtasks,
     required this.routeId,
     required this.checkListInfo,
+    this.visitDateTime,
   });
 
   factory Task.fromJson(Map<String, dynamic> json) => _$TaskFromJson(json);
@@ -81,11 +83,11 @@ class Task {
     List<Subtask>? subtasks,
     String? routeId,
     List<LastCheckListInfoResponse>? checkListInfo,
+    DateTime? visitDateTime,
   }) {
     return Task(
       id: id ?? this.id,
       name: name ?? this.name,
-      taskType: taskType ?? this.taskType,
       client: client ?? this.client,
       taskStatus: taskStatus ?? this.taskStatus,
       completedTime: completedTime ?? this.completedTime,
@@ -93,6 +95,7 @@ class Task {
       subtasks: subtasks ?? this.subtasks,
       routeId: routeId ?? this.routeId,
       checkListInfo: checkListInfo ?? this.checkListInfo,
+      visitDateTime: visitDateTime ?? this.visitDateTime,
     );
   }
 }
@@ -105,13 +108,14 @@ class Subtask {
   final String comment;
   final Aroma expectedAroma;
   final double expectedAromaVolume;
+  final String? volumeFormula;
   final bool isNeedChangeBattery;
   final String subtaskStatus;
-  final int estimatedCompletedTime;
   final String? startAt;
   final String? endAt;
   final String? arrivalTime;
   final CheckListInfoResponse? checklist;
+  final SubtaskTypeResponse subtaskType;
 
   Subtask({
     required this.id,
@@ -120,13 +124,14 @@ class Subtask {
     required this.comment,
     required this.expectedAroma,
     required this.expectedAromaVolume,
+    this.volumeFormula,
     required this.isNeedChangeBattery,
     required this.subtaskStatus,
-    required this.estimatedCompletedTime,
     this.startAt,
     this.endAt,
     this.arrivalTime,
     this.checklist,
+    required this.subtaskType,
   });
 
   factory Subtask.fromJson(Map<String, dynamic> json) =>
@@ -140,12 +145,13 @@ class Subtask {
     String? comment,
     Aroma? expectedAroma,
     double? expectedAromaVolume,
+    String? volumeFormula,
     bool? isNeedChangeBattery,
     String? subtaskStatus,
-    int? estimatedCompletedTime,
     String? startAt,
     String? endAt,
     String? arrivalTime,
+    SubtaskTypeResponse? subtaskType,
   }) {
     return Subtask(
       id: id ?? this.id,
@@ -154,13 +160,13 @@ class Subtask {
       comment: comment ?? this.comment,
       expectedAroma: expectedAroma ?? this.expectedAroma,
       expectedAromaVolume: expectedAromaVolume ?? this.expectedAromaVolume,
+      volumeFormula: volumeFormula ?? this.volumeFormula,
       isNeedChangeBattery: isNeedChangeBattery ?? this.isNeedChangeBattery,
       subtaskStatus: subtaskStatus ?? this.subtaskStatus,
-      estimatedCompletedTime:
-          estimatedCompletedTime ?? this.estimatedCompletedTime,
       startAt: startAt ?? this.startAt,
       endAt: endAt ?? this.endAt,
       arrivalTime: arrivalTime ?? this.arrivalTime,
+      subtaskType: subtaskType ?? this.subtaskType,
     );
   }
 }
