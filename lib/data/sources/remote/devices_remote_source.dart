@@ -1,8 +1,5 @@
 import 'package:dio/dio.dart';
 import 'package:feelmeweb/core/result/result_of.dart';
-import 'package:feelmeweb/data/models/response/aroma_response.dart';
-import 'package:feelmeweb/data/models/response/customer_response.dart';
-import 'package:feelmeweb/data/models/response/user_response.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../../provider/network/network_provider.dart';

@@ -2,6 +2,7 @@ import 'package:feelmeweb/presentation/navigation/route_names.dart';
 import 'package:feelmeweb/ui/aromas/aromas_page.dart';
 import 'package:feelmeweb/ui/checklists/checklists_page.dart';
 import 'package:feelmeweb/ui/customers/customers_page.dart';
+import 'package:feelmeweb/ui/device_models/device_models_page.dart';
 import 'package:feelmeweb/ui/inventory/inventory_page.dart';
 import 'package:feelmeweb/ui/regions/regions_page.dart';
 import 'package:feelmeweb/ui/route_info/route_info_page.dart';
@@ -115,6 +116,10 @@ class RouteGenerator {
 
             return InventoryPage.create(userId!);
           },
+        ),
+        GoRoute(
+          path: RouteName.deviceModels,
+          builder: (context, state) => const DeviceModelsPage(),
         ),
       ],
     );

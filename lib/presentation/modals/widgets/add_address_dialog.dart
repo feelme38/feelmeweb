@@ -1,19 +1,20 @@
 import 'package:feelmeweb/core/extensions/base_class_extensions/build_context_ext.dart';
 import 'package:feelmeweb/data/models/request/add_customer_address.dart';
 import 'package:feelmeweb/presentation/buttons/base_text_button.dart';
-import 'package:feelmeweb/presentation/widgets/row_select_button.dart';
-import 'package:feelmeweb/ui/regions/regions_view_model.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../../data/models/response/region_response.dart';
-import '../../../domain/address/add_address_usecase.dart';
 import '../../widgets/base_text_field.dart';
+
 typedef AddCustomerCallback = void Function(AddCustomerAddressBody);
+
 class AddAddressDialog extends StatefulWidget {
   const AddAddressDialog(
-      {super.key, required this.regions, required this.customerId, required this.addCallback});
+      {super.key,
+      required this.regions,
+      required this.customerId,
+      required this.addCallback});
 
   final String customerId;
   final AddCustomerCallback addCallback;
@@ -28,7 +29,6 @@ class _AddAddressDialogState extends State<AddAddressDialog> {
   final latController = TextEditingController();
   final lonController = TextEditingController();
   late var selectedRegion = widget.regions.first;
-
 
   @override
   Widget build(BuildContext context) {

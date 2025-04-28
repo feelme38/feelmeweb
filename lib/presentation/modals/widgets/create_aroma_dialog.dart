@@ -1,5 +1,6 @@
 import 'package:feelmeweb/core/extensions/base_class_extensions/build_context_ext.dart';
 import 'package:feelmeweb/data/models/request/create_aroma_body.dart';
+import 'package:feelmeweb/data/models/response/aroma_response.dart';
 import 'package:feelmeweb/presentation/buttons/base_text_button.dart';
 import 'package:feelmeweb/presentation/widgets/base_text_field.dart';
 import 'package:flutter/material.dart';
@@ -17,40 +18,75 @@ class CreateAromaDialog extends StatefulWidget {
 
 class _CreateAromaDialogState extends State<CreateAromaDialog> {
   final nameController = TextEditingController();
-  final typeController = TextEditingController();
+  final listAromaTypes = AromaType.values;
+  late var selectedAromaType = listAromaTypes.first;
 
   @override
   Widget build(BuildContext context) {
     return Material(
       color: Colors.white,
-      child: Column(mainAxisSize: MainAxisSize.min, children: [
-        BaseTextField(
-            controller: nameController, helperText: 'Название аромата'),
-        const SizedBox(height: 12),
-        SizedBox(
-            width: context.currentSize.width * 0.4,
-            child: Row(children: [
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          Row(
+            children: [
               Expanded(
-                  child: BaseTextButton(
-                      buttonText: 'Отмена',
-                      onTap: () {
-                        context.navigateUp(arg: true);
+                child: BaseTextField(
+                    controller: nameController, helperText: 'Название аромата'),
+              ),
+              Padding(
+                  padding: const EdgeInsets.fromLTRB(16.0, 0, 8.0, 0),
+                  child: DropdownButton<AromaType>(
+                      value: selectedAromaType,
+                      onChanged: (newValue) {
+                        setState(() {
+                          selectedAromaType = newValue ?? selectedAromaType;
+                        });
                       },
-                      enabled: true,
-                      buttonColor: Colors.redAccent)),
-              const SizedBox(width: 20),
-              Expanded(
+                      items: listAromaTypes.map((e) {
+                        return DropdownMenuItem<AromaType>(
+                            value: e,
+                            child: SizedBox(width: 150, child: Text(e.name)));
+                      }).toList(),
+                      focusColor: Colors.white,
+                      dropdownColor: Colors.white,
+                      style:
+                          const TextStyle(color: Colors.black, fontSize: 16)))
+            ],
+          ),
+          const SizedBox(height: 12),
+          SizedBox(
+            width: context.currentSize.width * 0.4,
+            child: Row(
+              children: [
+                Expanded(
+                    child: BaseTextButton(
+                        buttonText: 'Отмена',
+                        onTap: () {
+                          context.navigateUp(arg: true);
+                        },
+                        enabled: true,
+                        buttonColor: Colors.redAccent)),
+                const SizedBox(width: 20),
+                Expanded(
                   child: BaseTextButton(
                       buttonText: 'Добавить',
                       onTap: () {
                         context.navigateUp();
-                        widget.callback(CreateAromaBody(
-                            name: nameController.text,
-                            type: typeController.text));
+                        widget.callback(
+                          CreateAromaBody(
+                              name: nameController.text,
+                              type: selectedAromaType),
+                        );
                       },
-                      enabled: true))
-            ]))
-      ]),
+                      enabled: true),
+                )
+              ],
+            ),
+          )
+        ],
+      ),
     );
   }
 }

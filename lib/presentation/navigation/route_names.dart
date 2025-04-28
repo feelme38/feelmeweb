@@ -12,4 +12,5 @@ class RouteName {
   static const checklists = '/check-lists';
   static const routeInfo = '/route-info';
   static const inventory = '/inventory';
+  static const deviceModels = '/device-models';
 }

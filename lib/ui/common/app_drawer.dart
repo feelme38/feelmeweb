@@ -86,10 +86,26 @@ Drawer getDrawer(BuildContext context, {Function()? reloadCallback}) {
               ListTile(
                   title: const Text('Добавить'),
                   onTap: () {
-                    //context.go('/home'); // Переход на Home
-                    Navigator.pop(context); // Закрытие drawer
+                    Navigator.pop(context);
                     Dialogs.createAromaDialog(
                         context, (body) => createAroma(body, reloadCallback));
+                  })
+            ]),
+        ExpansionTile(
+            leading: const Icon(Icons.devices),
+            title: const Text('Типы оборудования'),
+            children: [
+              ListTile(
+                  title: const Text('Список'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    context.go('/device-models');
+                  }),
+              ListTile(
+                  title: const Text('Добавить'),
+                  onTap: () {
+                    // TODO: Implement create device model dialog
+                    Navigator.pop(context);
                   })
             ]),
         ExpansionTile(
@@ -106,8 +122,7 @@ Drawer getDrawer(BuildContext context, {Function()? reloadCallback}) {
               ListTile(
                 title: const Text('Добавить'),
                 onTap: () {
-                  //context.go('/home'); // Переход на Home
-                  Navigator.pop(context); // Закрытие drawer
+                  Navigator.pop(context);
                   Dialogs.createRegionDialog(
                       context, (body) => createRegion(body, reloadCallback));
                 },
@@ -127,8 +142,7 @@ Drawer getDrawer(BuildContext context, {Function()? reloadCallback}) {
               ListTile(
                 title: const Text('Добавить'),
                 onTap: () {
-                  //context.go('/home'); // Переход на Home
-                  Navigator.pop(context); // Закрытие drawer
+                  Navigator.pop(context);
                   Dialogs.showCreateCustomerDialog(
                       context, (body) => createCustomer(body, reloadCallback));
                 },
@@ -147,8 +161,7 @@ Drawer getDrawer(BuildContext context, {Function()? reloadCallback}) {
           leading: const Icon(Icons.logout),
           title: const Text('Выход'),
           onTap: () {
-            // context.go('/logout'); // Переход на Logout
-            Navigator.pop(context); // Закрытие drawer
+            Navigator.pop(context);
           },
         ),
       ],

@@ -1,4 +1,3 @@
-import 'package:feelmeweb/data/models/response/customer_response.dart';
 import 'package:feelmeweb/data/models/response/route_response.dart';
 import 'package:json_annotation/json_annotation.dart';
 
