@@ -1,6 +1,7 @@
 import 'package:feelmeweb/core/extensions/base_class_extensions/build_context_ext.dart';
 import 'package:feelmeweb/data/models/request/add_device_body.dart';
 import 'package:feelmeweb/data/models/response/address_dto.dart';
+import 'package:feelmeweb/data/models/response/device_models.dart';
 import 'package:feelmeweb/data/models/response/device_powers.dart';
 import 'package:feelmeweb/presentation/buttons/base_text_button.dart';
 import 'package:feelmeweb/presentation/widgets/base_text_field.dart';

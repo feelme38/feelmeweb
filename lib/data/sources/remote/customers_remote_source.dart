@@ -8,6 +8,7 @@ import 'package:injectable/injectable.dart';
 import '../../../provider/network/network_provider.dart';
 import '../../../provider/network/urls.dart';
 import '../../models/request/add_customer_address.dart';
+import '../../models/request/update_customer_body.dart';
 
 @singleton
 class CustomersRemoteSource {
@@ -50,7 +51,6 @@ class CustomersRemoteSource {
   Future<Result<bool>> createCustomer(CreateCustomerBody body) async {
     try {
       await _networkProvider.dio.onWebPost(Urls.customer, data: body.toJson());
-
       return Success(true);
     } on DioException catch (e) {
       return Failure(exception: e, message: e.message);
@@ -70,19 +70,29 @@ class CustomersRemoteSource {
       return Failure(exception: e, message: e.message);
     }
   }
-// Future<Result> deleteAroma(String? aromaId) async {
-//   try {
-//     await _networkProvider.dio.onGet(
-//         Urls.aromas,
-//         queryParams: {
-//           "aromaId": aromaId
-//         }
-//     );
-//     return Success(null);
-//   } on DioException catch (e) {
-//     return Failure(exception: e, message: e.message);
-//   } on ConnectionException catch (e) {
-//     return Failure(exception: e, message: e.message);
-//   }
-// }
+
+  Future<Result<bool>> updateCustomer(UpdateCustomerBody body) async {
+    try {
+      await _networkProvider.dio.onPatch(
+        Urls.customer,
+        data: body.toJson(),
+      );
+      return Success(true);
+    } on DioException catch (e) {
+      return Failure(exception: e, message: e.message);
+    } on ConnectionException catch (e) {
+      return Failure(exception: e, message: e.message);
+    }
+  }
+
+  Future<Result<bool>> deleteCustomer(String id) async {
+    try {
+      await _networkProvider.dio.onDelete('${Urls.customer}/$id');
+      return Success(true);
+    } on DioException catch (e) {
+      return Failure(exception: e, message: e.message);
+    } on ConnectionException catch (e) {
+      return Failure(exception: e, message: e.message);
+    }
+  }
 }

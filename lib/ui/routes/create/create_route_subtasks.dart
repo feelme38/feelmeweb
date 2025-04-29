@@ -1,8 +1,6 @@
-import 'package:feelmeweb/core/extensions/base_class_extensions/string_ext.dart';
 import 'package:feelmeweb/presentation/buttons/base_text_button.dart';
 import 'package:feelmeweb/presentation/theme/theme_colors.dart';
 import 'package:feelmeweb/ui/routes/create/widgets/choose_subtasks_widget.dart';
-import 'package:feelmeweb/ui/routes/create/widgets/time_input_field.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -19,41 +17,10 @@ class CreateRouteSubtasksWidget extends StatelessWidget {
         .watch<CreateRouteViewModel>()
         .isCreateOrUpdateRouteButtonEnabled;
 
-    final checklists = context.watch<CreateRouteViewModel>().lastChecklists;
-    final checklistsNotNullId =
-        checklists.where((item) => item.id != null).toList();
-    final lastDate = checklistsNotNullId.isEmpty
-        ? " – "
-        : checklistsNotNullId.firstOrNull?.createdAt?.toDateTime()?.orDash();
-
-    final visitTimeController =
-        context.watch<CreateRouteViewModel>().visitTimeController;
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Align(
-          alignment: Alignment.centerLeft,
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                const Text("Время посещения:"),
-                TimeInputField(
-                  controller: visitTimeController,
-                  onChanged: (_) => viewModel.updateVisitTime(),
-                ),
-                const SizedBox(width: 16),
-                Text("Дата последнего посещения: $lastDate"),
-              ],
-            ),
-          ),
-        ),
-        Expanded(
-          flex: 1,
-          child: CreateRouteChooseSubtasksWidget(checklists: checklists),
-        ),
+        const Expanded(flex: 1, child: CreateRouteChooseSubtasksWidget()),
         Row(
           children: [
             Padding(

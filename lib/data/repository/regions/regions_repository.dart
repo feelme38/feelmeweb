@@ -1,8 +1,9 @@
 import 'package:feelmeweb/core/result/result_of.dart';
+import 'package:feelmeweb/data/models/request/create_region_body.dart';
+import 'package:feelmeweb/data/models/request/update_region_body.dart';
 import 'package:feelmeweb/data/models/response/region_response.dart';
 import 'package:injectable/injectable.dart';
 
-import '../../models/request/create_region_body.dart';
 import '../../sources/remote/regions_remote_source.dart';
 
 @Singleton(as: RegionsRepository)
@@ -28,12 +29,24 @@ class RegionsRepositoryImpl extends RegionsRepository {
   @override
   Future<Result<bool>> createRegion(CreateRegionBody body) =>
       _regionsRemoteSource.createRegion(body);
+
+  @override
+  Future<Result<bool>> updateRegion(UpdateRegionBody body) =>
+      _regionsRemoteSource.updateRegion(body);
+
+  @override
+  Future<Result<bool>> deleteRegion(String id) =>
+      _regionsRemoteSource.deleteRegion(id);
 }
 
 abstract class RegionsRepository {
   Future<Result<List<RegionResponse>>> getRegions();
 
   Future<Result<bool>> createRegion(CreateRegionBody body);
+
+  Future<Result<bool>> updateRegion(UpdateRegionBody body);
+
+  Future<Result<bool>> deleteRegion(String id);
 
   List<RegionResponse> get regions;
 }

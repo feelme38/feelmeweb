@@ -1,19 +1,22 @@
-import 'package:feelmeweb/data/models/response/aroma_response.dart';
+import 'package:feelmeweb/data/models/request/update_region_body.dart';
 import 'package:feelmeweb/data/models/response/region_response.dart';
-import 'package:feelmeweb/domain/aromas/get_aromas_usecase.dart';
+import 'package:feelmeweb/domain/regions/delete_region_use_case.dart';
 import 'package:feelmeweb/domain/regions/get_regions_usecase.dart';
+import 'package:feelmeweb/domain/regions/update_region_use_case.dart';
 import 'package:feelmeweb/presentation/base_vm/base_search_view_model.dart';
+import 'package:feelmeweb/presentation/modals/dialogs.dart';
 import 'package:flutter/material.dart';
 
 import '../../presentation/alert/alert.dart';
 
 class RegionsViewModel extends BaseSearchViewModel {
-
   RegionsViewModel() {
     loadRegions();
   }
 
   final _getRegionsUseCase = GetRegionsUseCase();
+  final _updateRegionUseCase = UpdateRegionUseCase();
+  final _deleteRegionUseCase = DeleteRegionUseCase();
 
   List<RegionResponse> _regions = [];
   List<RegionResponse> get regions => _regions;
@@ -36,39 +39,64 @@ class RegionsViewModel extends BaseSearchViewModel {
     loadingOff();
   }
 
+  void updateRegion(UpdateRegionBody body) async {
+    loadingOn();
+    (await executeUseCaseParam<bool, UpdateRegionBody>(
+            _updateRegionUseCase, body))
+        .doOnError((message, exception) {
+      addAlert(Alert(message ?? '$exception', style: AlertStyle.danger));
+    }).doOnSuccess((value) {
+      addAlert(Alert('Район обновлен', style: AlertStyle.success));
+      loadRegions();
+    });
+    loadingOff();
+  }
+
+  void deleteRegion(String id) async {
+    loadingOn();
+    (await executeUseCaseParam<bool, String>(_deleteRegionUseCase, id))
+        .doOnError((message, exception) {
+      addAlert(Alert(message ?? '$exception', style: AlertStyle.danger));
+    }).doOnSuccess((value) {
+      addAlert(Alert('Район удален', style: AlertStyle.success));
+      loadRegions();
+    });
+    loadingOff();
+  }
+
   void onSearch(String? text) {
     clearEnabled = text != null && text.isNotEmpty;
     //refilter(state.defects);
   }
 
-  List<DataRow> getTableRegionsRows(List<RegionResponse> regions) => regions.map((region) {
-    return DataRow(cells: [
-      DataCell(
-          Align(
+  List<DataRow> getTableRegionsRows(
+          List<RegionResponse> regions, BuildContext context) =>
+      regions.map((region) {
+        return DataRow(cells: [
+          DataCell(Align(
             alignment: Alignment.center,
             child: Text(region.name),
-          )
-      ),
-      DataCell(Row(
-        children: [
-          IconButton(
-            icon: const Icon(Icons.edit),
-            onPressed: () {
-              // Логика редактирования пользователя
-            },
-            tooltip: 'Редактировать',
-          ),
-          IconButton(
-            icon: const Icon(Icons.delete),
-            onPressed: () {
-              // Логика удаления пользователя
-            },
-            tooltip: 'Удалить',
-          ),
-        ],
-      )),
-    ]);
-  }).toList();
+          )),
+          DataCell(Row(
+            children: [
+              IconButton(
+                icon: const Icon(Icons.edit),
+                onPressed: () {
+                  Dialogs.showUpdateRegionDialog(context, region, updateRegion);
+                },
+                tooltip: 'Редактировать',
+              ),
+              IconButton(
+                icon: const Icon(Icons.delete),
+                onPressed: () {
+                  deleteRegion(region.id);
+                },
+                tooltip: 'Удалить',
+              ),
+            ],
+          )),
+        ]);
+      }).toList();
 
   @override
   String get title => 'Районы';

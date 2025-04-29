@@ -1,5 +1,7 @@
 import 'package:feelmeweb/data/models/request/create_aroma_body.dart';
+import 'package:feelmeweb/data/models/request/create_device_model_body.dart';
 import 'package:feelmeweb/data/models/request/create_region_body.dart';
+import 'package:feelmeweb/domain/devices/create_device_model_usecase.dart';
 import 'package:feelmeweb/domain/regions/create_region_usecase.dart';
 import 'package:feelmeweb/presentation/modals/dialogs.dart';
 import 'package:flutter/material.dart';
@@ -24,6 +26,12 @@ Future<void> createUser(CreateUserBody body, Function()? reloadCallback) async {
 Future<void> createAroma(
     CreateAromaBody body, Function()? reloadCallback) async {
   await CreateAromaUseCase().call(body);
+  reloadCallback?.call();
+}
+
+Future<void> createDeviceModel(
+    CreateDeviceModelBody body, Function()? reloadCallback) async {
+  await CreateDeviceModelUseCase().call(body);
   reloadCallback?.call();
 }
 
@@ -104,8 +112,9 @@ Drawer getDrawer(BuildContext context, {Function()? reloadCallback}) {
               ListTile(
                   title: const Text('Добавить'),
                   onTap: () {
-                    // TODO: Implement create device model dialog
                     Navigator.pop(context);
+                    Dialogs.createDeviceModelDialog(context,
+                        (body) => createDeviceModel(body, reloadCallback));
                   })
             ]),
         ExpansionTile(

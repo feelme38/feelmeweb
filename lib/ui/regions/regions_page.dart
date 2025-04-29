@@ -19,21 +19,25 @@ class RegionsPage extends StatelessWidget {
     final viewModel = context.read<RegionsViewModel>();
 
     return BaseScreen<RegionsViewModel>(
+      needBackButton: false,
+      needAppBar: true,
+      drawer: getDrawer(context, reloadCallback: viewModel.loadRegions),
+      appBar: SearchWidget<RegionsViewModel>(
+        context.read<RegionsViewModel>().onSearch,
+        () {},
+        needBottomEdge: true,
         needBackButton: false,
-        needAppBar: true,
-        drawer: getDrawer(context, reloadCallback: viewModel.loadRegions),
-        appBar: SearchWidget<RegionsViewModel>(
-          context.read<RegionsViewModel>().onSearch,
-          () {},
-          needBottomEdge: true,
-          needBackButton: false,
+      ),
+      child: Align(
+        alignment: Alignment.topCenter,
+        child: SingleChildScrollView(
+          scrollDirection: Axis.vertical,
+          child: AppTableWidget(
+            dataColumns: viewModel.tableRegionsColumns,
+            dataRows: viewModel.getTableRegionsRows(regions, context),
+          ),
         ),
-        child: Align(
-            alignment: Alignment.topCenter,
-            child: SingleChildScrollView(
-                scrollDirection: Axis.vertical,
-                child: AppTableWidget(
-                    dataColumns: viewModel.tableRegionsColumns,
-                    dataRows: viewModel.getTableRegionsRows(regions)))));
+      ),
+    );
   }
 }

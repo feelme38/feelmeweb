@@ -1,25 +1,25 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'device_model_response.dart';
+part of 'update_device_model_body.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-DeviceModelResponse _$DeviceModelResponseFromJson(Map<String, dynamic> json) =>
-    DeviceModelResponse(
+UpdateDeviceModelBody _$UpdateDeviceModelBodyFromJson(
+        Map<String, dynamic> json) =>
+    UpdateDeviceModelBody(
       id: json['id'] as String,
       name: json['name'] as String,
-      worker_type:
-          $enumDecodeNullable(_$WorkerTypeEnumMap, json['worker_type']),
+      worker_type: $enumDecode(_$WorkerTypeEnumMap, json['worker_type']),
     );
 
-Map<String, dynamic> _$DeviceModelResponseToJson(
-        DeviceModelResponse instance) =>
+Map<String, dynamic> _$UpdateDeviceModelBodyToJson(
+        UpdateDeviceModelBody instance) =>
     <String, dynamic>{
       'id': instance.id,
       'name': instance.name,
-      'worker_type': _$WorkerTypeEnumMap[instance.worker_type],
+      'worker_type': _$WorkerTypeEnumMap[instance.worker_type]!,
     };
 
 const _$WorkerTypeEnumMap = {

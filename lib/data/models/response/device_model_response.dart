@@ -6,12 +6,12 @@ part 'device_model_response.g.dart';
 class DeviceModelResponse {
   final String id;
   final String name;
-  final String workerType;
+  final WorkerType? worker_type;
 
   DeviceModelResponse({
     required this.id,
     required this.name,
-    required this.workerType,
+    this.worker_type,
   });
 
   factory DeviceModelResponse.fromJson(Map<String, dynamic> json) =>

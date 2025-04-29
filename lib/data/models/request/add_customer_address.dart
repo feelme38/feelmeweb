@@ -1,19 +1,16 @@
+import 'package:json_annotation/json_annotation.dart';
 
+part 'add_customer_address.g.dart';
 
+@JsonSerializable()
 class AddCustomerAddressBody {
   final String customerId;
-  final String regionId;
   final String address;
-  final double lat;
-  final double lng;
 
-  AddCustomerAddressBody(this.customerId, this.regionId, this.address, this.lat, this.lng);
+  AddCustomerAddressBody(this.customerId, this.address);
 
-  Map<String,dynamic> toJson() => {
-    'customerId': customerId,
-    'regionId': regionId,
-    'address': address,
-    'lat': lat,
-    'lng': lng
-  };
+  factory AddCustomerAddressBody.fromJson(Map<String, dynamic> json) =>
+      _$AddCustomerAddressBodyFromJson(json);
+
+  Map<String, dynamic> toJson() => _$AddCustomerAddressBodyToJson(this);
 }

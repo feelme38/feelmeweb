@@ -4,6 +4,7 @@ import 'package:feelmeweb/domain/aromas/delete_aroma_use_case.dart';
 import 'package:feelmeweb/domain/aromas/get_aromas_usecase.dart';
 import 'package:feelmeweb/domain/aromas/update_aroma_use_case.dart';
 import 'package:feelmeweb/presentation/base_vm/base_search_view_model.dart';
+import 'package:feelmeweb/presentation/modals/dialogs.dart';
 import 'package:flutter/material.dart';
 
 import '../../presentation/alert/alert.dart';
@@ -63,10 +64,10 @@ class AromasViewModel extends BaseSearchViewModel {
     loadingOff();
   }
 
-  void updateAromas(UpdateAromaBody aromaId) async {
+  void updateAromas(UpdateAromaBody body) async {
     loadingOn();
     (await executeUseCaseParam<bool, UpdateAromaBody>(
-            _updateAromaUseCase, aromaId))
+            _updateAromaUseCase, body))
         .doOnError((message, exception) {
       addAlert(Alert(message ?? '$exception', style: AlertStyle.danger));
     }).doOnSuccess((value) {
@@ -82,7 +83,7 @@ class AromasViewModel extends BaseSearchViewModel {
   }
 
   List<DataRow> getTableAromasRows(
-          List<AromaResponse> aromas, AromaType type) =>
+          List<AromaResponse> aromas, AromaType type, BuildContext context) =>
       aromas.where((e) => e.type == type).map((aroma) {
         return DataRow(cells: [
           DataCell(Align(
@@ -94,8 +95,7 @@ class AromasViewModel extends BaseSearchViewModel {
               IconButton(
                 icon: const Icon(Icons.edit),
                 onPressed: () {
-                  //Dialogs.createAromaDialog(
-                  //null, (body) => updateAromas(body, reloadCallback));
+                  Dialogs.updateAromaDialog(context, aroma, updateAromas);
                 },
                 tooltip: 'Редактировать',
               ),

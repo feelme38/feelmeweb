@@ -23,7 +23,6 @@ import 'package:feelmeweb/presentation/base_vm/base_search_view_model.dart';
 import 'package:feelmeweb/presentation/navigation/route_generation.dart';
 import 'package:feelmeweb/presentation/navigation/route_names.dart';
 import 'package:feelmeweb/provider/di/di_provider.dart';
-import 'package:flutter/material.dart';
 
 class CreateRouteViewModel extends BaseSearchViewModel {
   CreateRouteViewModel(this.userId, this.isUpdate) {
@@ -80,8 +79,7 @@ class CreateRouteViewModel extends BaseSearchViewModel {
   final List<CustomerResponse> selectedCustomers = [];
   final List<SubtaskBody> selectedSubtasks = [];
   final Map<String, TasksBody> savedTasks = {};
-  final TextEditingController visitTimeController = TextEditingController();
-  DateTime? visitDateTime;
+  final Map<String, DateTime?> visitTimes = {};
 
   CustomerResponse? selectedCustomer;
 
@@ -128,7 +126,10 @@ class CreateRouteViewModel extends BaseSearchViewModel {
         .doOnError((message, exception) {
       addAlert(Alert(message ?? '$exception', style: AlertStyle.danger));
     }).doOnSuccess((value) {
-      _customers = value;
+      _customers = (value as List<CustomerResponse>)
+          .where((e) =>
+              (e.addresses ?? []).isNotEmpty && (e.devices ?? []).isNotEmpty)
+          .toList();
       notifyListeners();
     });
     loadingOff();
@@ -161,8 +162,12 @@ class CreateRouteViewModel extends BaseSearchViewModel {
   }
 
   void toggleCustomerSelection(CustomerResponse customer) {
-    if (selectedCustomers.contains(customer)) {
-      selectedCustomers.remove(customer);
+    final existingCustomer = selectedCustomers.firstWhereOrNull(
+      (e) => e.id == customer.id,
+    );
+
+    if (existingCustomer != null) {
+      selectedCustomers.remove(existingCustomer);
     } else {
       selectedCustomers.add(customer);
     }
@@ -184,6 +189,13 @@ class CreateRouteViewModel extends BaseSearchViewModel {
 
     // После любого изменения сабтасков обновляем таск
     updateTask();
+  }
+
+  void updateVisitTimeForAddress(
+      String customerId, String addressId, String timeText) {
+    final time = parseTime(timeText);
+    visitTimes['${customerId}_$addressId'] = time;
+    calculateCreateOrUpdateRouteButtonState();
   }
 
   void updateTask() {
@@ -212,10 +224,11 @@ class CreateRouteViewModel extends BaseSearchViewModel {
 
       final customerName = customer.name ?? '';
       final customerId = customer.id ?? '';
+      final visitTime = visitTimes['${customerId}_$addressId'];
 
       savedTasks[addressId] = TasksBody(
         name: customerName,
-        visitDateTime: visitDateTime,
+        visitDateTime: visitTime,
         clientId: customerId,
         addressId: addressId,
         subtasks: subtasks,
@@ -366,17 +379,6 @@ class CreateRouteViewModel extends BaseSearchViewModel {
     return route;
   }
 
-  void updateVisitTime() {
-    visitDateTime = parseTime(visitTimeController.text);
-    if (visitDateTime == null) {
-      _isCreateOrUpdateRouteButtonEnabled = false;
-    } else {
-      savedTasks
-          .updateAll((_, task) => task.copyWith(visitDateTime: visitDateTime));
-    }
-    calculateCreateOrUpdateRouteButtonState();
-  }
-
   void calculateCreateOrUpdateRouteButtonState() {
     final isEveryTaskCreated = selectedCustomers.every(
       (customer) => savedTasks.values
@@ -385,8 +387,12 @@ class CreateRouteViewModel extends BaseSearchViewModel {
           .contains(customer.id),
     );
 
+    final isEveryTaskHasTime = savedTasks.values.every(
+      (task) => visitTimes['${task.clientId}_${task.addressId}'] != null,
+    );
+
     _isCreateOrUpdateRouteButtonEnabled =
-        isEveryTaskCreated && visitDateTime != null;
+        isEveryTaskCreated && isEveryTaskHasTime;
 
     notifyListeners();
   }

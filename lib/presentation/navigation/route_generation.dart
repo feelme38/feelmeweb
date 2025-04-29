@@ -65,6 +65,12 @@ class RouteGenerator {
           },
         ),
         GoRoute(
+          path: RouteName.deviceModels,
+          builder: (BuildContext context, GoRouterState state) {
+            return DeviceModelsPage.create();
+          },
+        ),
+        GoRoute(
           path: RouteName.customersList,
           builder: (BuildContext context, GoRouterState state) {
             return CustomersPage.create();
@@ -116,10 +122,6 @@ class RouteGenerator {
 
             return InventoryPage.create(userId!);
           },
-        ),
-        GoRoute(
-          path: RouteName.deviceModels,
-          builder: (context, state) => const DeviceModelsPage(),
         ),
       ],
     );

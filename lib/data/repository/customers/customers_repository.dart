@@ -1,5 +1,6 @@
 import 'package:feelmeweb/core/result/result_of.dart';
 import 'package:feelmeweb/data/models/request/create_user_body.dart';
+import 'package:feelmeweb/data/models/request/update_customer_body.dart';
 import 'package:feelmeweb/data/models/response/active_customer_response.dart';
 import 'package:feelmeweb/data/models/response/customer_response.dart';
 import 'package:injectable/injectable.dart';
@@ -33,6 +34,16 @@ class CustomersRepositoryImpl extends CustomersRepository {
   Future<Result<bool>> createCustomer(CreateCustomerBody body) {
     return _customersRemoteSource.createCustomer(body);
   }
+
+  @override
+  Future<Result<bool>> updateCustomer(UpdateCustomerBody body) {
+    return _customersRemoteSource.updateCustomer(body);
+  }
+
+  @override
+  Future<Result<bool>> deleteCustomer(String id) {
+    return _customersRemoteSource.deleteCustomer(id);
+  }
 }
 
 abstract class CustomersRepository {
@@ -44,4 +55,8 @@ abstract class CustomersRepository {
   Future<Result<bool>> createCustomer(CreateCustomerBody body);
 
   Future<Result<bool>> addAddress(AddCustomerAddressBody body);
+
+  Future<Result<bool>> updateCustomer(UpdateCustomerBody body);
+
+  Future<Result<bool>> deleteCustomer(String id);
 }

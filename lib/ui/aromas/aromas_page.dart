@@ -48,8 +48,8 @@ class AromasPage extends StatelessWidget {
                         scrollDirection: Axis.vertical,
                         child: AppTableWidget(
                           dataColumns: viewModel.tableAromasColumns,
-                          dataRows:
-                              viewModel.getTableAromasRows(aromas, aromaType),
+                          dataRows: viewModel.getTableAromasRows(
+                              aromas, aromaType, context),
                         ),
                       ),
                     ],

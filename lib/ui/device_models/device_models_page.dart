@@ -34,7 +34,8 @@ class DeviceModelsPage extends StatelessWidget {
             scrollDirection: Axis.vertical,
             child: AppTableWidget(
               dataColumns: viewModel.tableDeviceModelsColumns,
-              dataRows: viewModel.getTableDeviceModelsRows(deviceModels),
+              dataRows:
+                  viewModel.getTableDeviceModelsRows(deviceModels, context),
             ),
           ),
         ),
