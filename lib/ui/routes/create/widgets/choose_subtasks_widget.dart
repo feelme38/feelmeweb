@@ -1,5 +1,4 @@
 import 'package:collection/collection.dart';
-import 'package:feelmeweb/core/extensions/base_class_extensions/string_ext.dart';
 import 'package:feelmeweb/data/models/request/subtask_body.dart';
 import 'package:feelmeweb/data/models/response/last_checklist_info_response.dart';
 import 'package:feelmeweb/ui/routes/create/create_route_view_model.dart';
@@ -42,11 +41,6 @@ class _CreateRouteChooseSubtasksWidgetState
     final selectedSubtasks =
         context.watch<CreateRouteViewModel>().selectedSubtasks;
     final checklists = context.watch<CreateRouteViewModel>().lastChecklists;
-    final checklistsNotNullId =
-        checklists.where((item) => item.id != null).toList();
-    final lastDate = checklistsNotNullId.isEmpty
-        ? " – "
-        : checklistsNotNullId.firstOrNull?.createdAt?.toDateTime()?.orDash();
 
     // Group checklists by customer and address
     final Map<String, Map<String, List<LastCheckListInfoResponse>>>
@@ -95,6 +89,7 @@ class _CreateRouteChooseSubtasksWidgetState
               return ExpansionTile(
                 shape: const Border(),
                 collapsedShape: const Border(),
+                leading: const Icon(Icons.expand_more),
                 title: Column(
                   children: [
                     Text(customer.name ?? '', textAlign: TextAlign.center),
@@ -110,8 +105,6 @@ class _CreateRouteChooseSubtasksWidgetState
                           onChanged: (_) => viewModel.updateVisitTimeForAddress(
                               customer.id!, address.id!, timeController.text),
                         ),
-                        const SizedBox(width: 16),
-                        Text("Дата последнего посещения: $lastDate"),
                       ],
                     ),
                   ],

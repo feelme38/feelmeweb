@@ -40,38 +40,53 @@ class _DevicesTableDialogWidgetState extends State<DevicesTableDialogWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return IntrinsicHeight(
+    return Material(
+      color: Colors.white,
+      child: IntrinsicHeight(
         child: Container(
-            alignment: Alignment.center,
-            padding: const EdgeInsets.all(16.0), // Внутренние отступы
-            child: Column(children: [
+          alignment: Alignment.center,
+          padding: const EdgeInsets.all(16.0), // Внутренние отступы
+          child: Column(
+            children: [
               AppTableWidget(
                   dataColumns: _tableCustomerDevicesColumns,
                   dataRows: _getTableCustomerDevicesRows(devices)),
+              if (widget.devices.isEmpty)
+                Text(widget.addresses.isEmpty
+                    ? 'Нет ни одного адреса для подключения оборудования'
+                    : 'Добавьте оборудование для клиента'),
               Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 20, 0.0, 32),
-                  child:
-                      Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+                padding: const EdgeInsets.fromLTRB(16, 20, 0.0, 32),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
                     SizedBox(
-                        width: context.currentSize.width * 0.25,
-                        child: BaseTextButton(
-                          buttonText: "Добавить оборудование",
-                          onTap: () {
-                            context.navigateUp();
-                            Dialogs.createDeviceDialog(
-                                context,
-                                widget.powers,
-                                widget.models,
-                                widget.addresses,
-                                widget.addDeviceCallback);
-                          },
-                          weight: FontWeight.w500,
-                          fontSize: 14,
-                          textColor: Colors.white,
-                          enabled: true,
-                        ))
-                  ]))
-            ])));
+                      width: context.currentSize.width * 0.25,
+                      child: BaseTextButton(
+                        buttonText: "Добавить оборудование",
+                        onTap: () {
+                          context.navigateUp();
+                          Dialogs.createDeviceDialog(
+                              context,
+                              widget.powers,
+                              widget.models,
+                              widget.addresses,
+                              widget.addDeviceCallback);
+                        },
+                        weight: FontWeight.w500,
+                        fontSize: 14,
+                        textColor: Colors.white,
+                        enabled: widget.addresses.isNotEmpty,
+                      ),
+                    )
+                  ],
+                ),
+              )
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   final List<DataColumn> _tableCustomerDevicesColumns = [

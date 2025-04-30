@@ -68,6 +68,10 @@ class CreateRouteViewModel extends BaseSearchViewModel {
 
   List<SubtaskTypeResponse> get subtaskTypes => _subtaskTypes;
 
+  RouteResponse? _route;
+
+  RouteResponse? get route => _route;
+
   // активно тогда, и только тогда, когда по каждому клиенту есть 1 Task и в каждой Task по 1 Subtask
   bool _isCreateOrUpdateRouteButtonEnabled = false;
 
@@ -110,29 +114,101 @@ class CreateRouteViewModel extends BaseSearchViewModel {
     (await executeUseCase<List<RegionResponse>>(_getRegionsUseCase))
         .doOnError((message, exception) {
       addAlert(Alert(message ?? '$exception', style: AlertStyle.danger));
-    }).doOnSuccess((value) {
+    }).doOnSuccess((value) async {
       _regions = value;
+
+      // Загружаем всех клиентов
+      /*(await executeUseCaseParam<List<CustomerResponse>, String?>(
+              _getCustomersUseCase, null))
+          .doOnSuccess((customers) {
+        _customers = customers;
+
+        // Фильтруем регионы
+        _regions = _regions.where((region) {
+          // Получаем всех клиентов в регионе
+          final regionCustomers = _customers
+              .where((customer) => customer.region.id == region.id)
+              .toList();
+
+          // Если в регионе нет клиентов, не показываем его
+          if (regionCustomers.isEmpty) return false;
+
+          // Проверяем каждый клиент в регионе
+          for (var customer in regionCustomers) {
+            // Получаем все адреса клиента
+            final customerAddresses = customer.addresses ?? [];
+
+            // Если у клиента нет адресов, пропускаем
+            if (customerAddresses.isEmpty) continue;
+
+            // Получаем все задачи для этого клиента
+            final customerTasks = _route?.tasks
+                    .where((task) => task.client.id == customer.id)
+                    .toList() ??
+                [];
+
+            // Если нет задач для клиента, показываем регион
+            if (customerTasks.isEmpty) return true;
+
+            bool hasMatchingSubtask = customerTasks
+                .map((e) => e.address.id)
+                .toList()
+                .every((e) => customerAddresses
+                    .map((address) => address.id)
+                    .toList()
+                    .contains(e));
+
+            return !hasMatchingSubtask;
+          }
+
+          // Если все адреса всех клиентов имеют соответствующие подзадачи, не показываем регион
+          return false;
+        }).toList();
+        chooseDefaultRegion();
+      });*/
       chooseDefaultRegion();
-      notifyListeners();
     });
     loadingOff();
   }
 
-  void loadCustomers({String? regionId}) async {
+  Future loadCustomers(
+      {String? regionId, bool isNeedUpdateState = true}) async {
     selectedRegionId = regionId;
-    loadingOn();
+    if (isNeedUpdateState) loadingOn();
+
     (await executeUseCaseParam<List<CustomerResponse>, String?>(
             _getCustomersUseCase, regionId))
         .doOnError((message, exception) {
       addAlert(Alert(message ?? '$exception', style: AlertStyle.danger));
     }).doOnSuccess((value) {
-      _customers = (value as List<CustomerResponse>)
+      final tasksAddressIds =
+          _route?.tasks.map((task) => task.address.id).toSet() ?? {};
+
+      var loadedCustomers = (value as List<CustomerResponse>)
           .where((e) =>
               (e.addresses ?? []).isNotEmpty && (e.devices ?? []).isNotEmpty)
           .toList();
-      notifyListeners();
+
+      /*if (isUpdate) {
+        for (final customer in loadedCustomers) {
+          customer.copyWith(
+              addresses: (customer.addresses ?? [])
+                  .where((addr) => !tasksAddressIds.contains(addr.id))
+                  .toList());
+        }
+
+        // Убираем клиентов, у которых после фильтрации не осталось адресов
+        loadedCustomers = loadedCustomers
+            .where((e) => (e.addresses ?? []).isNotEmpty)
+            .toList();
+      }*/
+
+      _customers = loadedCustomers;
+
+      if (isNeedUpdateState) notifyListeners();
     });
-    loadingOff();
+
+    if (isNeedUpdateState) loadingOff();
   }
 
   Future loadLastChecklistsInfo() async {
@@ -258,8 +334,8 @@ class CreateRouteViewModel extends BaseSearchViewModel {
 
   Future updateRoute() async {
     loadingOn();
-    final route = await getUserRoute();
-    if (route == null) {
+
+    if (_route == null) {
       addAlert(Alert(
           'Ошибка обновления маршрута. Действующий маршрут не найден',
           style: AlertStyle.danger));
@@ -269,7 +345,7 @@ class CreateRouteViewModel extends BaseSearchViewModel {
         final TasksBody newTask = entry.value;
 
         Task? existsTask =
-            route.tasks.firstWhereOrNull((e) => e.address.id == addressId);
+            _route?.tasks.firstWhereOrNull((e) => e.address.id == addressId);
 
         if (existsTask != null) {
           // Обновляем newTask, присваивая новый объект
@@ -294,7 +370,7 @@ class CreateRouteViewModel extends BaseSearchViewModel {
       }
 
       // Добавляем существующие таски, если их нет в savedTasks
-      for (var task in route.tasks) {
+      for (Task task in route?.tasks ?? []) {
         if (!savedTasks.containsKey(task.address.id)) {
           savedTasks[task.address.id] = TasksBody(
             id: task.id,
@@ -320,7 +396,7 @@ class CreateRouteViewModel extends BaseSearchViewModel {
       }
 
       final RouteBody routeBody =
-          RouteBody(routeId: route.id, userId, savedTasks.values.toList());
+          RouteBody(routeId: route?.id, userId, savedTasks.values.toList());
 
       (await executeUseCaseParam<void, RouteBody>(
               _updateRouteUseCase, routeBody))
@@ -366,17 +442,14 @@ class CreateRouteViewModel extends BaseSearchViewModel {
     loadingOff();
   }
 
-  Future<RouteResponse?> getUserRoute() async {
-    RouteResponse? route;
-
+  Future getUserRoute() async {
     (await executeUseCaseParam<RouteResponse, GetUserRouteParam>(
             _getUserRouteUseCase, GetUserRouteParam(userId)))
         .doOnError((message, exception) {
       addAlert(Alert(message ?? '$exception', style: AlertStyle.danger));
     }).doOnSuccess((value) {
-      route = value;
+      _route = value;
     });
-    return route;
   }
 
   void calculateCreateOrUpdateRouteButtonState() {

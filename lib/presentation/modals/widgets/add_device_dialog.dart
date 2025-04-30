@@ -99,9 +99,7 @@ class _AddDeviceDialogState extends State<AddDeviceDialog> {
                     },
                     items: widget.addresses.map((e) {
                       return DropdownMenuItem(
-                          value: e.id,
-                          child: SizedBox(
-                              width: 150, child: Text(e.address ?? '')));
+                          value: e.id, child: Text(e.address ?? ''));
                     }).toList(),
                     focusColor: Colors.white,
                     dropdownColor: Colors.white,

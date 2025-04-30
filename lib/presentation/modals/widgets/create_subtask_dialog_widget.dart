@@ -121,14 +121,108 @@ class _CreateSubtaskDialogWidgetState extends State<CreateSubtaskDialogWidget> {
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
-                    (widget.checklist?.deviceModel ?? '').orDash(),
+                    (widget.checklist?.deviceModel).orDash(),
                     style: const TextStyle(
                         fontSize: 16, fontWeight: FontWeight.w500),
                   ),
                 )
               ],
             ),
+            const SizedBox(height: 16),
 
+            // Расположение
+            Row(
+              children: [
+                Text(
+                  'Расположение: ',
+                  style: TextStyle(fontSize: 16, color: Colors.grey[400]),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    (widget.checklist?.deviceLocation).orDash(),
+                    style: const TextStyle(
+                        fontSize: 16, fontWeight: FontWeight.w500),
+                  ),
+                )
+              ],
+            ),
+            const SizedBox(height: 16),
+
+            // Режим работы
+            Row(
+              children: [
+                Text(
+                  'Режим работы: ',
+                  style: TextStyle(fontSize: 16, color: Colors.grey[400]),
+                ),
+                const SizedBox(width: 8),
+                const Expanded(
+                  child: Text(
+                    'Режим работы',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                  ),
+                )
+              ],
+            ),
+            const SizedBox(height: 16),
+
+            // Тип сотрудничества
+            Row(
+              children: [
+                Text(
+                  'Тип сотрудничества: ',
+                  style: TextStyle(fontSize: 16, color: Colors.grey[400]),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    (widget.checklist?.contract).orDash(),
+                    style: const TextStyle(
+                        fontSize: 16, fontWeight: FontWeight.w500),
+                  ),
+                )
+              ],
+            ),
+            const SizedBox(height: 16),
+
+            // Текущий аромат
+            Row(
+              children: [
+                Text(
+                  'Текущий аромат: ',
+                  style: TextStyle(fontSize: 16, color: Colors.grey[400]),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    (widget.checklist?.checklistAroma.newAromaName).orDash(),
+                    style: const TextStyle(
+                        fontSize: 16, fontWeight: FontWeight.w500),
+                  ),
+                )
+              ],
+            ),
+            const SizedBox(height: 16),
+
+            // Остаток аромата
+            Row(
+              children: [
+                Text(
+                  'Остаток аромата: ',
+                  style: TextStyle(fontSize: 16, color: Colors.grey[400]),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    (widget.checklist?.checklistAroma.volumeMl.toString())
+                        .orDash(),
+                    style: const TextStyle(
+                        fontSize: 16, fontWeight: FontWeight.w500),
+                  ),
+                )
+              ],
+            ),
             const SizedBox(height: 16),
 
             /// Подзадача

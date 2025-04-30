@@ -7,6 +7,7 @@ import 'package:feelmeweb/data/models/response/device_models.dart';
 import 'package:feelmeweb/data/models/response/device_powers.dart';
 import 'package:feelmeweb/data/models/response/last_checklist_info_response.dart';
 import 'package:feelmeweb/data/models/response/region_response.dart';
+import 'package:feelmeweb/data/models/response/route_response.dart';
 import 'package:feelmeweb/data/models/response/task_types_response.dart';
 import 'package:feelmeweb/data/repository/users/users_repository.dart';
 import 'package:feelmeweb/presentation/modals/widgets/add_address_dialog.dart';
@@ -27,6 +28,7 @@ import 'package:flutter/material.dart';
 import '../../provider/di/di_provider.dart';
 import 'widgets/create_region_dialog.dart';
 import 'widgets/update_region_dialog.dart';
+import 'widgets/view_subtask_dialog_widget.dart';
 
 class Dialogs {
   static Future<void> createDeviceDialog(
@@ -207,6 +209,23 @@ class Dialogs {
     if (context != null) {
       await showBaseDialog(
           context, UpdateRegionDialog(region: region, callback: callback),
+          width: context.currentSize.width * 0.35);
+    }
+  }
+
+  static void showSubtaskInfoDialog(
+    BuildContext? fromContext, {
+    required LastCheckListInfoResponse checklist,
+    required Subtask subtask,
+  }) async {
+    final context = fromContext ?? getContext();
+    if (context != null) {
+      await showBaseDialog(
+          context,
+          ViewSubtaskDialogWidget(
+            checklist: checklist,
+            subtask: subtask,
+          ),
           width: context.currentSize.width * 0.35);
     }
   }
