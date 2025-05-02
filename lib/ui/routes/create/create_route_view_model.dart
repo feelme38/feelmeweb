@@ -382,16 +382,20 @@ class CreateRouteViewModel extends BaseSearchViewModel {
   }
 
   void calculateCreateOrUpdateRouteButtonState() {
-    final isEveryTaskCreated = selectedCustomers.every(
-      (customer) => savedTasks.values
-          .map((e) => e.clientId)
-          .toList()
-          .contains(customer.id),
-    );
+    bool isEveryTaskCreated = true;
+    bool isEveryTaskHasTime = true;
 
-    final isEveryTaskHasTime = savedTasks.values.every(
-      (task) => visitTimes['${task.clientId}_${task.addressId}'] != null,
-    );
+    savedTasks.updateAll((_, task) {
+      final key = '${task.clientId}_${task.addressId}';
+      final visitTime = visitTimes[key];
+
+      if (visitTime == null) isEveryTaskHasTime = false;
+      if (!selectedCustomers.any((c) => c.id == task.clientId)) {
+        isEveryTaskCreated = false;
+      }
+
+      return task.copyWith(visitDateTime: visitTime);
+    });
 
     _isCreateOrUpdateRouteButtonEnabled =
         isEveryTaskCreated && isEveryTaskHasTime;
