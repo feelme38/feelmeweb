@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'task_types_response.dart';
+part of 'subtask_types_response.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator

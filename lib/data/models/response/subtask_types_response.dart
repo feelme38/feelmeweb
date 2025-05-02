@@ -1,6 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 
-part 'task_types_response.g.dart';
+part 'subtask_types_response.g.dart';
 
 @JsonSerializable()
 class SubtaskTypeResponse {

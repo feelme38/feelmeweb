@@ -12,12 +12,15 @@ class Urls {
   static const deviceModels = '/device/models';
 
   static const customers = 'customers';
+  static const availableCustomers = 'customers/available';
   static const customer = 'customer';
   static const customersActive = 'customers/active';
   static const regions = 'regions';
+  static const availableRegions = 'regions/available';
   static const region = 'region';
   static const checklists = 'checklists';
   static const lastChecklists = 'checklists/last';
+  static const availableChecklists = 'checklists/available';
   static const customerAddress = 'customer/address';
   static const task = 'task';
   static const subtask = 'subtask';

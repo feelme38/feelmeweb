@@ -48,7 +48,7 @@ class CreateRouteChooseCustomersPage extends StatelessWidget {
                                   ? Colors.blue[100]
                                   : Colors.transparent,
                               onTap: () {
-                                viewModel.loadCustomers(regionId: region.id);
+                                viewModel.loadCustomers(region.id);
                               });
                         })),
                 Expanded(

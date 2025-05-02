@@ -9,11 +9,11 @@ import 'package:feelmeweb/data/models/response/customer_response.dart';
 import 'package:feelmeweb/data/models/response/last_checklist_info_response.dart';
 import 'package:feelmeweb/data/models/response/region_response.dart';
 import 'package:feelmeweb/data/models/response/route_response.dart';
-import 'package:feelmeweb/data/models/response/task_types_response.dart';
+import 'package:feelmeweb/data/models/response/subtask_types_response.dart';
 import 'package:feelmeweb/domain/aromas/get_aromas_usecase.dart';
-import 'package:feelmeweb/domain/checklists/get_last_checklists_usecase.dart';
-import 'package:feelmeweb/domain/customers/get_customers_usecase.dart';
-import 'package:feelmeweb/domain/regions/get_regions_usecase.dart';
+import 'package:feelmeweb/domain/checklists/get_available_checklists_usecase.dart';
+import 'package:feelmeweb/domain/customers/get_available_customers_usecase.dart';
+import 'package:feelmeweb/domain/regions/get_available_regions_usecase.dart';
 import 'package:feelmeweb/domain/route/create_route_usecase.dart';
 import 'package:feelmeweb/domain/route/get_user_route_usecase.dart';
 import 'package:feelmeweb/domain/route/update_route_usecase.dart';
@@ -34,9 +34,9 @@ class CreateRouteViewModel extends BaseSearchViewModel {
     loadTaskTypes();
   }
 
-  final _getRegionsUseCase = GetRegionsUseCase();
-  final _getCustomersUseCase = GetCustomersUseCase();
-  final _getLastChecklistsUseCase = GetLastChecklistsUseCase();
+  final _getAvailableRegionsUseCase = GetAvailableRegionsUseCase();
+  final _getAvailableCustomersUseCase = GetAvailableCustomersUseCase();
+  final _getAvailableChecklistsUseCase = GetAvailableChecklistsUseCase();
   final _getAromasUseCase = GetAromasUseCase();
   final _getSubtaskTypesUseCase = GetSubtaskTypesUseCase();
   final _createRouteUseCase = CreateRouteUseCase();
@@ -94,7 +94,7 @@ class CreateRouteViewModel extends BaseSearchViewModel {
   void chooseDefaultRegion() {
     if (_regions.isNotEmpty) {
       selectedRegionId = _regions.first.id;
-      loadCustomers(regionId: selectedRegionId);
+      loadCustomers(selectedRegionId);
     }
   }
 
@@ -111,104 +111,33 @@ class CreateRouteViewModel extends BaseSearchViewModel {
 
   Future loadRegions() async {
     loadingOn();
-    (await executeUseCase<List<RegionResponse>>(_getRegionsUseCase))
+    (await executeUseCaseParam<List<RegionResponse>, String>(
+            _getAvailableRegionsUseCase, userId))
         .doOnError((message, exception) {
       addAlert(Alert(message ?? '$exception', style: AlertStyle.danger));
     }).doOnSuccess((value) async {
       _regions = value;
-
-      // Загружаем всех клиентов
-      /*(await executeUseCaseParam<List<CustomerResponse>, String?>(
-              _getCustomersUseCase, null))
-          .doOnSuccess((customers) {
-        _customers = customers;
-
-        // Фильтруем регионы
-        _regions = _regions.where((region) {
-          // Получаем всех клиентов в регионе
-          final regionCustomers = _customers
-              .where((customer) => customer.region.id == region.id)
-              .toList();
-
-          // Если в регионе нет клиентов, не показываем его
-          if (regionCustomers.isEmpty) return false;
-
-          // Проверяем каждый клиент в регионе
-          for (var customer in regionCustomers) {
-            // Получаем все адреса клиента
-            final customerAddresses = customer.addresses ?? [];
-
-            // Если у клиента нет адресов, пропускаем
-            if (customerAddresses.isEmpty) continue;
-
-            // Получаем все задачи для этого клиента
-            final customerTasks = _route?.tasks
-                    .where((task) => task.client.id == customer.id)
-                    .toList() ??
-                [];
-
-            // Если нет задач для клиента, показываем регион
-            if (customerTasks.isEmpty) return true;
-
-            bool hasMatchingSubtask = customerTasks
-                .map((e) => e.address.id)
-                .toList()
-                .every((e) => customerAddresses
-                    .map((address) => address.id)
-                    .toList()
-                    .contains(e));
-
-            return !hasMatchingSubtask;
-          }
-
-          // Если все адреса всех клиентов имеют соответствующие подзадачи, не показываем регион
-          return false;
-        }).toList();
-        chooseDefaultRegion();
-      });*/
       chooseDefaultRegion();
     });
     loadingOff();
   }
 
-  Future loadCustomers(
-      {String? regionId, bool isNeedUpdateState = true}) async {
+  Future loadCustomers(String? regionId) async {
     selectedRegionId = regionId;
-    if (isNeedUpdateState) loadingOn();
+    loadingOn();
 
-    (await executeUseCaseParam<List<CustomerResponse>, String?>(
-            _getCustomersUseCase, regionId))
+    (await executeUseCaseParam<List<CustomerResponse>,
+                GetAvailableCustomersParam?>(_getAvailableCustomersUseCase,
+            GetAvailableCustomersParam(userId, regionId!)))
         .doOnError((message, exception) {
       addAlert(Alert(message ?? '$exception', style: AlertStyle.danger));
     }).doOnSuccess((value) {
-      final tasksAddressIds =
-          _route?.tasks.map((task) => task.address.id).toSet() ?? {};
+      _customers = value;
 
-      var loadedCustomers = (value as List<CustomerResponse>)
-          .where((e) =>
-              (e.addresses ?? []).isNotEmpty && (e.devices ?? []).isNotEmpty)
-          .toList();
-
-      /*if (isUpdate) {
-        for (final customer in loadedCustomers) {
-          customer.copyWith(
-              addresses: (customer.addresses ?? [])
-                  .where((addr) => !tasksAddressIds.contains(addr.id))
-                  .toList());
-        }
-
-        // Убираем клиентов, у которых после фильтрации не осталось адресов
-        loadedCustomers = loadedCustomers
-            .where((e) => (e.addresses ?? []).isNotEmpty)
-            .toList();
-      }*/
-
-      _customers = loadedCustomers;
-
-      if (isNeedUpdateState) notifyListeners();
+      notifyListeners();
     });
 
-    if (isNeedUpdateState) loadingOff();
+    loadingOff();
   }
 
   Future loadLastChecklistsInfo() async {
@@ -222,8 +151,8 @@ class CreateRouteViewModel extends BaseSearchViewModel {
       for (AddressDTO address in customer.addresses ?? []) {
         selectedCustomer = customer;
         (await executeUseCaseParam<List<LastCheckListInfoResponse>,
-                    GetLastChecklistParam>(_getLastChecklistsUseCase,
-                GetLastChecklistParam(address.id!, customer.id!)))
+                    GetAvailableChecklistParam>(_getAvailableChecklistsUseCase,
+                GetAvailableChecklistParam(address.id!, customer.id!, userId)))
             .doOnSuccess((value) {
           _lastChecklists.addAll(value);
         });

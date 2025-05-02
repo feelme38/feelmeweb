@@ -86,6 +86,12 @@ class DateUtil {
     final now = DateTime.now();
     return DateTime(now.year, now.month, now.day, hours, minutes);
   }
+
+  static String toDateTime(DateTime? date) {
+    if (date == null) return '-';
+    return DateFormat(DateFormats.ddMMyyyy2)
+        .format(DateTime(date.year, date.month, date.day));
+  }
 }
 
 class DateFormats {
@@ -95,6 +101,7 @@ class DateFormats {
   static const yyyyMMddTHHmmss = 'yyyy-MM-ddTHH:mm:ss';
   static const yyyyMMddTHHmmsszsssss = 'yyyy-MM-ddTHH:mm:ss.ssssss';
   static const ddMMyyyy = 'dd-MM-yyyy';
+  static const ddMMyyyy2 = 'dd-MM-yyyy';
   static const MMyyyy = 'MM-yyyy';
   static const HHmm = 'HH:mm';
 }

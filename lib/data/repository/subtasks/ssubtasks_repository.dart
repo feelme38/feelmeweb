@@ -1,4 +1,4 @@
-import 'package:feelmeweb/data/models/response/task_types_response.dart';
+import 'package:feelmeweb/data/models/response/subtask_types_response.dart';
 import 'package:feelmeweb/data/sources/remote/ssubtasks_remote_source.dart';
 import 'package:feelmeweb/domain/subtasks/delete_subtask_usecase.dart';
 import 'package:injectable/injectable.dart';

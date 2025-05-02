@@ -5,7 +5,7 @@ import 'package:feelmeweb/core/extensions/base_class_extensions/string_ext.dart'
 import 'package:feelmeweb/data/models/request/subtask_body.dart';
 import 'package:feelmeweb/data/models/response/aroma_response.dart';
 import 'package:feelmeweb/data/models/response/last_checklist_info_response.dart';
-import 'package:feelmeweb/data/models/response/task_types_response.dart';
+import 'package:feelmeweb/data/models/response/subtask_types_response.dart';
 import 'package:feelmeweb/presentation/buttons/base_text_button.dart';
 import 'package:feelmeweb/presentation/theme/theme_colors.dart';
 import 'package:feelmeweb/presentation/widgets/base_text_field.dart';

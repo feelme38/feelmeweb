@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:feelmeweb/data/models/response/checklist_info_response.dart';
 import 'package:feelmeweb/data/models/response/last_checklist_info_response.dart';
+import 'package:feelmeweb/domain/checklists/get_available_checklists_usecase.dart';
 import 'package:feelmeweb/domain/checklists/get_checklists_usecase.dart';
 import 'package:injectable/injectable.dart';
 
@@ -22,6 +23,26 @@ class ChecklistRemoteSource {
           await _networkProvider.dio.onGet(Urls.lastChecklists, queryParams: {
         // "customerId": body.customerId,
         'addressId': body.addressId
+      });
+      var result = (response.data as List)
+          .map((e) => LastCheckListInfoResponse.fromJson(e)
+              .copyWith(addressId: body.addressId, customerId: body.customerId))
+          .toList();
+      return Success(result);
+    } on DioException catch (e) {
+      return Failure(exception: e, message: e.message);
+    } on ConnectionException catch (e) {
+      return Failure(exception: e, message: e.message);
+    }
+  }
+
+  Future<Result<List<LastCheckListInfoResponse>>> getAvailableCheckListInfo(
+      GetAvailableChecklistParam body) async {
+    try {
+      final response = await _networkProvider.dio
+          .onGet(Urls.availableChecklists, queryParams: {
+        "userId": body.userId,
+        'addressId': body.addressId,
       });
       var result = (response.data as List)
           .map((e) => LastCheckListInfoResponse.fromJson(e)

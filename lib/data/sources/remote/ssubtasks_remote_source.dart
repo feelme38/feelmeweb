@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:feelmeweb/core/result/result_of.dart';
-import 'package:feelmeweb/data/models/response/task_types_response.dart';
+import 'package:feelmeweb/data/models/response/subtask_types_response.dart';
 import 'package:feelmeweb/domain/subtasks/delete_subtask_usecase.dart';
 import 'package:feelmeweb/provider/network/network_provider.dart';
 import 'package:feelmeweb/provider/network/urls.dart';

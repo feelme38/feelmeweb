@@ -1,5 +1,4 @@
 import 'package:feelmeweb/data/models/response/checklist_info_response.dart';
-import 'package:feelmeweb/data/models/response/last_checklist_info_response.dart';
 import 'package:feelmeweb/data/repository/checklists/checklists_repository.dart';
 
 import '../../core/result/result_of.dart';

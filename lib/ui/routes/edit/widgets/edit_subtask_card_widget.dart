@@ -56,7 +56,7 @@ class EditSubtaskCardWidget extends StatelessWidget {
                 children: [
                   Expanded(
                     child: BaseTextButton(
-                        buttonText: "Посмотреть",
+                        buttonText: "Редактировать",
                         onTap: () {
                           Dialogs.showSubtaskInfoDialog(
                             context,

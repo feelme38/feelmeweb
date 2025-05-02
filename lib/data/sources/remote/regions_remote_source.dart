@@ -28,6 +28,22 @@ class RegionsRemoteSource {
     }
   }
 
+  Future<Result<List<RegionResponse>>> getAvailableRegions(
+      String userId) async {
+    try {
+      final response = await _networkProvider.dio
+          .onGet(Urls.availableRegions, queryParams: {'userId': userId});
+      var result = (response.data as List)
+          .map((e) => RegionResponse.fromJson(e))
+          .toList();
+      return Success(result);
+    } on DioException catch (e) {
+      return Failure(exception: e, message: e.message);
+    } on ConnectionException catch (e) {
+      return Failure(exception: e, message: e.message);
+    }
+  }
+
   Future<Result<bool>> createRegion(CreateRegionBody body) async {
     try {
       await _networkProvider.dio.onWebPost(Urls.region, data: body.toJson());

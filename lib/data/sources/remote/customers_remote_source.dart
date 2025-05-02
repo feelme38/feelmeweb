@@ -3,6 +3,7 @@ import 'package:feelmeweb/core/result/result_of.dart';
 import 'package:feelmeweb/data/models/request/create_user_body.dart';
 import 'package:feelmeweb/data/models/response/active_customer_response.dart';
 import 'package:feelmeweb/data/models/response/customer_response.dart';
+import 'package:feelmeweb/domain/customers/get_available_customers_usecase.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../../provider/network/network_provider.dart';
@@ -21,6 +22,22 @@ class CustomersRemoteSource {
     try {
       final response = await _networkProvider.dio.onGet(Urls.customers,
           queryParams: regionId != null ? {"regionId": regionId} : null);
+      var result = (response.data as List)
+          .map((e) => CustomerResponse.fromJson(e))
+          .toList();
+      return Success(result);
+    } on DioException catch (e) {
+      return Failure(exception: e, message: e.message);
+    } on ConnectionException catch (e) {
+      return Failure(exception: e, message: e.message);
+    }
+  }
+
+  Future<Result<List<CustomerResponse>>> getAvailableCustomers(
+      GetAvailableCustomersParam param) async {
+    try {
+      final response = await _networkProvider.dio.onGet(Urls.availableCustomers,
+          queryParams: {'regionId': param.regionId, 'userId': param.userId});
       var result = (response.data as List)
           .map((e) => CustomerResponse.fromJson(e))
           .toList();

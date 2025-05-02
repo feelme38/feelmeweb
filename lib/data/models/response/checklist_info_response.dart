@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:feelmeweb/data/models/response/local_date.dart';
 import 'package:feelmeweb/data/models/response/local_time.dart';
 import 'package:json_annotation/json_annotation.dart';
@@ -57,16 +58,9 @@ class LocalDateTime {
   factory LocalDateTime.fromJson(Map<String, dynamic> json) =>
       _$LocalDateTimeFromJson(json);
 
-  DateTime toDateTime() {
-    return DateTime(
-      date.year,
-      date.month,
-      date.day,
-      time?.hour ?? 0,
-      time?.minute ?? 0,
-      time?.second ?? 0,
-      (time?.nano ?? 0) ~/ 1e6, // Convert nanoseconds to milliseconds
-    );
+  String? toDateTime() {
+    return DateFormat('dd.MM.yyyy')
+        .format(DateTime(date.year, date.month, date.day));
   }
 
   Map<String, dynamic> toJson() => _$LocalDateTimeToJson(this);

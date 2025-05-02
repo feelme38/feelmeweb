@@ -24,6 +24,16 @@ class RegionsRepositoryImpl extends RegionsRepository {
   }
 
   @override
+  Future<Result<List<RegionResponse>>> getAvailableRegions(
+      String userId) async {
+    final result = await _regionsRemoteSource.getAvailableRegions(userId);
+    if (result is Success<List<RegionResponse>>) {
+      _regions = result.data;
+    }
+    return result;
+  }
+
+  @override
   List<RegionResponse> get regions => _regions;
 
   @override
@@ -41,6 +51,8 @@ class RegionsRepositoryImpl extends RegionsRepository {
 
 abstract class RegionsRepository {
   Future<Result<List<RegionResponse>>> getRegions();
+
+  Future<Result<List<RegionResponse>>> getAvailableRegions(String userId);
 
   Future<Result<bool>> createRegion(CreateRegionBody body);
 

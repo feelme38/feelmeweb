@@ -1,6 +1,7 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:feelmeweb/data/models/response/checklist_info_response.dart';
 import 'package:feelmeweb/data/models/response/last_checklist_info_response.dart';
-import 'package:feelmeweb/data/models/response/task_types_response.dart';
+import 'package:feelmeweb/data/models/response/subtask_types_response.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'route_response.g.dart';
@@ -46,7 +47,6 @@ class RouteResponse {
 class Task {
   final String id;
   final String name;
-
   final Client client;
   final String taskStatus;
   final int completedTime;
@@ -71,6 +71,12 @@ class Task {
 
   factory Task.fromJson(Map<String, dynamic> json) => _$TaskFromJson(json);
   Map<String, dynamic> toJson() => _$TaskToJson(this);
+
+  String? toDateTime() {
+    if (visitDateTime == null) return '-';
+    return DateFormat('dd.MM.yyyy').format(DateTime(
+        visitDateTime!.year, visitDateTime!.month, visitDateTime!.day));
+  }
 
   Task copyWith({
     String? id,

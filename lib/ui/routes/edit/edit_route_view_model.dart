@@ -1,30 +1,41 @@
+import 'package:collection/collection.dart';
+import 'package:feelmeweb/core/extensions/base_class_extensions/string_ext.dart';
 import 'package:feelmeweb/data/models/request/route_update_body.dart';
+import 'package:feelmeweb/data/models/response/aroma_response.dart';
 import 'package:feelmeweb/data/models/response/customer_response.dart';
 import 'package:feelmeweb/data/models/response/region_response.dart';
 import 'package:feelmeweb/data/models/response/route_response.dart';
-import 'package:feelmeweb/domain/customers/get_customers_usecase.dart';
-import 'package:feelmeweb/domain/regions/get_regions_usecase.dart';
+import 'package:feelmeweb/data/models/response/subtask_types_response.dart';
+import 'package:feelmeweb/domain/aromas/get_aromas_usecase.dart';
+import 'package:feelmeweb/domain/regions/get_available_regions_usecase.dart';
 import 'package:feelmeweb/domain/route/change_route_status_usecase.dart';
 import 'package:feelmeweb/domain/route/get_user_route_usecase.dart';
+import 'package:feelmeweb/domain/route/update_route_usecase.dart';
 import 'package:feelmeweb/domain/subtasks/delete_subtask_usecase.dart';
+import 'package:feelmeweb/domain/subtasks/get_subtask_types_usecase.dart';
 import 'package:feelmeweb/domain/tasks/delete_task_usecase.dart';
 import 'package:feelmeweb/presentation/alert/alert.dart';
 import 'package:feelmeweb/presentation/base_vm/base_search_view_model.dart';
 import 'package:feelmeweb/presentation/navigation/route_generation.dart';
 import 'package:feelmeweb/presentation/navigation/route_names.dart';
 import 'package:feelmeweb/provider/di/di_provider.dart';
+import 'package:flutter/material.dart';
 
 class EditRouteViewModel extends BaseSearchViewModel {
   EditRouteViewModel(this.userId) {
     loadRoute();
+    loadAromas();
+    loadSubtaskTypes();
   }
 
   final _getUserRouteUseCase = GetUserRouteUseCase();
   final _deleteTaskUseCase = DeleteTaskUseCase();
   final _deleteSubtaskUseCase = DeleteSubtaskUseCase();
   final _changeRouteStatusUseCase = ChangeRouteStatusUseCase();
-  final _getRegionsUseCase = GetRegionsUseCase();
-  final _getCustomersUseCase = GetCustomersUseCase();
+  final _updateRouteUseCase = UpdateRouteUseCase();
+  final _getAvailableRegionsUseCase = GetAvailableRegionsUseCase();
+  final _getAromasUseCase = GetAromasUseCase();
+  final _getSubtaskTypesUseCase = GetSubtaskTypesUseCase();
 
   final _router = getIt<RouteGenerator>().router;
 
@@ -32,15 +43,32 @@ class EditRouteViewModel extends BaseSearchViewModel {
 
   RouteResponse? _route;
   List<RegionResponse> _regions = [];
-  List<CustomerResponse> _customers = [];
+  final List<CustomerResponse> _customers = [];
+  List<AromaResponse> _aromas = [];
+  List<SubtaskTypeResponse> _subtaskTypes = [];
+  final Map<String, TextEditingController> _timeControllers = {};
+  final Map<String, DateTime?> _visitTimes = {};
+  bool _hasChanges = false;
 
   RouteResponse? get route => _route;
   List<RegionResponse> get regions => _regions;
   List<CustomerResponse> get customers => _customers;
+  List<AromaResponse> get aromas => _aromas;
+  List<SubtaskTypeResponse> get subtaskTypes => _subtaskTypes;
+  Map<String, TextEditingController> get timeControllers => _timeControllers;
+  bool get hasChanges => _hasChanges;
 
   int _creationStage = 1;
 
   int get creationStage => _creationStage;
+
+  @override
+  void dispose() {
+    for (final controller in _timeControllers.values) {
+      controller.dispose();
+    }
+    super.dispose();
+  }
 
   void nextStage() {
     _creationStage = 2;
@@ -54,75 +82,13 @@ class EditRouteViewModel extends BaseSearchViewModel {
 
   Future loadRegions() async {
     loadingOn();
-    (await executeUseCase<List<RegionResponse>>(_getRegionsUseCase))
+    (await executeUseCaseParam<List<RegionResponse>, String>(
+            _getAvailableRegionsUseCase, userId))
         .doOnError((message, exception) {
       addAlert(Alert(message ?? '$exception', style: AlertStyle.danger));
     }).doOnSuccess((value) async {
       _regions = value;
-
-      // Загружаем всех клиентов
-      (await executeUseCaseParam<List<CustomerResponse>, String?>(
-              _getCustomersUseCase, null))
-          .doOnSuccess((customers) {
-        _customers = customers;
-
-        // Фильтруем регионы
-        _regions = _regions.where((region) {
-          // Получаем всех клиентов в регионе
-          final regionCustomers = _customers
-              .where((customer) => customer.region.id == region.id)
-              .toList();
-
-          // Если в регионе нет клиентов, не показываем его
-          if (regionCustomers.isEmpty) return false;
-
-          // Проверяем каждый клиент в регионе
-          for (var customer in regionCustomers) {
-            // Получаем все адреса клиента
-            final customerAddresses = customer.addresses ?? [];
-
-            // Если у клиента нет адресов, пропускаем
-            if (customerAddresses.isEmpty) continue;
-
-            // Получаем все задачи для этого клиента
-            final customerTasks = _route?.tasks
-                    .where((task) => task.client.id == customer.id)
-                    .toList() ??
-                [];
-
-            // Если нет задач для клиента, показываем регион
-            if (customerTasks.isEmpty) return true;
-
-            // Проверяем каждый адрес клиента
-            for (var address in customerAddresses) {
-              bool hasMatchingSubtask = false;
-
-              // Проверяем каждую задачу клиента
-              for (var task in customerTasks) {
-                // Проверяем каждую подзадачу в задаче
-                for (var subtask in task.subtasks) {
-                  // Если адрес подзадачи совпадает с адресом клиента
-                  if (subtask.checklist?.address?.id == address.id) {
-                    hasMatchingSubtask = true;
-                    break;
-                  }
-                }
-                if (hasMatchingSubtask) break;
-              }
-
-              // Если хотя бы один адрес не имеет соответствующей подзадачи, показываем регион
-              if (!hasMatchingSubtask) {
-                return true;
-              }
-            }
-          }
-
-          // Если все адреса всех клиентов имеют соответствующие подзадачи, не показываем регион
-          return false;
-        }).toList();
-
-        notifyListeners();
-      });
+      notifyListeners();
     });
     loadingOff();
   }
@@ -199,6 +165,111 @@ class EditRouteViewModel extends BaseSearchViewModel {
   void onSearch(String? text) {
     clearEnabled = text != null && text.isNotEmpty;
     //refilter(state.defects);
+  }
+
+  void updateVisitTimeForAddress(
+      String customerId, String addressId, String timeText) {
+    final time = parseTime(timeText);
+    _visitTimes['${customerId}_$addressId'] = time;
+    _hasChanges = true;
+    notifyListeners();
+  }
+
+  DateTime? parseTime(String timeText) {
+    final timeRegex = RegExp(r'^\d{2}:\d{2}$');
+    if (!timeRegex.hasMatch(timeText)) return null;
+
+    final timeParts = timeText.split(':');
+    int hours = int.parse(timeParts[0]);
+    int minutes = int.parse(timeParts[1]);
+
+    if (hours > 23 || minutes > 59) return null;
+
+    final now = DateTime.now();
+    return DateTime(now.year, now.month, now.day, hours, minutes);
+  }
+
+  Future<void> updateRoute() async {
+    /* if (_route == null) return;
+
+    loadingOn();
+
+    final updatedTasks = _route!.tasks.map((task) {
+      final visitTime = _visitTimes['${task.client.id}_${task.address.id}'];
+      return task.copyWith(visitDateTime: visitTime);
+    }).toList();
+
+    final updatedRoute = _route!.copyWith(tasks: updatedTasks);
+
+    (await executeUseCaseParam<void, RouteUpdateBody>(
+      _updateRouteUseCase,
+      RouteUpdateBody(updatedRoute.id, 'UPDATED', tasks: updatedTasks),
+    ))
+        .doOnError((message, exception) {
+      addAlert(Alert(message ?? '$exception', style: AlertStyle.danger));
+    }).doOnSuccess((_) {
+      addAlert(Alert('Маршрут успешно обновлен', style: AlertStyle.success));
+      _hasChanges = false;
+      loadRoute();
+    });
+
+    loadingOff();*/
+  }
+
+  String getLastVisitDate(String customerId, String addressId) {
+    final task = _route?.tasks.firstWhereOrNull(
+      (task) => task.client.id == customerId && task.address.id == addressId,
+    );
+
+    if (task == null || task.subtasks.isEmpty) {
+      return " – ";
+    }
+
+    final lastSubtask = task.subtasks.last;
+    return (lastSubtask.checklist?.createdAt?.toDateTime()).orDash();
+  }
+
+  Future<void> updateSubtask(Subtask updatedSubtask) async {
+    if (_route == null) return;
+
+    final updatedTasks = _route!.tasks.map((task) {
+      final updatedSubtasks = task.subtasks.map((subtask) {
+        if (subtask.id == updatedSubtask.id) {
+          return updatedSubtask;
+        }
+        return subtask;
+      }).toList();
+
+      return task.copyWith(subtasks: updatedSubtasks);
+    }).toList();
+
+    _route = _route!.copyWith(tasks: updatedTasks);
+    _hasChanges = true;
+    notifyListeners();
+  }
+
+  Future<void> loadAromas() async {
+    loadingOn();
+    (await executeUseCase<List<AromaResponse>>(_getAromasUseCase))
+        .doOnError((message, exception) {
+      addAlert(Alert(message ?? '$exception', style: AlertStyle.danger));
+    }).doOnSuccess((value) {
+      _aromas = value;
+      notifyListeners();
+    });
+    loadingOff();
+  }
+
+  Future<void> loadSubtaskTypes() async {
+    loadingOn();
+    (await executeUseCase<List<SubtaskTypeResponse>>(_getSubtaskTypesUseCase))
+        .doOnError((message, exception) {
+      addAlert(Alert(message ?? '$exception', style: AlertStyle.danger));
+    }).doOnSuccess((value) {
+      _subtaskTypes = value;
+      notifyListeners();
+    });
+    loadingOff();
   }
 
   @override

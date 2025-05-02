@@ -1,9 +1,11 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:feelmeweb/presentation/base_screen/base_screen.dart';
 import 'package:feelmeweb/presentation/buttons/base_text_button.dart';
 import 'package:feelmeweb/presentation/navigation/route_names.dart';
 import 'package:feelmeweb/presentation/theme/theme_colors.dart';
 import 'package:feelmeweb/presentation/widgets/search_widget.dart';
 import 'package:feelmeweb/ui/common/app_drawer.dart';
+import 'package:feelmeweb/ui/routes/create/widgets/time_input_field.dart';
 import 'package:feelmeweb/ui/routes/edit/widgets/edit_subtasks_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -42,10 +44,21 @@ class EditRoutePage extends StatelessWidget {
               child: ListView.builder(
                   itemBuilder: (context, index) {
                     final task = filteredTasks![index];
+                    final timeController =
+                        viewModel.timeControllers.putIfAbsent(
+                      '${task.client.id}_${task.address.id}',
+                      () => TextEditingController(
+                        text: DateFormat('HH:mm').format(task.visitDateTime!),
+                      ),
+                    );
+                    final lastDate = viewModel.getLastVisitDate(
+                      task.client.id,
+                      task.address.id,
+                    );
+
                     return ExpansionTile(
-                      shape: const Border(), // Убираем границу при раскрытии
-                      collapsedShape:
-                          const Border(), // Убираем границу в свернутом состоянии
+                      shape: const Border(),
+                      collapsedShape: const Border(),
                       leading: const Icon(Icons.expand_more),
                       trailing: IconButton(
                         icon:
@@ -60,6 +73,24 @@ class EditRoutePage extends StatelessWidget {
                           Text(task.name, textAlign: TextAlign.center),
                           Text(task.address.address,
                               textAlign: TextAlign.center),
+                          const SizedBox(height: 8),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Text("Время посещения:"),
+                              const SizedBox(width: 8),
+                              TimeInputField(
+                                controller: timeController,
+                                onChanged: (_) =>
+                                    viewModel.updateVisitTimeForAddress(
+                                        task.client.id,
+                                        task.address.id,
+                                        timeController.text),
+                              ),
+                              const SizedBox(width: 16),
+                              Text("Дата последнего посещения: $lastDate"),
+                            ],
+                          ),
                         ],
                       ),
                       children: [
