@@ -2,7 +2,6 @@ import 'package:base_class_gen/core/ext/build_context_ext.dart';
 import 'package:feelmeweb/data/models/response/roles_response.dart';
 import 'package:feelmeweb/presentation/buttons/base_text_button.dart';
 import 'package:feelmeweb/presentation/widgets/base_text_field.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../../../data/models/request/create_user_body.dart';

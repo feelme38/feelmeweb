@@ -19,11 +19,21 @@ class DeviceModelsViewModel extends BaseSearchViewModel {
   final _deleteDeviceModelUseCase = DeleteDeviceModelUseCase();
 
   List<DeviceModelsResponse> _deviceModels = [];
-  List<DeviceModelsResponse> get deviceModels => _deviceModels;
+  List<DeviceModelsResponse> _filteredDeviceModels = [];
+
+  List<DeviceModelsResponse> get deviceModels => _filteredDeviceModels;
 
   void onSearch(String? text) {
     clearEnabled = text != null && text.isNotEmpty;
-    //refilter(state.defects);
+    if (text == null || text.isEmpty) {
+      _filteredDeviceModels = _deviceModels;
+    } else {
+      _filteredDeviceModels = _deviceModels
+          .where(
+              (model) => model.name.toLowerCase().contains(text.toLowerCase()))
+          .toList();
+    }
+    notifyListeners();
   }
 
   final List<DataColumn> _tableDeviceModelsColumns = [
@@ -38,6 +48,7 @@ class DeviceModelsViewModel extends BaseSearchViewModel {
     _getDeviceModelsUseCase().then((v) {
       v.doOnSuccess((data) {
         _deviceModels = data;
+        _filteredDeviceModels = data;
         notifyListeners();
       });
     });

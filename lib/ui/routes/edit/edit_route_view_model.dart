@@ -1,6 +1,9 @@
 import 'package:collection/collection.dart';
 import 'package:feelmeweb/core/extensions/base_class_extensions/string_ext.dart';
+import 'package:feelmeweb/data/models/request/route_body.dart';
 import 'package:feelmeweb/data/models/request/route_update_body.dart';
+import 'package:feelmeweb/data/models/request/subtask_body.dart';
+import 'package:feelmeweb/data/models/request/tasks_body.dart';
 import 'package:feelmeweb/data/models/response/aroma_response.dart';
 import 'package:feelmeweb/data/models/response/customer_response.dart';
 import 'package:feelmeweb/data/models/response/region_response.dart';
@@ -9,6 +12,7 @@ import 'package:feelmeweb/data/models/response/subtask_types_response.dart';
 import 'package:feelmeweb/domain/aromas/get_aromas_usecase.dart';
 import 'package:feelmeweb/domain/regions/get_available_regions_usecase.dart';
 import 'package:feelmeweb/domain/route/change_route_status_usecase.dart';
+import 'package:feelmeweb/domain/route/create_route_usecase.dart';
 import 'package:feelmeweb/domain/route/get_user_route_usecase.dart';
 import 'package:feelmeweb/domain/route/update_route_usecase.dart';
 import 'package:feelmeweb/domain/subtasks/delete_subtask_usecase.dart';
@@ -36,6 +40,7 @@ class EditRouteViewModel extends BaseSearchViewModel {
   final _getAvailableRegionsUseCase = GetAvailableRegionsUseCase();
   final _getAromasUseCase = GetAromasUseCase();
   final _getSubtaskTypesUseCase = GetSubtaskTypesUseCase();
+  final _createRouteUseCase = CreateRouteUseCase();
 
   final _router = getIt<RouteGenerator>().router;
 
@@ -171,6 +176,18 @@ class EditRouteViewModel extends BaseSearchViewModel {
       String customerId, String addressId, String timeText) {
     final time = parseTime(timeText);
     _visitTimes['${customerId}_$addressId'] = time;
+
+    if (_route != null) {
+      final updatedTasks = _route!.tasks.map((task) {
+        if (task.client.id == customerId && task.address.id == addressId) {
+          return task.copyWith(visitDateTime: time);
+        }
+        return task;
+      }).toList();
+
+      _route = _route!.copyWith(tasks: updatedTasks);
+    }
+
     _hasChanges = true;
     notifyListeners();
   }
@@ -190,30 +207,74 @@ class EditRouteViewModel extends BaseSearchViewModel {
   }
 
   Future<void> updateRoute() async {
-    /* if (_route == null) return;
+    if (_route == null) return;
 
+    final tasks = _route!.tasks
+        .map((task) => TasksBody(
+              id: task.id,
+              name: task.name,
+              taskStatus: task.taskStatus,
+              clientId: task.client.id,
+              addressId: task.address.id,
+              visitDateTime: task.visitDateTime,
+              subtasks: task.subtasks
+                  .map(
+                    (subtask) => SubtaskBody(
+                        task.client.id,
+                        subtask.device.id,
+                        subtask.comment,
+                        subtask.expectedAroma.id,
+                        subtask.expectedAromaVolume,
+                        subtask.volumeFormula ?? '+100',
+                        subtask.subtaskType.id,
+                        id: subtask.id,
+                        subtaskStatus: subtask.subtaskStatus),
+                  )
+                  .toList(),
+            ))
+        .toList();
+
+    final RouteBody routeBody = RouteBody(userId, tasks,
+        routeId: _route?.id, routeStatus: _route?.routeStatus);
     loadingOn();
-
-    final updatedTasks = _route!.tasks.map((task) {
-      final visitTime = _visitTimes['${task.client.id}_${task.address.id}'];
-      return task.copyWith(visitDateTime: visitTime);
-    }).toList();
-
-    final updatedRoute = _route!.copyWith(tasks: updatedTasks);
-
-    (await executeUseCaseParam<void, RouteUpdateBody>(
-      _updateRouteUseCase,
-      RouteUpdateBody(updatedRoute.id, 'UPDATED', tasks: updatedTasks),
-    ))
+    (await executeUseCaseParam<void, RouteBody>(_updateRouteUseCase, routeBody))
         .doOnError((message, exception) {
       addAlert(Alert(message ?? '$exception', style: AlertStyle.danger));
-    }).doOnSuccess((_) {
+    }).doOnSuccess((value) {
       addAlert(Alert('Маршрут успешно обновлен', style: AlertStyle.success));
       _hasChanges = false;
-      loadRoute();
+      notifyListeners();
     });
+    loadingOff();
+  }
 
-    loadingOff();*/
+  Future<void> onEditSubtask(SubtaskBody updatedSubtask) async {
+    if (_route == null) return;
+
+    final updatedTasks = _route!.tasks.map((task) {
+      final updatedSubtasks = task.subtasks.map((subtask) {
+        if (subtask.id == updatedSubtask.id) {
+          final aroma = aromas
+              .firstWhereOrNull((e) => e.id == updatedSubtask.expectedAromaId);
+          final type = subtaskTypes
+              .firstWhereOrNull((e) => e.id == updatedSubtask.typeId);
+          // Convert SubtaskBody back to Subtask
+          return subtask.copyWith(
+              comment: updatedSubtask.comment,
+              expectedAroma: Aroma(id: aroma!.id, name: aroma.name),
+              expectedAromaVolume: updatedSubtask.expectedAromaVolume,
+              volumeFormula: updatedSubtask.volumeFormula,
+              subtaskType: type);
+        }
+        return subtask;
+      }).toList();
+
+      return task.copyWith(subtasks: updatedSubtasks);
+    }).toList();
+
+    _route = _route!.copyWith(tasks: updatedTasks);
+    _hasChanges = true;
+    notifyListeners();
   }
 
   String getLastVisitDate(String customerId, String addressId) {
@@ -227,25 +288,6 @@ class EditRouteViewModel extends BaseSearchViewModel {
 
     final lastSubtask = task.subtasks.last;
     return (lastSubtask.checklist?.createdAt?.toDateTime()).orDash();
-  }
-
-  Future<void> updateSubtask(Subtask updatedSubtask) async {
-    if (_route == null) return;
-
-    final updatedTasks = _route!.tasks.map((task) {
-      final updatedSubtasks = task.subtasks.map((subtask) {
-        if (subtask.id == updatedSubtask.id) {
-          return updatedSubtask;
-        }
-        return subtask;
-      }).toList();
-
-      return task.copyWith(subtasks: updatedSubtasks);
-    }).toList();
-
-    _route = _route!.copyWith(tasks: updatedTasks);
-    _hasChanges = true;
-    notifyListeners();
   }
 
   Future<void> loadAromas() async {

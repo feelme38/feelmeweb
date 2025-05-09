@@ -43,9 +43,10 @@ class CustomersViewModel extends BaseSearchViewModel {
   List<DevicePowersResponse> powers = [];
   List<DeviceModelsResponse> models = [];
   List<CustomerResponse> _customers = [];
+  List<CustomerResponse> _filteredCustomers = [];
   List<RegionResponse> regions = [];
 
-  List<CustomerResponse> get customers => _customers;
+  List<CustomerResponse> get customers => _filteredCustomers;
 
   final List<DataColumn> _tableCustomersColumns = [
     const DataColumn(
@@ -70,6 +71,7 @@ class CustomersViewModel extends BaseSearchViewModel {
       addAlert(Alert(message ?? '$exception', style: AlertStyle.danger));
     }).doOnSuccess((value) {
       _customers = value;
+      _filteredCustomers = value;
       fillCurrentCountDevices();
       loadingOff();
     });
@@ -141,7 +143,16 @@ class CustomersViewModel extends BaseSearchViewModel {
 
   void onSearch(String? text) {
     clearEnabled = text != null && text.isNotEmpty;
-    //refilter(state.defects);
+    if (text == null || text.isEmpty) {
+      _filteredCustomers = _customers;
+    } else {
+      _filteredCustomers = _customers
+          .where((customer) =>
+              customer.name?.toLowerCase().contains(text.toLowerCase()) ??
+              false)
+          .toList();
+    }
+    notifyListeners();
   }
 
   List<DataRow> getTableCustomersRows(

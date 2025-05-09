@@ -5,24 +5,26 @@ import 'package:feelmeweb/presentation/buttons/base_text_button.dart';
 import 'package:feelmeweb/presentation/modals/dialogs.dart';
 import 'package:feelmeweb/presentation/theme/theme_colors.dart';
 import 'package:feelmeweb/ui/routes/create/widgets/subtask_parameters_widget.dart';
+import 'package:feelmeweb/ui/routes/edit/edit_route_view_model.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class EditSubtaskCardWidget extends StatelessWidget {
   final LastCheckListInfoResponse checklist;
   final Subtask subtask;
   final Task task;
-  final Function(String) onDeleteSubtask;
 
   const EditSubtaskCardWidget({
     super.key,
     required this.checklist,
     required this.subtask,
     required this.task,
-    required this.onDeleteSubtask,
   });
 
   @override
   Widget build(BuildContext context) {
+    final viewModel = context.read<EditRouteViewModel>();
+
     return Card(
       elevation: 2,
       color: Colors.white,
@@ -58,11 +60,12 @@ class EditSubtaskCardWidget extends StatelessWidget {
                     child: BaseTextButton(
                         buttonText: "Редактировать",
                         onTap: () {
-                          Dialogs.showSubtaskInfoDialog(
-                            context,
-                            checklist: checklist,
-                            subtask: subtask,
-                          );
+                          Dialogs.editSubtaskDialog(context,
+                              checklist: checklist,
+                              aromas: viewModel.aromas,
+                              subtaskTypes: viewModel.subtaskTypes,
+                              editSubtaskCallback: viewModel.onEditSubtask,
+                              subtask: subtask);
                         },
                         weight: FontWeight.w500,
                         fontSize: 14,
@@ -74,7 +77,7 @@ class EditSubtaskCardWidget extends StatelessWidget {
                   Expanded(
                     child: BaseTextButton(
                         buttonText: "Удалить",
-                        onTap: () => onDeleteSubtask(subtask.id),
+                        onTap: () => viewModel.onDeleteSubtask(subtask.id),
                         weight: FontWeight.w500,
                         fontSize: 14,
                         enabled: true,

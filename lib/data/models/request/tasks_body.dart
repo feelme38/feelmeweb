@@ -9,6 +9,7 @@ class TasksBody {
   final String name;
   final String clientId;
   final String addressId;
+  final String? taskStatus;
   final DateTime? visitDateTime;
   final List<SubtaskBody> subtasks;
 
@@ -16,6 +17,7 @@ class TasksBody {
     required this.name,
     required this.clientId,
     required this.addressId,
+    this.taskStatus,
     required this.subtasks,
     required this.visitDateTime,
     this.id, // Оставляем id как необязательный именованный параметр
@@ -33,12 +35,14 @@ class TasksBody {
     String? typeId,
     String? clientId,
     String? addressId,
+    String? taskStatus,
     List<SubtaskBody>? subtasks,
   }) {
     return TasksBody(
       name: name ?? this.name,
       clientId: clientId ?? this.clientId,
       addressId: addressId ?? this.addressId,
+      taskStatus: taskStatus ?? this.taskStatus,
       subtasks: subtasks ?? this.subtasks,
       id: id ?? this.id, // Исправленный порядок
       visitDateTime: visitDateTime == _unset

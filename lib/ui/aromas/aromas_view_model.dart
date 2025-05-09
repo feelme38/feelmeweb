@@ -19,11 +19,12 @@ class AromasViewModel extends BaseSearchViewModel {
   final _updateAromaUseCase = UpdateAromaUseCase();
 
   List<AromaResponse> _aromas = [];
-  List<AromaResponse> get aromas => _aromas;
+  List<AromaResponse> _filteredAromas = [];
+  List<AromaResponse> get aromas => _filteredAromas;
 
   Map<AromaType, List<AromaResponse>> get aromasByType {
     final Map<AromaType, List<AromaResponse>> result = {};
-    for (var aroma in _aromas) {
+    for (var aroma in _filteredAromas) {
       final type = aroma.type;
       if (type == null) continue;
       if (!result.containsKey(type)) {
@@ -47,6 +48,7 @@ class AromasViewModel extends BaseSearchViewModel {
       addAlert(Alert(message ?? '$exception', style: AlertStyle.danger));
     }).doOnSuccess((value) {
       _aromas = value;
+      _filteredAromas = value;
       notifyListeners();
     });
     loadingOff();
@@ -79,7 +81,15 @@ class AromasViewModel extends BaseSearchViewModel {
 
   void onSearch(String? text) {
     clearEnabled = text != null && text.isNotEmpty;
-    //refilter(state.defects);
+    if (text == null || text.isEmpty) {
+      _filteredAromas = _aromas;
+    } else {
+      _filteredAromas = _aromas
+          .where(
+              (aroma) => aroma.name.toLowerCase().contains(text.toLowerCase()))
+          .toList();
+    }
+    notifyListeners();
   }
 
   List<DataRow> getTableAromasRows(

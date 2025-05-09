@@ -33,12 +33,18 @@ class UsersRepositoryImpl extends UsersRepository {
   Future<Result<bool>> createUser(CreateUserBody body) {
     return _usersRemoteSource.createUser(body);
   }
+
+  @override
+  Future<Result<bool>> deleteUser(String userId) {
+    return _usersRemoteSource.deleteUser(userId);
+  }
 }
 
 abstract class UsersRepository {
   Future<Result<List<UserResponse>>> getUsers(String? roleId);
   Future<Result<bool>> createUser(CreateUserBody body);
   Future<Result<List<RolesResponse>>> getUserRoles();
+  Future<Result<bool>> deleteUser(String userId);
 
   List<RolesResponse> get roles;
 }

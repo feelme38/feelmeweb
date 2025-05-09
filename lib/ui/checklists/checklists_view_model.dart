@@ -19,8 +19,9 @@ class ChecklistsViewModel extends BaseSearchViewModel {
   List<UserResponse> get users => _users;
 
   List<CheckListInfoResponse> _checklists = [];
+  List<CheckListInfoResponse> _filteredChecklists = [];
 
-  List<CheckListInfoResponse> get checklists => _checklists;
+  List<CheckListInfoResponse> get checklists => _filteredChecklists;
 
   late String selectedUserId;
 
@@ -54,6 +55,7 @@ class ChecklistsViewModel extends BaseSearchViewModel {
       addAlert(Alert(message ?? '$exception', style: AlertStyle.danger));
     }).doOnSuccess((value) {
       _checklists = value;
+      _filteredChecklists = value;
       notifyListeners();
     });
     loadingOff();
@@ -61,7 +63,18 @@ class ChecklistsViewModel extends BaseSearchViewModel {
 
   void onSearch(String? text) {
     clearEnabled = text != null && text.isNotEmpty;
-    //refilter(state.defects);
+    if (text == null || text.isEmpty) {
+      _filteredChecklists = _checklists;
+    } else {
+      _filteredChecklists = _checklists
+          .where((checklist) =>
+              checklist.customer?.name
+                  ?.toLowerCase()
+                  .contains(text.toLowerCase()) ??
+              false)
+          .toList();
+    }
+    notifyListeners();
   }
 
   @override

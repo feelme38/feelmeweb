@@ -18,6 +18,7 @@ import 'package:feelmeweb/presentation/modals/widgets/create_customer_dialog.dar
 import 'package:feelmeweb/presentation/modals/widgets/create_device_model_dialog.dart';
 import 'package:feelmeweb/presentation/modals/widgets/create_subtask_dialog_widget.dart';
 import 'package:feelmeweb/presentation/modals/widgets/create_user_dialog.dart';
+import 'package:feelmeweb/presentation/modals/widgets/edit_subtask_dialog_widget.dart';
 import 'package:feelmeweb/presentation/modals/widgets/update_aroma_dialog.dart';
 import 'package:feelmeweb/presentation/modals/widgets/update_customer_dialog.dart';
 import 'package:feelmeweb/presentation/modals/widgets/update_device_model_dialog.dart';
@@ -200,6 +201,26 @@ class Dialogs {
               aromas: aromas,
               subtaskTypes: subtaskTypes,
               callback: createSubtaskCallback),
+          width: context.currentSize.width * 0.4);
+    }
+  }
+
+  static Future<void> editSubtaskDialog(BuildContext? fromContext,
+      {required LastCheckListInfoResponse checklist,
+      required List<AromaResponse> aromas,
+      required List<SubtaskTypeResponse> subtaskTypes,
+      required EditSubtaskCallback editSubtaskCallback,
+      required Subtask subtask}) async {
+    final context = fromContext ?? getContext();
+    if (context != null) {
+      await showBaseDialog(
+          fromContext,
+          EditSubtaskDialogWidget(
+              subtask: subtask,
+              checklist: checklist,
+              aromas: aromas,
+              subtaskTypes: subtaskTypes,
+              callback: editSubtaskCallback),
           width: context.currentSize.width * 0.4);
     }
   }

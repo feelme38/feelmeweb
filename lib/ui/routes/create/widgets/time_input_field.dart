@@ -5,8 +5,13 @@ import 'package:flutter/services.dart';
 class TimeInputField extends StatelessWidget {
   final TextEditingController controller;
   final Function(String)? onChanged;
+  final bool enabled;
 
-  const TimeInputField({super.key, required this.controller, this.onChanged});
+  const TimeInputField(
+      {super.key,
+      required this.controller,
+      this.onChanged,
+      this.enabled = true});
 
   @override
   Widget build(BuildContext context) {
@@ -23,6 +28,7 @@ class TimeInputField extends StatelessWidget {
           ],
           textAlign: TextAlign.center,
           decoration: InputDecoration(
+            enabled: enabled,
             hintText: '00:00',
             counterText: "",
             isDense: true,

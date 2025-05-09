@@ -143,6 +143,8 @@ class CreateRouteViewModel extends BaseSearchViewModel {
   Future loadLastChecklistsInfo() async {
     loadingOn();
 
+    _lastChecklists.clear();
+
     // Удаляем из selectedSubtasks те, которых нет в savedTasks
     selectedSubtasks.removeWhere((subtask) =>
         !savedTasks.values.any((task) => task.subtasks.contains(subtask)));
@@ -262,8 +264,6 @@ class CreateRouteViewModel extends BaseSearchViewModel {
   }
 
   Future updateRoute() async {
-    loadingOn();
-
     if (_route == null) {
       addAlert(Alert(
           'Ошибка обновления маршрута. Действующий маршрут не найден',
@@ -277,73 +277,49 @@ class CreateRouteViewModel extends BaseSearchViewModel {
             _route?.tasks.firstWhereOrNull((e) => e.address.id == addressId);
 
         if (existsTask != null) {
-          // Обновляем newTask, присваивая новый объект
+          // Convert existing subtasks to SubtaskBody format
+          final existingSubtasks = existsTask.subtasks
+              .map((subtask) => SubtaskBody(
+                    subtask.taskId, // customerId
+                    subtask.device.id, // deviceId
+                    subtask.comment,
+                    subtask.expectedAroma.id, // expectedAromaId
+                    subtask.expectedAromaVolume,
+                    subtask.volumeFormula ?? '+100', // volumeFormula
+                    subtask.subtaskType.id, // typeId
+                    id: subtask.id,
+                    addressId: subtask.taskId,
+                    subtaskStatus: subtask.subtaskStatus,
+                  ))
+              .toList();
+
+          // Update the task with existing subtasks and new subtasks
           savedTasks[addressId] = newTask.copyWith(
             id: existsTask.id,
-            subtasks: [
-              ...existsTask.subtasks.map(
-                (subtask) => SubtaskBody(
-                    id: subtask.id,
-                    newTask.clientId,
-                    subtask.device.id,
-                    subtask.comment,
-                    subtask.expectedAroma.id,
-                    subtask.expectedAromaVolume,
-                    subtask.volumeFormula ?? '+100',
-                    subtask.subtaskType.id),
-              ),
-              ...newTask.subtasks, // Сохраняем старые подзадачи
-            ],
+            taskStatus: existsTask.taskStatus,
+            subtasks: [...existingSubtasks, ...newTask.subtasks],
           );
         }
       }
 
-      // Добавляем существующие таски, если их нет в savedTasks
-      for (Task task in route?.tasks ?? []) {
-        if (!savedTasks.containsKey(task.address.id)) {
-          savedTasks[task.address.id] = TasksBody(
-            id: task.id,
-            name: task.client.name,
-            visitDateTime: task.visitDateTime ?? DateTime.now(),
-            clientId: task.client.id,
-            addressId: task.address.id,
-            subtasks: task.subtasks
-                .map(
-                  (subtask) => SubtaskBody(
-                      id: subtask.id,
-                      task.client.id,
-                      subtask.device.id,
-                      subtask.comment,
-                      subtask.expectedAroma.id,
-                      subtask.expectedAromaVolume,
-                      subtask.volumeFormula ?? '+100',
-                      subtask.subtaskType.id),
-                )
-                .toList(),
-          );
-        }
-      }
-
-      final RouteBody routeBody =
-          RouteBody(routeId: route?.id, userId, savedTasks.values.toList());
-
+      final RouteBody routeBody = RouteBody(userId, savedTasks.values.toList(),
+          routeId: _route?.id, routeStatus: _route?.routeStatus);
+      loadingOn();
       (await executeUseCaseParam<void, RouteBody>(
               _updateRouteUseCase, routeBody))
           .doOnError((message, exception) {
         addAlert(Alert(message ?? '$exception', style: AlertStyle.danger));
       }).doOnSuccess((value) {
-        addAlert(Alert('Маршрут успешно обновлён', style: AlertStyle.success));
+        addAlert(Alert('Маршрут успешно обновлен', style: AlertStyle.success));
         selectedSubtasks.clear();
         savedTasks.clear();
         Future.delayed(const Duration(milliseconds: 500), () {
-          // Перейти на customerEditRoute
-          _router.pushReplacement(RouteName.customerEditRoute, extra: userId);
+          _router.pushReplacement(RouteName.usersList);
         });
         notifyListeners();
       });
+      loadingOff();
     }
-
-    loadingOff();
   }
 
   void loadAromas() async {
@@ -382,23 +358,42 @@ class CreateRouteViewModel extends BaseSearchViewModel {
   }
 
   void calculateCreateOrUpdateRouteButtonState() {
-    bool isEveryTaskCreated = true;
-    bool isEveryTaskHasTime = true;
+    // Базовые проверки на непустые задачи и выбранных клиентов
+    if (savedTasks.isEmpty || selectedCustomers.isEmpty) {
+      _isCreateOrUpdateRouteButtonEnabled = false;
+      notifyListeners();
+      return;
+    }
+
+    // Собираем ID клиентов из сохранённых задач
+    final savedClientIds =
+        savedTasks.values.map((task) => task.clientId).toSet();
+
+    // Проверяем, что все выбранные клиенты есть в сохранённых задачах
+    final allSelectedClientsExist =
+        selectedCustomers.every((c) => savedClientIds.contains(c.id));
+
+    // Проверяем каждую задачу
+    bool allTasksValid = true;
 
     savedTasks.updateAll((_, task) {
       final key = '${task.clientId}_${task.addressId}';
       final visitTime = visitTimes[key];
 
-      if (visitTime == null) isEveryTaskHasTime = false;
-      if (!selectedCustomers.any((c) => c.id == task.clientId)) {
-        isEveryTaskCreated = false;
+      final isValid = visitTime != null &&
+          task.subtasks.isNotEmpty &&
+          selectedCustomers.any((c) => c.id == task.clientId);
+
+      if (!isValid) {
+        allTasksValid = false;
       }
 
       return task.copyWith(visitDateTime: visitTime);
     });
 
+    // Объединённая финальная проверка
     _isCreateOrUpdateRouteButtonEnabled =
-        isEveryTaskCreated && isEveryTaskHasTime;
+        allSelectedClientsExist && allTasksValid;
 
     notifyListeners();
   }

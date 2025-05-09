@@ -10,6 +10,7 @@ TasksBody _$TasksBodyFromJson(Map<String, dynamic> json) => TasksBody(
       name: json['name'] as String,
       clientId: json['clientId'] as String,
       addressId: json['addressId'] as String,
+      taskStatus: json['taskStatus'] as String?,
       subtasks: (json['subtasks'] as List<dynamic>)
           .map((e) => SubtaskBody.fromJson(e as Map<String, dynamic>))
           .toList(),
@@ -24,6 +25,7 @@ Map<String, dynamic> _$TasksBodyToJson(TasksBody instance) => <String, dynamic>{
       'name': instance.name,
       'clientId': instance.clientId,
       'addressId': instance.addressId,
+      'taskStatus': instance.taskStatus,
       'visitDateTime': instance.visitDateTime?.toIso8601String(),
       'subtasks': instance.subtasks,
     };

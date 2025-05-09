@@ -18,8 +18,10 @@ class RegionsViewModel extends BaseSearchViewModel {
   final _updateRegionUseCase = UpdateRegionUseCase();
   final _deleteRegionUseCase = DeleteRegionUseCase();
 
+  List<RegionResponse> get regions => _filteredRegions;
+
+  List<RegionResponse> _filteredRegions = [];
   List<RegionResponse> _regions = [];
-  List<RegionResponse> get regions => _regions;
 
   final List<DataColumn> _tableRegionsColumns = [
     const DataColumn(label: Text('Наименование')),
@@ -66,7 +68,15 @@ class RegionsViewModel extends BaseSearchViewModel {
 
   void onSearch(String? text) {
     clearEnabled = text != null && text.isNotEmpty;
-    //refilter(state.defects);
+    if (text == null || text.isEmpty) {
+      _filteredRegions = _regions;
+    } else {
+      _filteredRegions = _regions
+          .where((customer) =>
+              customer.name.toLowerCase().contains(text.toLowerCase()))
+          .toList();
+    }
+    notifyListeners();
   }
 
   List<DataRow> getTableRegionsRows(

@@ -24,6 +24,7 @@ class EditRoutePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final route = context.watch<EditRouteViewModel>().route;
+    final hasChanges = context.watch<EditRouteViewModel>().hasChanges;
     final viewModel = context.read<EditRouteViewModel>();
     final filteredTasks = route?.tasks
         .where((e) =>
@@ -94,55 +95,71 @@ class EditRoutePage extends StatelessWidget {
                         ],
                       ),
                       children: [
-                        EditSubtasksWidget(
-                            task: task,
-                            checklists: task.checkListInfo,
-                            onDeleteSubtask: viewModel.onDeleteSubtask),
+                        EditSubtasksWidget(task: task),
                       ],
                     );
                   },
                   itemCount: filteredTasks?.length ?? 0),
             ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Container(
-                alignment: Alignment.centerRight,
-                padding: const EdgeInsets.all(32.0),
-                child: SizedBox(
-                  width: 200,
-                  child: BaseTextButton(
-                      buttonText: "Снять с маршрута",
-                      onTap: () => viewModel.onRemoveFromRoute(),
-                      weight: FontWeight.w500,
-                      fontSize: 14,
-                      enabled: true,
-                      textColor: Colors.white,
-                      buttonColor: AppColor.redDefect),
+          Padding(
+            padding: const EdgeInsets.only(left: 32, right: 32, bottom: 32),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Container(
+                  alignment: Alignment.centerRight,
+                  child: SizedBox(
+                    width: 200,
+                    child: BaseTextButton(
+                        buttonText: "Снять с маршрута",
+                        onTap: () => viewModel.onRemoveFromRoute(),
+                        weight: FontWeight.w500,
+                        fontSize: 14,
+                        enabled: true,
+                        textColor: Colors.white,
+                        buttonColor: AppColor.redDefect),
+                  ),
                 ),
-              ),
-              Container(
-                alignment: Alignment.centerRight,
-                padding: const EdgeInsets.all(32.0),
-                child: SizedBox(
-                  width: 200,
-                  child: BaseTextButton(
-                      buttonText: "Добавить маршрут",
-                      onTap: () => context.go(
-                            RouteName.customerCreateRoute,
-                            extra: {
-                              'userId': viewModel.userId,
-                              'isUpdate': true
-                            },
-                          ),
-                      weight: FontWeight.w500,
-                      fontSize: 14,
-                      enabled: true,
-                      textColor: Colors.white,
-                      buttonColor: AppColor.primary),
+                Row(
+                  children: [
+                    Container(
+                      alignment: Alignment.centerRight,
+                      child: SizedBox(
+                        child: BaseTextButton(
+                            buttonText: "Применить изменения",
+                            onTap: viewModel.updateRoute,
+                            weight: FontWeight.w500,
+                            fontSize: 14,
+                            enabled: hasChanges,
+                            textColor: Colors.white,
+                            buttonColor: AppColor.success),
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Container(
+                      alignment: Alignment.centerRight,
+                      child: SizedBox(
+                        width: 200,
+                        child: BaseTextButton(
+                            buttonText: "Добавить маршрут",
+                            onTap: () => context.go(
+                                  RouteName.customerCreateRoute,
+                                  extra: {
+                                    'userId': viewModel.userId,
+                                    'isUpdate': true
+                                  },
+                                ),
+                            weight: FontWeight.w500,
+                            fontSize: 14,
+                            enabled: true,
+                            textColor: Colors.white,
+                            buttonColor: AppColor.primary),
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ],
       ),

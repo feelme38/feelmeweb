@@ -7,6 +7,7 @@ class SubtaskBody {
   final String? id;
   final String? customerId;
   final String? addressId;
+  final String? subtaskStatus;
   final String deviceId;
   final String comment;
   final String expectedAromaId;
@@ -24,6 +25,7 @@ class SubtaskBody {
     this.typeId, {
     this.id,
     this.addressId,
+    this.subtaskStatus,
   });
 
   factory SubtaskBody.fromJson(Map<String, dynamic> json) =>
@@ -36,6 +38,7 @@ class SubtaskBody {
     String? id,
     String? customerId,
     String? addressId,
+    String? subtaskStatus,
     String? deviceId,
     String? comment,
     String? expectedAromaId,
@@ -44,15 +47,15 @@ class SubtaskBody {
     String? typeId,
   }) {
     return SubtaskBody(
-      customerId ?? this.customerId,
-      deviceId ?? this.deviceId,
-      comment ?? this.comment,
-      expectedAromaId ?? this.expectedAromaId,
-      expectedAromaVolume ?? this.expectedAromaVolume,
-      volumeFormula ?? this.volumeFormula,
-      typeId ?? this.typeId,
-      id: id ?? this.id,
-      addressId: addressId ?? this.addressId,
-    );
+        customerId ?? this.customerId,
+        deviceId ?? this.deviceId,
+        comment ?? this.comment,
+        expectedAromaId ?? this.expectedAromaId,
+        expectedAromaVolume ?? this.expectedAromaVolume,
+        volumeFormula ?? this.volumeFormula,
+        typeId ?? this.typeId,
+        id: id ?? this.id,
+        addressId: addressId ?? this.addressId,
+        subtaskStatus: subtaskStatus ?? this.subtaskStatus);
   }
 }

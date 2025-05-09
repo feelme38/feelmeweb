@@ -1,21 +1,13 @@
 import 'package:collection/collection.dart';
-import 'package:feelmeweb/data/models/response/last_checklist_info_response.dart';
 import 'package:feelmeweb/data/models/response/route_response.dart';
 import 'package:flutter/material.dart';
 
 import 'edit_subtask_card_widget.dart';
 
 class EditSubtasksWidget extends StatelessWidget {
-  const EditSubtasksWidget({
-    super.key,
-    required this.task,
-    required this.onDeleteSubtask,
-    required this.checklists,
-  });
+  const EditSubtasksWidget({super.key, required this.task});
 
   final Task task;
-  final List<LastCheckListInfoResponse> checklists;
-  final Function(String subtaskId) onDeleteSubtask;
 
   @override
   Widget build(BuildContext context) {
@@ -32,18 +24,14 @@ class EditSubtasksWidget extends StatelessWidget {
       itemCount: task.subtasks.length,
       itemBuilder: (context, index) {
         final subtask = task.subtasks[index];
-        final checklist = checklists.firstWhereOrNull(
+        final checklist = task.checkListInfo.firstWhereOrNull(
           (e) => e.deviceId == subtask.device.id,
         );
 
         if (checklist == null) return const SizedBox.shrink();
 
         return EditSubtaskCardWidget(
-          checklist: checklist,
-          task: task,
-          subtask: subtask,
-          onDeleteSubtask: onDeleteSubtask,
-        );
+            checklist: checklist, task: task, subtask: subtask);
       },
     );
   }

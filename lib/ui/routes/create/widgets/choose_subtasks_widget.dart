@@ -1,4 +1,5 @@
 import 'package:collection/collection.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:feelmeweb/core/extensions/base_class_extensions/string_ext.dart';
 import 'package:feelmeweb/data/models/request/subtask_body.dart';
 import 'package:feelmeweb/data/models/response/last_checklist_info_response.dart';
@@ -92,6 +93,19 @@ class _CreateRouteChooseSubtasksWidgetState
               final timeController =
                   _timeControllers['${customer.id}_${address.id}']!;
 
+              final existsTask = viewModel.route?.tasks
+                  .firstWhereOrNull((task) => task.client.id == customer.id);
+
+              if (existsTask != null) {
+                final newTimeText =
+                    DateFormat('HH:mm').format(existsTask.visitDateTime!);
+                if (timeController.text != newTimeText) {
+                  timeController.text = newTimeText;
+                  viewModel.updateVisitTimeForAddress(
+                      customerId, addressId, newTimeText);
+                }
+              }
+
               return ExpansionTile(
                 shape: const Border(),
                 collapsedShape: const Border(),
@@ -109,6 +123,10 @@ class _CreateRouteChooseSubtasksWidgetState
                           controller: timeController,
                           onChanged: (_) => viewModel.updateVisitTimeForAddress(
                               customer.id!, address.id!, timeController.text),
+                          enabled: viewModel.route?.tasks
+                                  .map((e) => e.client.id)
+                                  .contains(customer.id) ==
+                              false,
                         ),
                         const SizedBox(width: 16),
                         Text("Дата последнего посещения: $lastDate"),
