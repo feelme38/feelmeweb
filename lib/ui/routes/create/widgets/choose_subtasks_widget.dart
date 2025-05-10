@@ -123,10 +123,7 @@ class _CreateRouteChooseSubtasksWidgetState
                           controller: timeController,
                           onChanged: (_) => viewModel.updateVisitTimeForAddress(
                               customer.id!, address.id!, timeController.text),
-                          enabled: viewModel.route?.tasks
-                                  .map((e) => e.client.id)
-                                  .contains(customer.id) ==
-                              false,
+                          enabled: existsTask == null,
                         ),
                         const SizedBox(width: 16),
                         Text("Дата последнего посещения: $lastDate"),

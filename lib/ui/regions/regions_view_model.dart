@@ -36,6 +36,7 @@ class RegionsViewModel extends BaseSearchViewModel {
       addAlert(Alert(message ?? '$exception', style: AlertStyle.danger));
     }).doOnSuccess((value) {
       _regions = value;
+      _filteredRegions = value;
       notifyListeners();
     });
     loadingOff();
