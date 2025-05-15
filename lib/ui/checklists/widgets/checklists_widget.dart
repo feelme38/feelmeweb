@@ -1,6 +1,8 @@
+import 'dart:html' as html;
+
+import 'package:easy_localization/easy_localization.dart';
 import 'package:feelmeweb/data/models/response/checklist_info_response.dart';
 import 'package:flutter/material.dart';
-import 'dart:html' as html;
 
 import '../../common/app_table_widget.dart';
 
@@ -40,12 +42,19 @@ class _ChecklistsWidgetState extends State<ChecklistsWidget> {
   List<DataRow> getTableChecklistsRows(
           List<CheckListInfoResponse> checklists) =>
       checklists.map((checklists) {
+        DateTime? createdAt = checklists.createdAt;
+        String formattedDate = " – ";
+        if (createdAt != null) {
+          formattedDate = DateFormat('dd.MM.yyyy HH:mm:ss').format(createdAt);
+        }
+
         return DataRow(cells: [
-          DataCell(Align(
-            alignment: Alignment.center,
-            child: Text(
-                '${checklists.createdAt?.date.toDateTime()} ${checklists.createdAt?.time?.toFormattedTime()}'),
-          )),
+          DataCell(
+            Align(
+              alignment: Alignment.center,
+              child: Text(formattedDate),
+            ),
+          ),
           DataCell(Align(
             alignment: Alignment.center,
             child: Text(checklists.customer?.name ?? ''),

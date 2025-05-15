@@ -12,7 +12,7 @@ LastCheckListInfoResponse _$LastCheckListInfoResponseFromJson(
       id: json['id'] as String?,
       createdAt: json['createdAt'] == null
           ? null
-          : LocalDate.fromJson(json['createdAt'] as Map<String, dynamic>),
+          : DateTime.parse(json['createdAt'] as String),
       checklistAroma: ChecklistAroma.fromJson(
           json['checklistAroma'] as Map<String, dynamic>),
       deviceLocation: json['deviceLocation'] as String?,
@@ -31,7 +31,7 @@ Map<String, dynamic> _$LastCheckListInfoResponseToJson(
         LastCheckListInfoResponse instance) =>
     <String, dynamic>{
       'id': instance.id,
-      'createdAt': instance.createdAt,
+      'createdAt': instance.createdAt?.toIso8601String(),
       'checklistAroma': instance.checklistAroma,
       'deviceWorkSchedule': instance.deviceWorkSchedule,
       'deviceId': instance.deviceId,

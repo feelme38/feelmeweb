@@ -6,7 +6,7 @@ part 'last_checklist_info_response.g.dart';
 @JsonSerializable()
 class LastCheckListInfoResponse {
   final String? id;
-  final LocalDate? createdAt;
+  final DateTime? createdAt;
   final ChecklistAroma checklistAroma;
   final DeviceWorkSchedule? deviceWorkSchedule;
   final String? deviceId;
@@ -35,7 +35,7 @@ class LastCheckListInfoResponse {
 
   LastCheckListInfoResponse copyWith({
     String? id,
-    LocalDate? createdAt,
+    DateTime? createdAt,
     ChecklistAroma? checklistAroma,
     DeviceWorkSchedule? deviceWorkSchedule,
     String? deviceId,

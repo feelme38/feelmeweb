@@ -8,7 +8,7 @@ part 'checklist_info_response.g.dart';
 @JsonSerializable()
 class CheckListInfoResponse {
   final String? id;
-  final LocalDateTime? createdAt;
+  final DateTime? createdAt;
 
   final String? pdfUrl;
   final Customer? customer;

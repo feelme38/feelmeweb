@@ -12,7 +12,7 @@ CheckListInfoResponse _$CheckListInfoResponseFromJson(
       id: json['id'] as String?,
       createdAt: json['createdAt'] == null
           ? null
-          : LocalDateTime.fromJson(json['createdAt'] as Map<String, dynamic>),
+          : DateTime.parse(json['createdAt'] as String),
       pdfUrl: json['pdfUrl'] as String?,
       customer: json['customer'] == null
           ? null
@@ -26,7 +26,7 @@ Map<String, dynamic> _$CheckListInfoResponseToJson(
         CheckListInfoResponse instance) =>
     <String, dynamic>{
       'id': instance.id,
-      'createdAt': instance.createdAt,
+      'createdAt': instance.createdAt?.toIso8601String(),
       'pdfUrl': instance.pdfUrl,
       'customer': instance.customer,
       'address': instance.address,

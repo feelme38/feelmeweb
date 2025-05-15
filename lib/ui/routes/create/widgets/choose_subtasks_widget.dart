@@ -1,6 +1,6 @@
 import 'package:collection/collection.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:feelmeweb/core/extensions/base_class_extensions/string_ext.dart';
+import 'package:feelmeweb/core/date_utils.dart';
 import 'package:feelmeweb/data/models/request/subtask_body.dart';
 import 'package:feelmeweb/data/models/response/last_checklist_info_response.dart';
 import 'package:feelmeweb/ui/routes/create/create_route_view_model.dart';
@@ -47,7 +47,9 @@ class _CreateRouteChooseSubtasksWidgetState
         checklists.where((item) => item.id != null).toList();
     final lastDate = checklistsNotNullId.isEmpty
         ? " – "
-        : checklistsNotNullId.firstOrNull?.createdAt?.toDateTime()?.orDash();
+        : checklistsNotNullId.firstOrNull?.createdAt != null
+            ? ruDateFormat.format(checklistsNotNullId.firstOrNull!.createdAt!)
+            : '–';
 
     // Group checklists by customer and address
     final Map<String, Map<String, List<LastCheckListInfoResponse>>>

@@ -103,15 +103,22 @@ class UsersViewModel extends BaseSearchViewModel {
 
   List<DataRow> getTableUsersRows(List<UserResponse> users) =>
       users.map((user) {
+        final routeAvailable = ![
+          RouteStatus.CANCELED,
+          RouteStatus.FINISHED,
+          null
+        ].contains(user.routeStatus);
         return DataRow(cells: [
           DataCell(Align(
               alignment: Alignment.center,
               child: InkWell(
                   onTap: () {
-                    final context =
-                        getIt<RouteGenerator>().navigatorKey.currentContext;
-                    if (context == null) return;
-                    context.go(RouteName.routeInfo, extra: user.id);
+                    if (routeAvailable) {
+                      final context =
+                          getIt<RouteGenerator>().navigatorKey.currentContext;
+                      if (context == null) return;
+                      context.go(RouteName.routeInfo, extra: user.id);
+                    }
                   },
                   child: Text(user.name)))),
           DataCell(Align(

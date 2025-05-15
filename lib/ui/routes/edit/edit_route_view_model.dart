@@ -1,5 +1,5 @@
 import 'package:collection/collection.dart';
-import 'package:feelmeweb/core/extensions/base_class_extensions/string_ext.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:feelmeweb/data/models/request/route_body.dart';
 import 'package:feelmeweb/data/models/request/route_update_body.dart';
 import 'package:feelmeweb/data/models/request/subtask_body.dart';
@@ -287,7 +287,10 @@ class EditRouteViewModel extends BaseSearchViewModel {
     }
 
     final lastSubtask = task.subtasks.last;
-    return (lastSubtask.checklist?.createdAt?.toDateTime()).orDash();
+    if (lastSubtask.checklist?.createdAt == null) {
+      return " – ";
+    }
+    return DateFormat('dd.MM.yyyy').format(lastSubtask.checklist!.createdAt!);
   }
 
   Future<void> loadAromas() async {

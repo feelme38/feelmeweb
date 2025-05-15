@@ -18,7 +18,7 @@ class RouteInfoViewModel extends BaseSearchViewModel {
 
   List<ActiveCustomerResponse> get activeCustomers => _activeCustomers;
 
-  late Client selectedCustomer;
+  Client? selectedCustomer;
 
   void chooseCustomer(Client customer) {
     selectedCustomer = customer;
@@ -33,7 +33,7 @@ class RouteInfoViewModel extends BaseSearchViewModel {
       addAlert(Alert(message ?? '$exception', style: AlertStyle.danger));
     }).doOnSuccess((value) {
       _activeCustomers = value;
-      selectedCustomer = _activeCustomers.first.customer;
+      selectedCustomer = _activeCustomers.firstOrNull?.customer;
       notifyListeners();
     });
     loadingOff();
