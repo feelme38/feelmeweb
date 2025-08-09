@@ -1,10 +1,13 @@
 import 'package:base_class_gen/core/ext/build_context_ext.dart';
-import 'package:feelmeweb/core/result/result_of.dart';
 import 'package:feelmeweb/data/models/request/add_device_body.dart';
+import 'package:feelmeweb/data/models/request/update_customer_body.dart';
 import 'package:feelmeweb/data/models/response/customer_response.dart';
+import 'package:feelmeweb/data/models/response/device_models.dart';
 import 'package:feelmeweb/data/models/response/device_powers.dart';
 import 'package:feelmeweb/data/models/response/region_response.dart';
+import 'package:feelmeweb/domain/customers/delete_customer_use_case.dart';
 import 'package:feelmeweb/domain/customers/get_customers_usecase.dart';
+import 'package:feelmeweb/domain/customers/update_customer_use_case.dart';
 import 'package:feelmeweb/domain/devices/delete_device_usecase.dart';
 import 'package:feelmeweb/domain/devices/get_device_models_use_case.dart';
 import 'package:feelmeweb/domain/devices/get_device_powers_use_case.dart';
@@ -12,6 +15,7 @@ import 'package:feelmeweb/domain/regions/get_regions_usecase.dart';
 import 'package:feelmeweb/presentation/modals/dialogs.dart';
 import 'package:feelmeweb/presentation/navigation/route_generation.dart';
 import 'package:flutter/material.dart';
+
 import '../../data/models/request/add_customer_address.dart';
 import '../../domain/address/add_address_usecase.dart';
 import '../../domain/devices/create_device_usecase.dart';
@@ -27,6 +31,8 @@ class CustomersViewModel extends BaseSearchViewModel {
   }
 
   final _getCustomersUseCase = GetCustomersUseCase();
+  final _updateCustomerUseCase = UpdateCustomerUseCase();
+  final _deleteCustomerUseCase = DeleteCustomerUseCase();
   final _deleteDeviceUseCase = DeleteDeviceUseCase();
   final _getDeviceModelsUseCase = GetDeviceModelsUseCase();
   final _getDevicePowersUseCase = GetDevicePowersUseCase();
@@ -37,9 +43,10 @@ class CustomersViewModel extends BaseSearchViewModel {
   List<DevicePowersResponse> powers = [];
   List<DeviceModelsResponse> models = [];
   List<CustomerResponse> _customers = [];
+  List<CustomerResponse> _filteredCustomers = [];
   List<RegionResponse> regions = [];
 
-  List<CustomerResponse> get customers => _customers;
+  List<CustomerResponse> get customers => _filteredCustomers;
 
   final List<DataColumn> _tableCustomersColumns = [
     const DataColumn(
@@ -64,6 +71,7 @@ class CustomersViewModel extends BaseSearchViewModel {
       addAlert(Alert(message ?? '$exception', style: AlertStyle.danger));
     }).doOnSuccess((value) {
       _customers = value;
+      _filteredCustomers = value;
       fillCurrentCountDevices();
       loadingOff();
     });
@@ -72,6 +80,31 @@ class CustomersViewModel extends BaseSearchViewModel {
         regions = data;
       });
     });
+  }
+
+  void updateCustomer(UpdateCustomerBody body) async {
+    loadingOn();
+    (await executeUseCaseParam<bool, UpdateCustomerBody>(
+            _updateCustomerUseCase, body))
+        .doOnError((message, exception) {
+      addAlert(Alert(message ?? '$exception', style: AlertStyle.danger));
+    }).doOnSuccess((value) {
+      addAlert(Alert('Клиент обновлен', style: AlertStyle.success));
+      loadCustomers();
+    });
+    loadingOff();
+  }
+
+  void deleteCustomer(String id) async {
+    loadingOn();
+    (await executeUseCaseParam<bool, String>(_deleteCustomerUseCase, id))
+        .doOnError((message, exception) {
+      addAlert(Alert(message ?? '$exception', style: AlertStyle.danger));
+    }).doOnSuccess((value) {
+      addAlert(Alert('Клиент удален', style: AlertStyle.success));
+      loadCustomers();
+    });
+    loadingOff();
   }
 
   Future<void> addAddress(AddCustomerAddressBody body) async {
@@ -92,7 +125,8 @@ class CustomersViewModel extends BaseSearchViewModel {
   }
 
   Future<void> addDevice(AddDeviceBody body, String? customerId) async {
-    (await executeUseCaseParam(_addDeviceUseCase, body.copyWith(customerId: customerId)))
+    (await executeUseCaseParam(
+            _addDeviceUseCase, body.copyWith(customerId: customerId)))
         .doOnError((message, exception) {
       addAlert(Alert(message ?? '$exception', style: AlertStyle.danger));
     }).doOnSuccess((value) {
@@ -109,10 +143,20 @@ class CustomersViewModel extends BaseSearchViewModel {
 
   void onSearch(String? text) {
     clearEnabled = text != null && text.isNotEmpty;
-    //refilter(state.defects);
+    if (text == null || text.isEmpty) {
+      _filteredCustomers = _customers;
+    } else {
+      _filteredCustomers = _customers
+          .where((customer) =>
+              customer.name?.toLowerCase().contains(text.toLowerCase()) ??
+              false)
+          .toList();
+    }
+    notifyListeners();
   }
 
-  List<DataRow> getTableCustomersRows(List<CustomerResponse> customers) =>
+  List<DataRow> getTableCustomersRows(
+          List<CustomerResponse> customers, BuildContext context) =>
       customers.map((customer) {
         return DataRow(cells: [
           DataCell(Align(
@@ -178,14 +222,15 @@ class CustomersViewModel extends BaseSearchViewModel {
               IconButton(
                 icon: const Icon(Icons.edit),
                 onPressed: () {
-                  // Логика редактирования пользователя
+                  Dialogs.showUpdateCustomerDialog(
+                      context, customer, updateCustomer);
                 },
                 tooltip: 'Редактировать',
               ),
               IconButton(
                 icon: const Icon(Icons.delete),
                 onPressed: () {
-                  // Логика удаления пользователя
+                  deleteCustomer(customer.id!);
                 },
                 tooltip: 'Удалить',
               ),

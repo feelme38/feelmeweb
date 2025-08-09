@@ -1,4 +1,6 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:feelmeweb/data/models/response/local_date.dart';
+import 'package:feelmeweb/data/models/response/local_time.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'checklist_info_response.g.dart';
@@ -6,74 +8,83 @@ part 'checklist_info_response.g.dart';
 @JsonSerializable()
 class CheckListInfoResponse {
   final String? id;
-  final LocalDate? createdAt;
-  final ChecklistAroma checklistAroma;
-  final DeviceWorkSchedule? deviceWorkSchedule;
-  final String? deviceId;
-  final String? deviceModel;
-  final String? contract;
-  final String? deviceLocation;
+  final DateTime? createdAt;
+
+  final String? pdfUrl;
+  final Customer? customer;
+  final Address? address; // New address field
 
   CheckListInfoResponse({
     this.id,
-    required this.createdAt,
-    required this.checklistAroma,
-    this.deviceLocation,
-    this.deviceWorkSchedule,
-    this.deviceId,
-    this.deviceModel,
-    this.contract,
+    this.createdAt,
+    this.pdfUrl,
+    this.customer,
+    this.address, // Address in constructor
   });
 
-  factory CheckListInfoResponse.fromJson(Map<String, dynamic> json) => _$CheckListInfoResponseFromJson(json);
+  factory CheckListInfoResponse.fromJson(Map<String, dynamic> json) =>
+      _$CheckListInfoResponseFromJson(json);
   Map<String, dynamic> toJson() => _$CheckListInfoResponseToJson(this);
 }
 
 @JsonSerializable()
-class ChecklistAroma {
-  final String? newAromaId;
-  final double volumeMl;
-  final String? newAromaName;
+class Address {
+  final String id;
+  final String customerId;
+  final String address;
+  final double lat;
+  final double lng;
 
-  ChecklistAroma(this.newAromaId, this.newAromaName, {required this.volumeMl});
-
-  factory ChecklistAroma.fromJson(Map<String, dynamic> json) => _$ChecklistAromaFromJson(json);
-  Map<String, dynamic> toJson() => _$ChecklistAromaToJson(this);
-}
-
-@JsonSerializable()
-class DeviceWorkSchedule {
-  final String type;
-  final int? duration;
-  final List<WorkMode>? workModes;
-
-  DeviceWorkSchedule(this.duration, {required this.type, this.workModes});
-
-  factory DeviceWorkSchedule.fromJson(Map<String, dynamic> json) => _$DeviceWorkScheduleFromJson(json);
-  Map<String, dynamic> toJson() => _$DeviceWorkScheduleToJson(this);
-}
-
-@JsonSerializable()
-class WorkMode {
-  final int tWork;
-  final int tPause;
-  final int tStart;
-  final int tEnd;
-  final List<WeekDay> workDays;
-
-  WorkMode({
-    required this.tWork,
-    required this.tPause,
-    required this.tStart,
-    required this.tEnd,
-    required this.workDays,
+  Address({
+    required this.id,
+    required this.customerId,
+    required this.address,
+    required this.lat,
+    required this.lng,
   });
 
-  factory WorkMode.fromJson(Map<String, dynamic> json) => _$WorkModeFromJson(json);
-  Map<String, dynamic> toJson() => _$WorkModeToJson(this);
+  factory Address.fromJson(Map<String, dynamic> json) =>
+      _$AddressFromJson(json);
+  Map<String, dynamic> toJson() => _$AddressToJson(this);
 }
 
-@JsonEnum()
-enum WeekDay {
-  MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY
+@JsonSerializable()
+class LocalDateTime {
+  final LocalDate date;
+  final LocalTime? time;
+
+  LocalDateTime({required this.date, this.time});
+
+  factory LocalDateTime.fromJson(Map<String, dynamic> json) =>
+      _$LocalDateTimeFromJson(json);
+
+  String? toDateTime() {
+    return DateFormat('dd.MM.yyyy')
+        .format(DateTime(date.year, date.month, date.day));
+  }
+
+  Map<String, dynamic> toJson() => _$LocalDateTimeToJson(this);
+}
+
+@JsonSerializable()
+class Customer {
+  final String? id;
+  final String? name;
+  final String? phone;
+  final String? ownerName;
+  final List<String>? devices;
+  final List<String>? addresses;
+
+  Customer({
+    this.id,
+    this.name,
+    this.phone,
+    this.ownerName,
+    this.devices,
+    this.addresses,
+  });
+
+  factory Customer.fromJson(Map<String, dynamic> json) =>
+      _$CustomerFromJson(json);
+  Map<String, dynamic> toJson() => _$CustomerToJson(this);
 }

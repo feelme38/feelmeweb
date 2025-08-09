@@ -1,7 +1,7 @@
 .gradle
-.idea/
-.dart_tool/
 build/
+.dart_tool/
+.idea/
 .flutter-plugins
 .flutter-plugins-dependencies
 !gradle/wrapper/gradle-wrapper.jar
@@ -44,3 +44,7 @@ bin/
 
 ### Mac OS ###
 .DS_Store
+
+# FVM Version Cache
+.fvm/
+.fvmrc

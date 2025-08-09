@@ -1,14 +1,12 @@
 import 'package:feelmeweb/core/result/result_of.dart';
 import 'package:feelmeweb/data/models/request/create_user_body.dart';
-import 'package:feelmeweb/data/models/response/aroma_response.dart';
+import 'package:feelmeweb/data/models/request/update_customer_body.dart';
+import 'package:feelmeweb/data/models/response/active_customer_response.dart';
 import 'package:feelmeweb/data/models/response/customer_response.dart';
-import 'package:feelmeweb/data/models/response/user_response.dart';
-import 'package:feelmeweb/data/sources/remote/aromas_remote_source.dart';
-import 'package:feelmeweb/data/sources/remote/users_remote_source.dart';
+import 'package:feelmeweb/domain/customers/get_available_customers_usecase.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../models/request/add_customer_address.dart';
-import '../../models/response/checklist_info_response.dart';
 import '../../sources/remote/customers_remote_source.dart';
 
 @Singleton(as: CustomersRepository)
@@ -23,6 +21,18 @@ class CustomersRepositoryImpl extends CustomersRepository {
   }
 
   @override
+  Future<Result<List<CustomerResponse>>> getAvailableCustomers(
+      GetAvailableCustomersParam param) {
+    return _customersRemoteSource.getAvailableCustomers(param);
+  }
+
+  @override
+  Future<Result<List<ActiveCustomerResponse>>> getActiveCustomers(
+      String userId) {
+    return _customersRemoteSource.getActiveCustomers(userId);
+  }
+
+  @override
   Future<Result<bool>> addAddress(AddCustomerAddressBody body) {
     return _customersRemoteSource.addCustomerAddress(body);
   }
@@ -31,12 +41,32 @@ class CustomersRepositoryImpl extends CustomersRepository {
   Future<Result<bool>> createCustomer(CreateCustomerBody body) {
     return _customersRemoteSource.createCustomer(body);
   }
+
+  @override
+  Future<Result<bool>> updateCustomer(UpdateCustomerBody body) {
+    return _customersRemoteSource.updateCustomer(body);
+  }
+
+  @override
+  Future<Result<bool>> deleteCustomer(String id) {
+    return _customersRemoteSource.deleteCustomer(id);
+  }
 }
 
 abstract class CustomersRepository {
   Future<Result<List<CustomerResponse>>> getCustomers({String? regionId});
 
+  Future<Result<List<CustomerResponse>>> getAvailableCustomers(
+      GetAvailableCustomersParam param);
+
+  Future<Result<List<ActiveCustomerResponse>>> getActiveCustomers(
+      String userId);
+
   Future<Result<bool>> createCustomer(CreateCustomerBody body);
 
   Future<Result<bool>> addAddress(AddCustomerAddressBody body);
+
+  Future<Result<bool>> updateCustomer(UpdateCustomerBody body);
+
+  Future<Result<bool>> deleteCustomer(String id);
 }

@@ -1,5 +1,7 @@
 import 'package:feelmeweb/data/models/request/create_aroma_body.dart';
+import 'package:feelmeweb/data/models/request/create_device_model_body.dart';
 import 'package:feelmeweb/data/models/request/create_region_body.dart';
+import 'package:feelmeweb/domain/devices/create_device_model_usecase.dart';
 import 'package:feelmeweb/domain/regions/create_region_usecase.dart';
 import 'package:feelmeweb/presentation/modals/dialogs.dart';
 import 'package:flutter/material.dart';
@@ -10,8 +12,8 @@ import '../../domain/aromas/create_aroma_use_case.dart';
 import '../../domain/customers/create_customer_usecase.dart';
 import '../../domain/users/create_user_usecase.dart';
 
-Future<void> createCustomer(CreateCustomerBody body,
-    Function()? reloadCallback) async {
+Future<void> createCustomer(
+    CreateCustomerBody body, Function()? reloadCallback) async {
   await CreateCustomerUseCase().call(body);
   reloadCallback?.call();
 }
@@ -21,14 +23,20 @@ Future<void> createUser(CreateUserBody body, Function()? reloadCallback) async {
   reloadCallback?.call();
 }
 
-Future<void> createAroma(CreateAromaBody body,
-    Function()? reloadCallback) async {
+Future<void> createAroma(
+    CreateAromaBody body, Function()? reloadCallback) async {
   await CreateAromaUseCase().call(body);
   reloadCallback?.call();
 }
 
-Future<void> createRegion(CreateRegionBody body,
-    Function()? reloadCallback) async {
+Future<void> createDeviceModel(
+    CreateDeviceModelBody body, Function()? reloadCallback) async {
+  await CreateDeviceModelUseCase().call(body);
+  reloadCallback?.call();
+}
+
+Future<void> createRegion(
+    CreateRegionBody body, Function()? reloadCallback) async {
   await CreateRegionUseCase().call(body);
   reloadCallback?.call();
 }
@@ -86,10 +94,27 @@ Drawer getDrawer(BuildContext context, {Function()? reloadCallback}) {
               ListTile(
                   title: const Text('Добавить'),
                   onTap: () {
-                    //context.go('/home'); // Переход на Home
-                    Navigator.pop(context); // Закрытие drawer
+                    Navigator.pop(context);
                     Dialogs.createAromaDialog(
                         context, (body) => createAroma(body, reloadCallback));
+                  })
+            ]),
+        ExpansionTile(
+            leading: const Icon(Icons.devices),
+            title: const Text('Типы оборудования'),
+            children: [
+              ListTile(
+                  title: const Text('Список'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    context.go('/device-models');
+                  }),
+              ListTile(
+                  title: const Text('Добавить'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    Dialogs.createDeviceModelDialog(context,
+                        (body) => createDeviceModel(body, reloadCallback));
                   })
             ]),
         ExpansionTile(
@@ -106,8 +131,7 @@ Drawer getDrawer(BuildContext context, {Function()? reloadCallback}) {
               ListTile(
                 title: const Text('Добавить'),
                 onTap: () {
-                  //context.go('/home'); // Переход на Home
-                  Navigator.pop(context); // Закрытие drawer
+                  Navigator.pop(context);
                   Dialogs.createRegionDialog(
                       context, (body) => createRegion(body, reloadCallback));
                 },
@@ -127,20 +151,26 @@ Drawer getDrawer(BuildContext context, {Function()? reloadCallback}) {
               ListTile(
                 title: const Text('Добавить'),
                 onTap: () {
-                  //context.go('/home'); // Переход на Home
-                  Navigator.pop(context); // Закрытие drawer
+                  Navigator.pop(context);
                   Dialogs.showCreateCustomerDialog(
                       context, (body) => createCustomer(body, reloadCallback));
                 },
               ),
             ]),
+        ListTile(
+          leading: const Icon(Icons.checklist_outlined),
+          title: const Text('Чек-листы'),
+          onTap: () {
+            Navigator.pop(context);
+            context.go("/check-lists");
+          },
+        ),
         const Divider(),
         ListTile(
           leading: const Icon(Icons.logout),
           title: const Text('Выход'),
           onTap: () {
-            // context.go('/logout'); // Переход на Logout
-            Navigator.pop(context); // Закрытие drawer
+            Navigator.pop(context);
           },
         ),
       ],

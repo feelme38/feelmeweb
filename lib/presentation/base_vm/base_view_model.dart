@@ -40,6 +40,7 @@ class BaseViewModel extends ChangeNotifier {
       {bool showLoading = false, bool cancelLoading = false}) async {
     log('execute usecase type: ${useCase.runtimeType}, param: ${param.runtimeType}');
     if (showLoading) loadingOn();
+    print(useCase.runtimeType);
     if (useCase is UseCaseParam<Result<T>, Y>) {
       Result<T> result;
       result = await useCase(param);

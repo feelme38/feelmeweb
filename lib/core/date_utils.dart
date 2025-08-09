@@ -63,11 +63,34 @@ class DateUtil {
   static String formatToYYYYMMDD(DateTime date) {
     return DateFormat(DateFormats.yyyyMMdd).format(date);
   }
+
   static String formatToYYYYMMDDTHHmmss(DateTime date) {
     return DateFormat(DateFormats.yyyyMMddTHHmmss).format(date);
   }
+
   static String formatToYYYYMMDDTHHmmssms(DateTime date) {
     return DateFormat(DateFormats.yyyyMMddTHHmmsszsssss).format(date);
+  }
+
+  static DateTime? parseTime(String timeText) {
+    final timeRegex = RegExp(r'^\d{2}:\d{2}$');
+
+    if (!timeRegex.hasMatch(timeText)) return null;
+
+    final timeParts = timeText.split(':');
+    int hours = int.parse(timeParts[0]);
+    int minutes = int.parse(timeParts[1]);
+
+    if (hours > 23 || minutes > 59) return null; // Дополнительная проверка
+
+    final now = DateTime.now();
+    return DateTime(now.year, now.month, now.day, hours, minutes);
+  }
+
+  static String toDateTime(DateTime? date) {
+    if (date == null) return '-';
+    return DateFormat(DateFormats.ddMMyyyy2)
+        .format(DateTime(date.year, date.month, date.day));
   }
 }
 
@@ -78,5 +101,7 @@ class DateFormats {
   static const yyyyMMddTHHmmss = 'yyyy-MM-ddTHH:mm:ss';
   static const yyyyMMddTHHmmsszsssss = 'yyyy-MM-ddTHH:mm:ss.ssssss';
   static const ddMMyyyy = 'dd-MM-yyyy';
+  static const ddMMyyyy2 = 'dd-MM-yyyy';
   static const MMyyyy = 'MM-yyyy';
+  static const HHmm = 'HH:mm';
 }

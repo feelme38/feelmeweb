@@ -12,15 +12,23 @@ SubtaskBody _$SubtaskBodyFromJson(Map<String, dynamic> json) => SubtaskBody(
       json['comment'] as String,
       json['expectedAromaId'] as String,
       (json['expectedAromaVolume'] as num).toDouble(),
-      json['estimatedCompletedTime'] as int,
+      json['volumeFormula'] as String,
+      json['typeId'] as String,
+      id: json['id'] as String?,
+      addressId: json['addressId'] as String?,
+      subtaskStatus: json['subtaskStatus'] as String?,
     );
 
 Map<String, dynamic> _$SubtaskBodyToJson(SubtaskBody instance) =>
     <String, dynamic>{
+      'id': instance.id,
       'customerId': instance.customerId,
+      'addressId': instance.addressId,
+      'subtaskStatus': instance.subtaskStatus,
       'deviceId': instance.deviceId,
       'comment': instance.comment,
       'expectedAromaId': instance.expectedAromaId,
       'expectedAromaVolume': instance.expectedAromaVolume,
-      'estimatedCompletedTime': instance.estimatedCompletedTime,
+      'volumeFormula': instance.volumeFormula,
+      'typeId': instance.typeId,
     };

@@ -12,86 +12,73 @@ CheckListInfoResponse _$CheckListInfoResponseFromJson(
       id: json['id'] as String?,
       createdAt: json['createdAt'] == null
           ? null
-          : LocalDate.fromJson(json['createdAt'] as Map<String, dynamic>),
-      checklistAroma: ChecklistAroma.fromJson(
-          json['checklistAroma'] as Map<String, dynamic>),
-      deviceLocation: json['deviceLocation'] as String?,
-      deviceWorkSchedule: json['deviceWorkSchedule'] == null
+          : DateTime.parse(json['createdAt'] as String),
+      pdfUrl: json['pdfUrl'] as String?,
+      customer: json['customer'] == null
           ? null
-          : DeviceWorkSchedule.fromJson(
-              json['deviceWorkSchedule'] as Map<String, dynamic>),
-      deviceId: json['deviceId'] as String?,
-      deviceModel: json['deviceModel'] as String?,
-      contract: json['contract'] as String?,
+          : Customer.fromJson(json['customer'] as Map<String, dynamic>),
+      address: json['address'] == null
+          ? null
+          : Address.fromJson(json['address'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$CheckListInfoResponseToJson(
         CheckListInfoResponse instance) =>
     <String, dynamic>{
       'id': instance.id,
-      'createdAt': instance.createdAt,
-      'checklistAroma': instance.checklistAroma,
-      'deviceWorkSchedule': instance.deviceWorkSchedule,
-      'deviceId': instance.deviceId,
-      'deviceModel': instance.deviceModel,
-      'contract': instance.contract,
-      'deviceLocation': instance.deviceLocation,
+      'createdAt': instance.createdAt?.toIso8601String(),
+      'pdfUrl': instance.pdfUrl,
+      'customer': instance.customer,
+      'address': instance.address,
     };
 
-ChecklistAroma _$ChecklistAromaFromJson(Map<String, dynamic> json) =>
-    ChecklistAroma(
-      json['newAromaId'] as String?,
-      json['newAromaName'] as String?,
-      volumeMl: (json['volumeMl'] as num).toDouble(),
+Address _$AddressFromJson(Map<String, dynamic> json) => Address(
+      id: json['id'] as String,
+      customerId: json['customerId'] as String,
+      address: json['address'] as String,
+      lat: (json['lat'] as num).toDouble(),
+      lng: (json['lng'] as num).toDouble(),
     );
 
-Map<String, dynamic> _$ChecklistAromaToJson(ChecklistAroma instance) =>
-    <String, dynamic>{
-      'newAromaId': instance.newAromaId,
-      'volumeMl': instance.volumeMl,
-      'newAromaName': instance.newAromaName,
+Map<String, dynamic> _$AddressToJson(Address instance) => <String, dynamic>{
+      'id': instance.id,
+      'customerId': instance.customerId,
+      'address': instance.address,
+      'lat': instance.lat,
+      'lng': instance.lng,
     };
 
-DeviceWorkSchedule _$DeviceWorkScheduleFromJson(Map<String, dynamic> json) =>
-    DeviceWorkSchedule(
-      json['duration'] as int?,
-      type: json['type'] as String,
-      workModes: (json['workModes'] as List<dynamic>?)
-          ?.map((e) => WorkMode.fromJson(e as Map<String, dynamic>))
+LocalDateTime _$LocalDateTimeFromJson(Map<String, dynamic> json) =>
+    LocalDateTime(
+      date: LocalDate.fromJson(json['date'] as Map<String, dynamic>),
+      time: json['time'] == null
+          ? null
+          : LocalTime.fromJson(json['time'] as Map<String, dynamic>),
+    );
+
+Map<String, dynamic> _$LocalDateTimeToJson(LocalDateTime instance) =>
+    <String, dynamic>{
+      'date': instance.date,
+      'time': instance.time,
+    };
+
+Customer _$CustomerFromJson(Map<String, dynamic> json) => Customer(
+      id: json['id'] as String?,
+      name: json['name'] as String?,
+      phone: json['phone'] as String?,
+      ownerName: json['ownerName'] as String?,
+      devices:
+          (json['devices'] as List<dynamic>?)?.map((e) => e as String).toList(),
+      addresses: (json['addresses'] as List<dynamic>?)
+          ?.map((e) => e as String)
           .toList(),
     );
 
-Map<String, dynamic> _$DeviceWorkScheduleToJson(DeviceWorkSchedule instance) =>
-    <String, dynamic>{
-      'type': instance.type,
-      'duration': instance.duration,
-      'workModes': instance.workModes,
+Map<String, dynamic> _$CustomerToJson(Customer instance) => <String, dynamic>{
+      'id': instance.id,
+      'name': instance.name,
+      'phone': instance.phone,
+      'ownerName': instance.ownerName,
+      'devices': instance.devices,
+      'addresses': instance.addresses,
     };
-
-WorkMode _$WorkModeFromJson(Map<String, dynamic> json) => WorkMode(
-      tWork: json['tWork'] as int,
-      tPause: json['tPause'] as int,
-      tStart: json['tStart'] as int,
-      tEnd: json['tEnd'] as int,
-      workDays: (json['workDays'] as List<dynamic>)
-          .map((e) => $enumDecode(_$WeekDayEnumMap, e))
-          .toList(),
-    );
-
-Map<String, dynamic> _$WorkModeToJson(WorkMode instance) => <String, dynamic>{
-      'tWork': instance.tWork,
-      'tPause': instance.tPause,
-      'tStart': instance.tStart,
-      'tEnd': instance.tEnd,
-      'workDays': instance.workDays.map((e) => _$WeekDayEnumMap[e]!).toList(),
-    };
-
-const _$WeekDayEnumMap = {
-  WeekDay.MONDAY: 'MONDAY',
-  WeekDay.TUESDAY: 'TUESDAY',
-  WeekDay.WEDNESDAY: 'WEDNESDAY',
-  WeekDay.THURSDAY: 'THURSDAY',
-  WeekDay.FRIDAY: 'FRIDAY',
-  WeekDay.SATURDAY: 'SATURDAY',
-  WeekDay.SUNDAY: 'SUNDAY',
-};

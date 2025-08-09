@@ -3,7 +3,6 @@ import 'package:feelmeweb/core/map_helper/map_helper.dart';
 import 'package:feelmeweb/data/models/response/today_routes_response.dart';
 import 'package:feelmeweb/presentation/base_vm/base_view_model.dart';
 import 'package:feelmeweb/presentation/buttons/base_text_button.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
@@ -113,17 +112,19 @@ class MapPageViewModel extends BaseViewModel {
                     style: const TextStyle(fontSize: 18, color: Colors.black))
               ]),
               const SizedBox(height: 12),
-              Row(children: [
+              Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 Text('Адреса задач:',
                     style: TextStyle(color: Colors.grey[500], fontSize: 16)),
                 const SizedBox(width: 12),
-                Text(tasks.map((e) => e.address?.address ?? '').join(', '),
-                    style: const TextStyle(fontSize: 18, color: Colors.black))
+                Expanded(
+                  child: Text(
+                      tasks.map((e) => e.address?.address ?? '').join(', '),
+                      style:
+                          const TextStyle(fontSize: 18, color: Colors.black)),
+                )
               ]),
               const SizedBox(height: 12),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
+              Row(mainAxisAlignment: MainAxisAlignment.end, children: [
                 BaseTextButton(
                     buttonText: 'Закрыть',
                     onTap: () {

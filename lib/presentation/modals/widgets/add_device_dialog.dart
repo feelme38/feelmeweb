@@ -1,6 +1,7 @@
 import 'package:feelmeweb/core/extensions/base_class_extensions/build_context_ext.dart';
 import 'package:feelmeweb/data/models/request/add_device_body.dart';
 import 'package:feelmeweb/data/models/response/address_dto.dart';
+import 'package:feelmeweb/data/models/response/device_models.dart';
 import 'package:feelmeweb/data/models/response/device_powers.dart';
 import 'package:feelmeweb/presentation/buttons/base_text_button.dart';
 import 'package:feelmeweb/presentation/widgets/base_text_field.dart';
@@ -86,7 +87,8 @@ class _AddDeviceDialogState extends State<AddDeviceDialog> {
           Row(children: [
             Text('Адрес оборудования: ',
                 style: TextStyle(fontSize: 16, color: Colors.grey[400])),
-            Padding(
+            Expanded(
+              child: Padding(
                 padding: const EdgeInsets.fromLTRB(16.0, 0, 8.0, 0),
                 child: DropdownButton(
                     value: selectedAddress.id,
@@ -98,13 +100,16 @@ class _AddDeviceDialogState extends State<AddDeviceDialog> {
                     },
                     items: widget.addresses.map((e) {
                       return DropdownMenuItem(
-                          value: e.id,
-                          child: SizedBox(
-                              width: 150, child: Text(e.address ?? '')));
+                        value: e.id,
+                        child: Text(e.address ?? ''),
+                      );
                     }).toList(),
                     focusColor: Colors.white,
                     dropdownColor: Colors.white,
-                    style: const TextStyle(color: Colors.black, fontSize: 16)))
+                    style: const TextStyle(color: Colors.black, fontSize: 16),
+                    isExpanded: true),
+              ),
+            )
           ]),
           const SizedBox(height: 6),
           BaseTextField(

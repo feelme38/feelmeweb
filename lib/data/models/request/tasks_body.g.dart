@@ -7,19 +7,25 @@ part of 'tasks_body.dart';
 // **************************************************************************
 
 TasksBody _$TasksBodyFromJson(Map<String, dynamic> json) => TasksBody(
-      json['name'] as String,
-      json['typeId'] as String,
-      json['clientId'] as String,
-      json['addressId'] as String,
-      (json['subtasks'] as List<dynamic>)
+      name: json['name'] as String,
+      clientId: json['clientId'] as String,
+      addressId: json['addressId'] as String,
+      taskStatus: json['taskStatus'] as String?,
+      subtasks: (json['subtasks'] as List<dynamic>)
           .map((e) => SubtaskBody.fromJson(e as Map<String, dynamic>))
           .toList(),
+      visitDateTime: json['visitDateTime'] == null
+          ? null
+          : DateTime.parse(json['visitDateTime'] as String),
+      id: json['id'] as String?,
     );
 
 Map<String, dynamic> _$TasksBodyToJson(TasksBody instance) => <String, dynamic>{
+      'id': instance.id,
       'name': instance.name,
-      'typeId': instance.typeId,
       'clientId': instance.clientId,
       'addressId': instance.addressId,
+      'taskStatus': instance.taskStatus,
+      'visitDateTime': instance.visitDateTime?.toIso8601String(),
       'subtasks': instance.subtasks,
     };

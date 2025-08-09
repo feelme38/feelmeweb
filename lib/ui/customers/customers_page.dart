@@ -19,21 +19,25 @@ class CustomersPage extends StatelessWidget {
     final viewModel = context.read<CustomersViewModel>();
 
     return BaseScreen<CustomersViewModel>(
+      needBackButton: false,
+      needAppBar: true,
+      drawer: getDrawer(context, reloadCallback: viewModel.loadCustomers),
+      appBar: SearchWidget<CustomersViewModel>(
+        context.read<CustomersViewModel>().onSearch,
+        () {},
+        needBottomEdge: true,
         needBackButton: false,
-        needAppBar: true,
-        drawer: getDrawer(context),
-        appBar: SearchWidget<CustomersViewModel>(
-          context.read<CustomersViewModel>().onSearch,
-          () {},
-          needBottomEdge: true,
-          needBackButton: false,
+      ),
+      child: Align(
+        alignment: Alignment.topCenter,
+        child: SingleChildScrollView(
+          scrollDirection: Axis.vertical,
+          child: AppTableWidget(
+            dataColumns: viewModel.tableCustomersColumns,
+            dataRows: viewModel.getTableCustomersRows(customers, context),
+          ),
         ),
-        child: Align(
-            alignment: Alignment.topCenter,
-            child: SingleChildScrollView(
-                scrollDirection: Axis.vertical,
-                child: AppTableWidget(
-                    dataColumns: viewModel.tableCustomersColumns,
-                    dataRows: viewModel.getTableCustomersRows(customers)))));
+      ),
+    );
   }
 }

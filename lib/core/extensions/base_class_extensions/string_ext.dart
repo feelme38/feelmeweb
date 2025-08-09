@@ -1,4 +1,3 @@
-
 extension S on String {
   bool get hasSpacer => contains(' ');
 
@@ -12,9 +11,7 @@ extension S on String {
     return getSearchString().contains(value.orEmpty.getSearchString());
   }
 
-  bool get isValid => replaceAll(' ', '')
-      .replaceAll('\n', '')
-      .isNotEmpty;
+  bool get isValid => replaceAll(' ', '').replaceAll('\n', '').isNotEmpty;
 
   String intFormat(int param) {
     return replaceAll('{}', '$param');

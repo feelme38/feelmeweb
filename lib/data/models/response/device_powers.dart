@@ -1,4 +1,8 @@
+import 'package:json_annotation/json_annotation.dart';
 
+part 'device_powers.g.dart';
+
+@JsonSerializable()
 class DevicePowersResponse {
   final String name;
   final String id;
@@ -7,19 +11,6 @@ class DevicePowersResponse {
 
   factory DevicePowersResponse.fromJson(Map<String, dynamic> json) {
     return DevicePowersResponse(
-      json['name'],
-      json['id'],
-    );
-  }
-}
-class DeviceModelsResponse {
-  final String name;
-  final String id;
-
-  DeviceModelsResponse(this.name, this.id);
-
-  factory DeviceModelsResponse.fromJson(Map<String, dynamic> json) {
-    return DeviceModelsResponse(
       json['name'],
       json['id'],
     );
