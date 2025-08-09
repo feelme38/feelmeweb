@@ -65,7 +65,7 @@ Drawer getDrawer(BuildContext context, {Function()? reloadCallback}) {
         ),
         ExpansionTile(
             leading: const Icon(Icons.home),
-            title: const Text('Пользователи'),
+            title: const Text('Создать маршрут'),
             children: [
               ListTile(
                   title: const Text('Список'),
