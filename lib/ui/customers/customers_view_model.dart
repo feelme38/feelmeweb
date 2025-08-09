@@ -57,7 +57,7 @@ class CustomersViewModel extends BaseSearchViewModel {
     const DataColumn(
         label: Text('Директор'), headingRowAlignment: MainAxisAlignment.center),
     const DataColumn(
-        label: Text('Адреса'), headingRowAlignment: MainAxisAlignment.center),
+        label: Text('Адрес'), headingRowAlignment: MainAxisAlignment.center),
     const DataColumn(label: Text('')),
   ];
 
@@ -171,21 +171,13 @@ class CustomersViewModel extends BaseSearchViewModel {
             alignment: Alignment.center,
             child: Text(customer.ownerName ?? ''),
           )),
-          DataCell(IconButton(
-            icon: const Icon(Icons.location_on),
-            onPressed: () {
-              final context =
-                  getIt<RouteGenerator>().navigatorKey.currentContext;
-              if (context == null) return;
-              Dialogs.showAddressesDialog(
-                getIt<RouteGenerator>().navigatorKey.currentContext,
-                customer.addresses ?? [],
-                regions,
-                addAddress,
-                customer.id!,
-              );
-            },
-            tooltip: 'Посмотреть адреса',
+          DataCell(Align(
+            alignment: Alignment.center,
+            child: Text(
+              (customer.addresses != null && customer.addresses!.isNotEmpty)
+                  ? (customer.addresses!.first.address ?? '')
+                  : '',
+            ),
           )),
           DataCell(Row(
             children: [
