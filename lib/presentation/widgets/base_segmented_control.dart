@@ -1,10 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:feelmeweb/presentation/theme/dimen.dart';
 
-class BaseSegmentedControl<T> extends StatelessWidget {
+class BaseSegmentedControl<T extends Object> extends StatelessWidget {
   const BaseSegmentedControl(this.selected, this.items,
-      {this.onPressed, Key? key})
-      : super(key: key);
+      {this.onPressed, super.key});
 
   final T selected;
   final Map<T, String> items;

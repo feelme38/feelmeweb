@@ -7,13 +7,13 @@ import 'package:feelmeweb/presentation/navigation/route_names.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../domain/users/get_roles_usecase.dart';
-import '../../presentation/alert/alert.dart';
-import '../../presentation/navigation/route_generation.dart';
-import '../../provider/di/di_provider.dart';
+import '../../../domain/users/get_roles_usecase.dart';
+import '../../../presentation/alert/alert.dart';
+import '../../../presentation/navigation/route_generation.dart';
+import '../../../provider/di/di_provider.dart';
 
-class UsersViewModel extends BaseSearchViewModel {
-  UsersViewModel() {
+class RouteOperationsViewModel extends BaseSearchViewModel {
+  RouteOperationsViewModel() {
     _getRolesUseCase().then((_) {
       selectedRole = getIt<UsersRepository>().roles.first;
       loadUsers();
@@ -87,6 +87,7 @@ class UsersViewModel extends BaseSearchViewModel {
         return 'Без маршрута';
     }
   }
+
   @protected
   BuildContext? get navigatorContext =>
       getIt<RouteGenerator>().navigatorKey.currentContext;
@@ -155,5 +156,5 @@ class UsersViewModel extends BaseSearchViewModel {
       }).toList();
 
   @override
-  String get title => 'Сервисные инженеры';
+  String get title => 'Управление маршрутами';
 }

@@ -1,31 +1,31 @@
 import 'package:feelmeweb/ui/common/app_drawer.dart';
-import 'package:feelmeweb/ui/users/users_view_model.dart';
+import 'package:feelmeweb/ui/routes/home/route_operations_view_model.dart';
 import 'package:feelmeweb/ui/common/app_table_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../presentation/base_screen/base_screen.dart';
-import '../../presentation/widgets/search_widget.dart';
+import '../../../presentation/base_screen/base_screen.dart';
+import '../../../presentation/widgets/search_widget.dart';
 
-class UsersPage extends StatelessWidget {
-  const UsersPage({super.key});
+class RouteOperationsPage extends StatelessWidget {
+  const RouteOperationsPage({super.key});
 
   static Widget create() => ChangeNotifierProvider(
-      create: (context) => UsersViewModel(), child: const UsersPage());
+      create: (context) => RouteOperationsViewModel(), child: const RouteOperationsPage());
 
   @override
   Widget build(BuildContext context) {
-    final users = context.watch<UsersViewModel>().users;
-    final viewModel = context.read<UsersViewModel>();
+    final users = context.watch<RouteOperationsViewModel>().users;
+    final viewModel = context.read<RouteOperationsViewModel>();
 
-    return BaseScreen<UsersViewModel>(
+    return BaseScreen<RouteOperationsViewModel>(
         needBackButton: false,
         needAppBar: true,
         drawer: getDrawer(context, reloadCallback: viewModel.loadUsers),
-        appBar: SearchWidget<UsersViewModel>(
+        appBar: SearchWidget<RouteOperationsViewModel>(
             notActiveTitleWidget: const Text('Управление маршрутами',
                 style: TextStyle(color: Colors.black, fontSize: 20)),
-            context.read<UsersViewModel>().onSearch,
+            context.read<RouteOperationsViewModel>().onSearch,
             () {},
             needBottomEdge: true,
             needBackButton: false),

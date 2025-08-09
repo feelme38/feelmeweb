@@ -8,7 +8,6 @@ import 'package:feelmeweb/ui/regions/regions_page.dart';
 import 'package:feelmeweb/ui/route_info/route_info_page.dart';
 import 'package:feelmeweb/ui/routes/create/create_route_choose_customers.dart';
 import 'package:feelmeweb/ui/routes/edit/edit_route_page.dart';
-import 'package:feelmeweb/ui/users/users_page.dart';
 import 'package:feelmeweb/ui/users/engineers_managers_page.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -18,6 +17,7 @@ import '../../provider/di/di_provider.dart';
 import '../../provider/network/auth_preferences.dart';
 import '../../ui/authorization/auth_page.dart';
 import '../../ui/home/root_home.dart';
+import '../../ui/routes/home/route_operations_page.dart';
 
 @singleton
 class RouteGenerator {
@@ -56,7 +56,7 @@ class RouteGenerator {
         GoRoute(
           path: RouteName.usersList,
           builder: (BuildContext context, GoRouterState state) {
-            return UsersPage.create();
+            return RouteOperationsPage.create();
           },
         ),
         GoRoute(
@@ -101,7 +101,7 @@ class RouteGenerator {
             final extra = state.extra as Map<String, dynamic>?;
             final userId = extra?['userId'] as String?;
             final isUpdate = extra?['isUpdate'] as bool?;
-            if (userId == null) return UsersPage.create();
+            if (userId == null) return RouteOperationsPage.create();
             return CreateRouteChooseCustomersPage.create(
                 userId, isUpdate ?? false);
           },
@@ -110,7 +110,7 @@ class RouteGenerator {
           path: RouteName.customerEditRoute,
           builder: (BuildContext context, GoRouterState state) {
             final userId = state.extra as String?;
-            if (userId == null) return UsersPage.create();
+            if (userId == null) return RouteOperationsPage.create();
             return EditRoutePage.create(userId);
           },
         ),
@@ -118,7 +118,7 @@ class RouteGenerator {
           path: RouteName.routeInfo,
           builder: (BuildContext context, GoRouterState state) {
             final userId = state.extra as String?;
-            if (userId == null) return UsersPage.create();
+            if (userId == null) return RouteOperationsPage.create();
             return RouteInfoPage.create(userId);
           },
         ),
