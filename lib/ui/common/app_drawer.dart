@@ -137,26 +137,14 @@ Drawer getDrawer(BuildContext context, {Function()? reloadCallback}) {
                 },
               ),
             ]),
-        ExpansionTile(
-            leading: const Icon(Icons.person),
-            title: const Text('Клиенты'),
-            children: [
-              ListTile(
-                title: const Text('Список'),
-                onTap: () {
-                  Navigator.pop(context);
-                  context.go("/customers");
-                },
-              ),
-              ListTile(
-                title: const Text('Добавить'),
-                onTap: () {
-                  Navigator.pop(context);
-                  Dialogs.showCreateCustomerDialog(
-                      context, (body) => createCustomer(body, reloadCallback));
-                },
-              ),
-            ]),
+        ListTile(
+          leading: const Icon(Icons.person),
+          title: const Text('Клиенты'),
+          onTap: () {
+            Navigator.pop(context);
+            context.go("/customers");
+          },
+        ),
         ListTile(
           leading: const Icon(Icons.checklist_outlined),
           title: const Text('Чек-листы'),
