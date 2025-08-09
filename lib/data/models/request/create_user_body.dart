@@ -3,18 +3,21 @@ class CreateCustomerBody {
   final String name;
   final String ownerName;
   final String regionId;
+  final String address;
 
   CreateCustomerBody(
       {required this.phone,
       required this.name,
       required this.ownerName,
-      required this.regionId});
+      required this.regionId,
+      required this.address});
 
   Map<String, dynamic> toJson() => {
         'phone': phone,
         'name': name,
         'ownerName': ownerName,
-        'regionId': regionId
+        'regionId': regionId,
+        'address': address,
       };
 }
 

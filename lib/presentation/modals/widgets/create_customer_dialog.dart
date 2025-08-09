@@ -23,6 +23,14 @@ class _AddAddressDialogState extends State<CreateCustomerDialog> {
   final phoneController = TextEditingController();
   final nameController = TextEditingController();
   final ownerController = TextEditingController();
+  final addressController = TextEditingController();
+  final List<String> _allAddressSamples = const [
+    'Москва, Тверская улица, 1',
+    'Москва, Новый Арбат, 10',
+    'Санкт-Петербург, Невский проспект, 20',
+    'Казань, Кремлёвская, 5',
+  ];
+  List<String> _addressSuggestions = [];
   final listRegions = List.from(getIt<RegionsRepository>().regions);
   late var selectedRegion = listRegions.first;
 
@@ -73,6 +81,40 @@ class _AddAddressDialogState extends State<CreateCustomerDialog> {
                             const TextStyle(color: Colors.black, fontSize: 16)))
               ]),
               const SizedBox(height: 12),
+              BaseTextField(
+                controller: addressController,
+                helperText: 'Адрес',
+                onTextChange: _onAddressChanged,
+              ),
+              if (_addressSuggestions.isNotEmpty) ...[
+                const SizedBox(height: 8),
+                Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    border: Border.all(color: Colors.black54, width: 0.5),
+                    borderRadius: const BorderRadius.all(Radius.circular(8)),
+                  ),
+                  constraints: const BoxConstraints(maxHeight: 150),
+                  child: ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: _addressSuggestions.length,
+                    itemBuilder: (context, index) {
+                      final suggestion = _addressSuggestions[index];
+                      return ListTile(
+                        dense: true,
+                        title: Text(suggestion),
+                        onTap: () {
+                          setState(() {
+                            addressController.text = suggestion;
+                            _addressSuggestions = [];
+                          });
+                        },
+                      );
+                    },
+                  ),
+                ),
+              ],
+              const SizedBox(height: 12),
               SizedBox(
                   width: context.currentSize.width * 0.4,
                   child: Row(children: [
@@ -99,10 +141,24 @@ class _AddAddressDialogState extends State<CreateCustomerDialog> {
                                       .replaceAll('+', ''),
                                   name: nameController.text,
                                   ownerName: ownerController.text,
-                                  regionId: selectedRegion.id));
+                                  regionId: selectedRegion.id,
+                                  address: addressController.text));
                             },
                             enabled: true))
                   ]))
             ]));
+  }
+
+  void _onAddressChanged(String value) {
+    // Stub: local filtering to mimic suggestions until API is integrated
+    setState(() {
+      if (value.isEmpty) {
+        _addressSuggestions = [];
+      } else {
+        _addressSuggestions = _allAddressSamples
+            .where((e) => e.toLowerCase().contains(value.toLowerCase()))
+            .toList();
+      }
+    });
   }
 }
