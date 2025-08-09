@@ -9,6 +9,7 @@ import 'package:feelmeweb/ui/route_info/route_info_page.dart';
 import 'package:feelmeweb/ui/routes/create/create_route_choose_customers.dart';
 import 'package:feelmeweb/ui/routes/edit/edit_route_page.dart';
 import 'package:feelmeweb/ui/users/users_page.dart';
+import 'package:feelmeweb/ui/users/engineers_managers_page.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:injectable/injectable.dart';
@@ -56,6 +57,12 @@ class RouteGenerator {
           path: RouteName.usersList,
           builder: (BuildContext context, GoRouterState state) {
             return UsersPage.create();
+          },
+        ),
+        GoRoute(
+          path: RouteName.engineersManagers,
+          builder: (BuildContext context, GoRouterState state) {
+            return EngineersManagersPage.create();
           },
         ),
         GoRoute(

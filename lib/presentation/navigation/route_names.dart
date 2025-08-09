@@ -3,6 +3,7 @@ class RouteName {
   static const auth = '/auth';
   static const home = '/home';
   static const usersList = '/users';
+  static const engineersManagers = '/engineers';
   static const aromasList = '/aromas';
   static const customersList = '/customers';
   static const customerCreateRoute = '/customer/create/route';

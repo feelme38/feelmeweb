@@ -11,6 +11,7 @@ import '../../data/models/request/create_user_body.dart';
 import '../../domain/aromas/create_aroma_use_case.dart';
 import '../../domain/customers/create_customer_usecase.dart';
 import '../../domain/users/create_user_usecase.dart';
+import '../../presentation/navigation/route_names.dart';
 
 Future<void> createCustomer(
     CreateCustomerBody body, Function()? reloadCallback) async {
@@ -63,24 +64,21 @@ Drawer getDrawer(BuildContext context, {Function()? reloadCallback}) {
             context.go('/home');
           },
         ),
-        ExpansionTile(
+        ListTile(
             leading: const Icon(Icons.home),
             title: const Text('Создать маршрут'),
-            children: [
-              ListTile(
-                  title: const Text('Список'),
-                  onTap: () {
-                    Navigator.pop(context);
-                    context.go('/users');
-                  }),
-              ListTile(
-                  title: const Text('Добавить'),
-                  onTap: () async {
-                    Navigator.pop(context);
-                    Dialogs.showCreateUserDialog(
-                        context, (body) => createUser(body, reloadCallback));
-                  })
-            ]),
+            onTap: () {
+              Navigator.pop(context);
+              context.go('/users');
+            }),
+        ListTile(
+          leading: const Icon(Icons.home_repair_service),
+          title: const Text('Инженеры'),
+          onTap: () {
+            Navigator.pop(context);
+            context.go(RouteName.engineersManagers);
+          },
+        ),
         ExpansionTile(
             leading: const Icon(Icons.local_florist),
             title: const Text('Ароматы'),

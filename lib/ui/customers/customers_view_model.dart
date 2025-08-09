@@ -48,6 +48,8 @@ class CustomersViewModel extends BaseSearchViewModel {
 
   List<CustomerResponse> get customers => _filteredCustomers;
 
+  static const double _addressColumnWidth = 420;
+
   final List<DataColumn> _tableCustomersColumns = [
     const DataColumn(
         label: Text('Наименование'),
@@ -56,8 +58,11 @@ class CustomersViewModel extends BaseSearchViewModel {
         label: Text('Телефон'), headingRowAlignment: MainAxisAlignment.center),
     const DataColumn(
         label: Text('Директор'), headingRowAlignment: MainAxisAlignment.center),
-    const DataColumn(
-        label: Text('Адрес'), headingRowAlignment: MainAxisAlignment.center),
+    DataColumn(
+        label: SizedBox(
+            width: _addressColumnWidth,
+            child: const Center(child: Text('Адрес'))),
+        headingRowAlignment: MainAxisAlignment.center),
     const DataColumn(label: Text('')),
   ];
 
@@ -158,6 +163,10 @@ class CustomersViewModel extends BaseSearchViewModel {
   List<DataRow> getTableCustomersRows(
           List<CustomerResponse> customers, BuildContext context) =>
       customers.map((customer) {
+        final address = (customer.addresses != null &&
+                customer.addresses!.isNotEmpty)
+            ? (customer.addresses!.first.address ?? '')
+            : '';
         return DataRow(cells: [
           DataCell(Align(
             alignment: Alignment.center,
@@ -171,14 +180,18 @@ class CustomersViewModel extends BaseSearchViewModel {
             alignment: Alignment.center,
             child: Text(customer.ownerName ?? ''),
           )),
-          DataCell(Align(
-            alignment: Alignment.center,
-            child: Text(
-              (customer.addresses != null && customer.addresses!.isNotEmpty)
-                  ? (customer.addresses!.first.address ?? '')
-                  : '',
-            ),
-          )),
+          DataCell(SizedBox(
+              width: _addressColumnWidth,
+              child: Tooltip(
+                message: address,
+                waitDuration: const Duration(milliseconds: 300),
+                child: Text(
+                  address,
+                  maxLines: 1,
+                  softWrap: false,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ))),
           DataCell(Row(
             children: [
               IconButton(

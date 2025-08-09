@@ -1,7 +1,6 @@
 import 'package:feelmeweb/data/models/response/roles_response.dart';
 import 'package:feelmeweb/data/models/response/user_response.dart';
 import 'package:feelmeweb/data/repository/users/users_repository.dart';
-import 'package:feelmeweb/domain/users/delete_user_usecase.dart';
 import 'package:feelmeweb/domain/users/get_users_usecase.dart';
 import 'package:feelmeweb/presentation/base_vm/base_search_view_model.dart';
 import 'package:feelmeweb/presentation/navigation/route_names.dart';
@@ -26,7 +25,6 @@ class UsersViewModel extends BaseSearchViewModel {
   List<RolesResponse> get roles => getIt<UsersRepository>().roles;
   final _getUsersUseCase = GetUsersUseCase();
   final _getRolesUseCase = GetRolesUseCase();
-  final _deleteUserUseCase = DeleteUserUseCase();
   List<UserResponse> _users = [];
   List<UserResponse> _filteredUsers = [];
 
@@ -74,7 +72,8 @@ class UsersViewModel extends BaseSearchViewModel {
     notifyListeners();
   }
 
-  String _renderRouteStatus(String? routeStatus) {
+  @protected
+  String renderRouteStatus(String? routeStatus) {
     switch (routeStatus) {
       case 'ASSIGNED':
         return 'Назначен';
@@ -88,17 +87,13 @@ class UsersViewModel extends BaseSearchViewModel {
         return 'Без маршрута';
     }
   }
+  @protected
+  BuildContext? get navigatorContext =>
+      getIt<RouteGenerator>().navigatorKey.currentContext;
 
-  void deleteUser(String userId) async {
-    loadingOn();
-    (await executeUseCaseParam<bool, String>(_deleteUserUseCase, userId))
-        .doOnError((message, exception) {
-      addAlert(Alert(message ?? '$exception', style: AlertStyle.danger));
-    }).doOnSuccess((_) {
-      addAlert(Alert('Пользователь успешно удален', style: AlertStyle.success));
-      loadUsers();
-    });
-    loadingOff();
+  @protected
+  void onOpenRouteInfo(BuildContext context, String userId) {
+    context.go(RouteName.routeInfo, extra: userId);
   }
 
   List<DataRow> getTableUsersRows(List<UserResponse> users) =>
@@ -129,39 +124,33 @@ class UsersViewModel extends BaseSearchViewModel {
               child: Text(user.completedTasksCount.toString()))),
           DataCell(Align(
               alignment: Alignment.center,
-              child: Text(_renderRouteStatus(user.routeStatus?.name)))),
-          DataCell(Row(
-            children: [
+              child: Text(renderRouteStatus(user.routeStatus?.name)))),
+          DataCell(Row(children: [
+            IconButton(
+                icon: const Icon(Icons.directions),
+                onPressed: () {
+                  final context =
+                      getIt<RouteGenerator>().navigatorKey.currentContext;
+                  if (context == null) return;
+                  context.go(
+                    RouteName.customerCreateRoute,
+                    extra: {'userId': user.id},
+                  );
+                },
+                tooltip: 'Создать маршрут'),
+            if (![RouteStatus.CANCELED, RouteStatus.FINISHED, null]
+                .contains(user.routeStatus))
               IconButton(
-                  icon: const Icon(Icons.directions),
-                  onPressed: () {
-                    final context =
-                        getIt<RouteGenerator>().navigatorKey.currentContext;
-                    if (context == null) return;
-                    context.go(
-                      RouteName.customerCreateRoute,
-                      extra: {'userId': user.id},
-                    );
-                  },
-                  tooltip: 'Создать маршрут'),
-              if (![RouteStatus.CANCELED, RouteStatus.FINISHED, null]
-                  .contains(user.routeStatus))
-                IconButton(
-                  icon: const Icon(Icons.edit),
-                  onPressed: () {
-                    final context =
-                        getIt<RouteGenerator>().navigatorKey.currentContext;
-                    if (context == null) return;
-                    context.go(RouteName.customerEditRoute, extra: user.id);
-                  },
-                  tooltip: 'Редактировать',
-                ),
-              IconButton(
-                  icon: const Icon(Icons.delete),
-                  onPressed: () => deleteUser(user.id),
-                  tooltip: 'Удалить'),
-            ],
-          )),
+                icon: const Icon(Icons.edit),
+                onPressed: () {
+                  final context =
+                      getIt<RouteGenerator>().navigatorKey.currentContext;
+                  if (context == null) return;
+                  context.go(RouteName.customerEditRoute, extra: user.id);
+                },
+                tooltip: 'Редактировать',
+              ),
+          ])),
         ]);
       }).toList();
 
