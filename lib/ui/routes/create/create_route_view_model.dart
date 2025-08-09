@@ -83,7 +83,9 @@ class CreateRouteViewModel extends BaseSearchViewModel {
   final List<CustomerResponse> selectedCustomers = [];
   final List<SubtaskBody> selectedSubtasks = [];
   final Map<String, TasksBody> savedTasks = {};
-  final Map<String, DateTime?> visitTimes = {};
+  final Map<String, String> taskComments = {};
+  final Map<String, DateTime?> visitFromTimes = {};
+  final Map<String, DateTime?> visitToTimes = {};
 
   CustomerResponse? selectedCustomer;
 
@@ -198,11 +200,22 @@ class CreateRouteViewModel extends BaseSearchViewModel {
     updateTask();
   }
 
-  void updateVisitTimeForAddress(
-      String customerId, String addressId, String timeText) {
-    final time = parseTime(timeText);
-    visitTimes['${customerId}_$addressId'] = time;
+  void updateVisitTimeFrom(String customerId, String addressId, String text) {
+    visitFromTimes['${customerId}_$addressId'] = parseTime(text);
     calculateCreateOrUpdateRouteButtonState();
+  }
+
+  void updateVisitTimeTo(String customerId, String addressId, String text) {
+    visitToTimes['${customerId}_$addressId'] = parseTime(text);
+    calculateCreateOrUpdateRouteButtonState();
+  }
+
+  void updateTaskComment(String customerId, String addressId, String text) {
+    if (text.length > 500) {
+      taskComments['${customerId}_$addressId'] = text.substring(0, 500);
+    } else {
+      taskComments['${customerId}_$addressId'] = text;
+    }
   }
 
   void updateTask() {
@@ -231,11 +244,15 @@ class CreateRouteViewModel extends BaseSearchViewModel {
 
       final customerName = customer.name ?? '';
       final customerId = customer.id ?? '';
-      final visitTime = visitTimes['${customerId}_$addressId'];
+      final vFrom = visitFromTimes['${customerId}_$addressId'];
+      final vTo = visitToTimes['${customerId}_$addressId'];
+      final comment = taskComments['${customerId}_$addressId'];
 
       savedTasks[addressId] = TasksBody(
         name: customerName,
-        visitDateTime: visitTime,
+        visitTimeFrom: vFrom,
+        visitTimeTo: vTo,
+        comment: comment,
         clientId: customerId,
         addressId: addressId,
         subtasks: subtasks,
@@ -378,9 +395,11 @@ class CreateRouteViewModel extends BaseSearchViewModel {
 
     savedTasks.updateAll((_, task) {
       final key = '${task.clientId}_${task.addressId}';
-      final visitTime = visitTimes[key];
+      final visitFrom = visitFromTimes[key];
+      final visitTo = visitToTimes[key];
 
-      final isValid = visitTime != null &&
+      final isValid = visitFrom != null &&
+          visitTo != null &&
           task.subtasks.isNotEmpty &&
           selectedCustomers.any((c) => c.id == task.clientId);
 
@@ -388,7 +407,7 @@ class CreateRouteViewModel extends BaseSearchViewModel {
         allTasksValid = false;
       }
 
-      return task.copyWith(visitDateTime: visitTime);
+      return task.copyWith(visitTimeFrom: visitFrom, visitTimeTo: visitTo);
     });
 
     // Объединённая финальная проверка

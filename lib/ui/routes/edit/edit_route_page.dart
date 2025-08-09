@@ -11,9 +11,10 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
+import '../../../core/date_utils.dart';
 import 'edit_route_view_model.dart';
 
-class EditRoutePage extends StatelessWidget {
+class EditRoutePage extends StatefulWidget {
   const EditRoutePage({super.key});
 
   static Widget create(String userId) => ChangeNotifierProvider(
@@ -21,6 +22,11 @@ class EditRoutePage extends StatelessWidget {
         child: const EditRoutePage(),
       );
 
+  @override
+  State<EditRoutePage> createState() => _EditRoutePageState();
+}
+
+class _EditRoutePageState extends State<EditRoutePage> {
   @override
   Widget build(BuildContext context) {
     final route = context.watch<EditRouteViewModel>().route;
@@ -45,11 +51,20 @@ class EditRoutePage extends StatelessWidget {
               child: ListView.builder(
                   itemBuilder: (context, index) {
                     final task = filteredTasks![index];
-                    final timeController =
-                        viewModel.timeControllers.putIfAbsent(
+                    final fromController = viewModel.fromControllers.putIfAbsent(
                       '${task.client.id}_${task.address.id}',
                       () => TextEditingController(
-                        text: DateFormat('HH:mm').format(task.visitDateTime!),
+                        text: task.visitFromTime != null
+                            ? DateFormat('HH:mm').format(task.visitFromTime!)
+                            : '',
+                      ),
+                    );
+                    final toController = viewModel.toControllers.putIfAbsent(
+                      '${task.client.id}_${task.address.id}',
+                      () => TextEditingController(
+                        text: task.visitToTime != null
+                            ? DateFormat('HH:mm').format(task.visitToTime!)
+                            : '',
                       ),
                     );
                     final lastDate = viewModel.getLastVisitDate(
@@ -77,21 +92,113 @@ class EditRoutePage extends StatelessWidget {
                           const SizedBox(height: 8),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
+                      children: [
                               const Text("Время посещения:"),
                               const SizedBox(width: 8),
                               TimeInputField(
-                                controller: timeController,
-                                onChanged: (_) =>
-                                    viewModel.updateVisitTimeForAddress(
-                                        task.client.id,
-                                        task.address.id,
-                                        timeController.text),
+                                controller: fromController,
+                                onChanged: (v) {
+                                  viewModel.updateVisitTimeFrom(
+                                      task.client.id, task.address.id, v);
+                                  final from = DateUtil.parseTime(v);
+                                  final to = DateUtil.parseTime(toController.text);
+                                  if (from != null && to != null && to.isBefore(from)) {
+                                    toController.clear();
+                                    setState(() {});
+                                  } else {
+                                    setState(() {});
+                                  }
+                                },
+                                onTap: () async {
+                                  final now = TimeOfDay.now();
+                                  final t = await showTimePicker(
+                                    context: context,
+                                    initialTime: now,
+                                    builder: (context, child) => MediaQuery(
+                                      data: MediaQuery.of(context)
+                                          .copyWith(alwaysUse24HourFormat: true),
+                                      child: child ?? const SizedBox.shrink(),
+                                    ),
+                                  );
+                                  if (t == null) return;
+                                  String two(int v) => v.toString().padLeft(2, '0');
+                                  fromController.text =
+                                      '${two(t.hour)}:${two(t.minute)}';
+                                  viewModel.updateVisitTimeFrom(task.client.id,
+                                      task.address.id, fromController.text);
+                                  setState(() {});
+                                },
+                              ),
+                              const SizedBox(width: 12),
+                              const Text('—'),
+                              const SizedBox(width: 12),
+                              TimeInputField(
+                                controller: toController,
+                                hasError: () {
+                                  final from = DateUtil.parseTime(fromController.text);
+                                  final to = DateUtil.parseTime(toController.text);
+                                  return from != null && to != null && to.isBefore(from);
+                                }(),
+                                onChanged: (v) {
+                                  final from = DateUtil.parseTime(fromController.text);
+                                  final to = DateUtil.parseTime(v);
+                                  if (from != null && to != null && to.isBefore(from)) {
+                                    toController.clear();
+                                    setState(() {});
+                                  } else {
+                                    viewModel.updateVisitTimeTo(
+                                        task.client.id, task.address.id, v);
+                                    setState(() {});
+                                  }
+                                },
+                                onTap: () async {
+                                  final now = TimeOfDay.now();
+                                  final t = await showTimePicker(
+                                    context: context,
+                                    initialTime: now,
+                                    builder: (context, child) => MediaQuery(
+                                      data: MediaQuery.of(context)
+                                          .copyWith(alwaysUse24HourFormat: true),
+                                      child: child ?? const SizedBox.shrink(),
+                                    ),
+                                  );
+                                  if (t == null) return;
+                                  String two(int v) => v.toString().padLeft(2, '0');
+                                  final toStr = '${two(t.hour)}:${two(t.minute)}';
+                                  final from = DateUtil.parseTime(fromController.text);
+                                  final toDt = DateUtil.parseTime(toStr);
+                                  if (from != null && toDt != null && toDt.isBefore(from)) {
+                                    toController.clear();
+                                    setState(() {});
+                                  } else {
+                                    toController.text = toStr;
+                                    viewModel.updateVisitTimeTo(task.client.id,
+                                        task.address.id, toController.text);
+                                    setState(() {});
+                                  }
+                                },
                               ),
                               const SizedBox(width: 16),
-                              Text("Дата последнего посещения: $lastDate"),
+                        Text("Дата последнего посещения: $lastDate"),
                             ],
                           ),
+                    const SizedBox(height: 8),
+                    SizedBox(
+                      width: 500,
+                      child: TextFormField(
+                        maxLength: 500,
+                        decoration: const InputDecoration(
+                          hintText: 'Комментарий к посещению',
+                          counterText: '',
+                          border: OutlineInputBorder(),
+                          isDense: true,
+                          contentPadding:
+                              EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
+                        ),
+                        onChanged: (value) => viewModel.updateTaskComment(
+                            task.client.id, task.address.id, value),
+                      ),
+                    ),
                         ],
                       ),
                       children: [

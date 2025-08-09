@@ -24,10 +24,19 @@ class CreateRouteChooseSubtasksWidget extends StatefulWidget {
 class _CreateRouteChooseSubtasksWidgetState
     extends State<CreateRouteChooseSubtasksWidget> {
   final Map<String, TextEditingController> _timeControllers = {};
+  final Map<String, TextEditingController> _fromControllers = {};
+  final Map<String, TextEditingController> _toControllers = {};
+  final Map<String, bool> _toErrors = {};
 
   @override
   void dispose() {
     for (final controller in _timeControllers.values) {
+      controller.dispose();
+    }
+    for (final controller in _fromControllers.values) {
+      controller.dispose();
+    }
+    for (final controller in _toControllers.values) {
       controller.dispose();
     }
     super.dispose();
@@ -66,6 +75,12 @@ class _CreateRouteChooseSubtasksWidgetState
         if (!_timeControllers.containsKey(key)) {
           _timeControllers[key] = TextEditingController();
         }
+        if (!_fromControllers.containsKey(key)) {
+          _fromControllers[key] = TextEditingController();
+        }
+        if (!_toControllers.containsKey(key)) {
+          _toControllers[key] = TextEditingController();
+        }
         groupedChecklists
             .putIfAbsent(customer.id!, () => {})
             .putIfAbsent(address.id!, () => [])
@@ -92,19 +107,24 @@ class _CreateRouteChooseSubtasksWidgetState
               final address =
                   customer.addresses!.firstWhere((e) => e.id == addressId);
               final checklists = addressMap[addressId]!;
-              final timeController =
-                  _timeControllers['${customer.id}_${address.id}']!;
+              final key = '${customer.id}_${address.id}';
+              final fromController = _fromControllers[key]!;
+              final toController = _toControllers[key]!;
 
-              final existsTask = viewModel.route?.tasks
-                  .firstWhereOrNull((task) => task.client.id == customer.id);
-
-              if (existsTask != null) {
-                final newTimeText =
-                    DateFormat('HH:mm').format(existsTask.visitDateTime!);
-                if (timeController.text != newTimeText) {
-                  timeController.text = newTimeText;
-                  viewModel.updateVisitTimeForAddress(
-                      customerId, addressId, newTimeText);
+              final fromTime =
+                  viewModel.visitFromTimes['${customer.id}_${address.id}'];
+              final toTime =
+                  viewModel.visitToTimes['${customer.id}_${address.id}'];
+              if (fromTime != null) {
+                final fromText = DateFormat('HH:mm').format(fromTime);
+                if (fromController.text != fromText) {
+                  fromController.text = fromText;
+                }
+              }
+              if (toTime != null) {
+                final toText = DateFormat('HH:mm').format(toTime);
+                if (toController.text != toText) {
+                  toController.text = toText;
                 }
               }
 
@@ -122,14 +142,121 @@ class _CreateRouteChooseSubtasksWidgetState
                         const Text("Время посещения:"),
                         const SizedBox(width: 8),
                         TimeInputField(
-                          controller: timeController,
-                          onChanged: (_) => viewModel.updateVisitTimeForAddress(
-                              customer.id!, address.id!, timeController.text),
-                          enabled: existsTask == null,
+                          controller: fromController,
+                          onChanged: (v) {
+                            viewModel.updateVisitTimeFrom(
+                                customer.id!, address.id!, v);
+                            // if TO already selected and < FROM -> snap TO to FROM
+                            final from = DateUtil.parseTime(v);
+                            final to = DateUtil.parseTime(toController.text);
+                            if (from != null && to != null && to.isBefore(from)) {
+                              toController.clear();
+                              _toErrors[key] = true;
+                              setState(() {});
+                            }
+                            if (from != null && to != null && !to.isBefore(from)) {
+                              _toErrors[key] = false;
+                              setState(() {});
+                            }
+                          },
+                          enabled: true,
+                          onTap: () async {
+                            final now = TimeOfDay.now();
+                            final from = await showTimePicker(
+                              context: context,
+                              initialTime: now,
+                              builder: (context, child) => MediaQuery(
+                                data: MediaQuery.of(context)
+                                    .copyWith(alwaysUse24HourFormat: true),
+                                child: child ?? const SizedBox.shrink(),
+                              ),
+                            );
+                            if (from == null) return;
+                            String two(int v) => v.toString().padLeft(2, '0');
+                            final fromStr = '${two(from.hour)}:${two(from.minute)}';
+                            fromController.text = fromStr;
+                            viewModel.updateVisitTimeFrom(
+                                customer.id!, address.id!, fromStr);
+                            // snap TO if needed
+                            final to = DateUtil.parseTime(toController.text);
+                            final fromDt = DateUtil.parseTime(fromStr);
+                            if (fromDt != null && to != null && to.isBefore(fromDt)) {
+                              toController.text = fromStr;
+                              viewModel.updateVisitTimeTo(
+                                  customer.id!, address.id!, fromStr);
+                            }
+                          },
+                        ),
+                        const SizedBox(width: 12),
+                        const Text('—'),
+                        const SizedBox(width: 12),
+                        TimeInputField(
+                          controller: toController,
+                          hasError: _toErrors[key] ?? false,
+                          onChanged: (v) {
+                            final from = DateUtil.parseTime(fromController.text);
+                            final to = DateUtil.parseTime(v);
+                            if (from != null && to != null && to.isBefore(from)) {
+                              toController.clear();
+                              _toErrors[key] = true;
+                              setState(() {});
+                            } else {
+                              viewModel.updateVisitTimeTo(
+                                  customer.id!, address.id!, v);
+                              _toErrors[key] = false;
+                              setState(() {});
+                            }
+                          },
+                          enabled: true,
+                          onTap: () async {
+                            final now = TimeOfDay.now();
+                            final to = await showTimePicker(
+                              context: context,
+                              initialTime: now,
+                              builder: (context, child) => MediaQuery(
+                                data: MediaQuery.of(context)
+                                    .copyWith(alwaysUse24HourFormat: true),
+                                child: child ?? const SizedBox.shrink(),
+                              ),
+                            );
+                            if (to == null) return;
+                            String two(int v) => v.toString().padLeft(2, '0');
+                            final toStr = '${two(to.hour)}:${two(to.minute)}';
+                            final from = DateUtil.parseTime(fromController.text);
+                            final toDt = DateUtil.parseTime(toStr);
+                            if (from != null && toDt != null && toDt.isBefore(from)) {
+                              toController.clear();
+                              _toErrors[key] = true;
+                              setState(() {});
+                            } else {
+                              toController.text = toStr;
+                              viewModel.updateVisitTimeTo(
+                                  customer.id!, address.id!, toStr);
+                              _toErrors[key] = false;
+                              setState(() {});
+                            }
+                          },
                         ),
                         const SizedBox(width: 16),
                         Text("Дата последнего посещения: $lastDate"),
                       ],
+                    ),
+                    const SizedBox(height: 8),
+                    SizedBox(
+                      width: 500,
+                      child: TextFormField(
+                        maxLength: 500,
+                        decoration: const InputDecoration(
+                          hintText: 'Комментарий к посещению',
+                          counterText: '',
+                          border: OutlineInputBorder(),
+                          isDense: true,
+                          contentPadding:
+                              EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
+                        ),
+                        onChanged: (value) => viewModel.updateTaskComment(
+                            customer.id!, address.id!, value),
+                      ),
                     ),
                   ],
                 ),

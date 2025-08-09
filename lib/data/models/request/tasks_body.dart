@@ -10,7 +10,9 @@ class TasksBody {
   final String clientId;
   final String addressId;
   final String? taskStatus;
-  final DateTime? visitDateTime;
+  final DateTime? visitTimeFrom;
+  final DateTime? visitTimeTo;
+  final String? comment;
   final List<SubtaskBody> subtasks;
 
   TasksBody({
@@ -19,7 +21,9 @@ class TasksBody {
     required this.addressId,
     this.taskStatus,
     required this.subtasks,
-    required this.visitDateTime,
+    this.visitTimeFrom,
+    this.visitTimeTo,
+    this.comment,
     this.id, // Оставляем id как необязательный именованный параметр
   });
 
@@ -31,7 +35,10 @@ class TasksBody {
   TasksBody copyWith({
     String? id,
     String? name,
-    Object? visitDateTime = _unset, // <= отличие!
+    
+    Object? visitTimeFrom = _unset,
+    Object? visitTimeTo = _unset,
+    String? comment,
     String? typeId,
     String? clientId,
     String? addressId,
@@ -45,9 +52,12 @@ class TasksBody {
       taskStatus: taskStatus ?? this.taskStatus,
       subtasks: subtasks ?? this.subtasks,
       id: id ?? this.id, // Исправленный порядок
-      visitDateTime: visitDateTime == _unset
-          ? this.visitDateTime
-          : visitDateTime as DateTime?,
+      
+      visitTimeFrom:
+          visitTimeFrom == _unset ? this.visitTimeFrom : visitTimeFrom as DateTime?,
+      visitTimeTo:
+          visitTimeTo == _unset ? this.visitTimeTo : visitTimeTo as DateTime?,
+      comment: comment ?? this.comment,
     );
   }
 }

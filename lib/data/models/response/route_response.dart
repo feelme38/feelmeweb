@@ -54,7 +54,9 @@ class Task {
   final List<Subtask> subtasks;
   final String routeId;
   final List<LastCheckListInfoResponse> checkListInfo;
-  final DateTime? visitDateTime;
+  final DateTime? visitFromTime;
+  final DateTime? visitToTime;
+  final String? comment;
 
   Task({
     required this.id,
@@ -66,17 +68,13 @@ class Task {
     required this.subtasks,
     required this.routeId,
     required this.checkListInfo,
-    this.visitDateTime,
+    this.visitFromTime,
+    this.visitToTime,
+    this.comment
   });
 
   factory Task.fromJson(Map<String, dynamic> json) => _$TaskFromJson(json);
   Map<String, dynamic> toJson() => _$TaskToJson(this);
-
-  String? toDateTime() {
-    if (visitDateTime == null) return '-';
-    return DateFormat('dd.MM.yyyy').format(DateTime(
-        visitDateTime!.year, visitDateTime!.month, visitDateTime!.day));
-  }
 
   Task copyWith({
     String? id,
@@ -89,7 +87,9 @@ class Task {
     List<Subtask>? subtasks,
     String? routeId,
     List<LastCheckListInfoResponse>? checkListInfo,
-    DateTime? visitDateTime,
+    DateTime? visitFromTime,
+    DateTime? visitToTime,
+    String? comment
   }) {
     return Task(
       id: id ?? this.id,
@@ -101,7 +101,9 @@ class Task {
       subtasks: subtasks ?? this.subtasks,
       routeId: routeId ?? this.routeId,
       checkListInfo: checkListInfo ?? this.checkListInfo,
-      visitDateTime: visitDateTime ?? this.visitDateTime,
+      visitFromTime: visitFromTime ?? this.visitFromTime,
+      visitToTime: visitToTime ?? this.visitToTime,
+      comment: comment ?? this.comment
     );
   }
 }

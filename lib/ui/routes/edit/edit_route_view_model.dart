@@ -12,7 +12,6 @@ import 'package:feelmeweb/data/models/response/subtask_types_response.dart';
 import 'package:feelmeweb/domain/aromas/get_aromas_usecase.dart';
 import 'package:feelmeweb/domain/regions/get_available_regions_usecase.dart';
 import 'package:feelmeweb/domain/route/change_route_status_usecase.dart';
-import 'package:feelmeweb/domain/route/create_route_usecase.dart';
 import 'package:feelmeweb/domain/route/get_user_route_usecase.dart';
 import 'package:feelmeweb/domain/route/update_route_usecase.dart';
 import 'package:feelmeweb/domain/subtasks/delete_subtask_usecase.dart';
@@ -40,7 +39,6 @@ class EditRouteViewModel extends BaseSearchViewModel {
   final _getAvailableRegionsUseCase = GetAvailableRegionsUseCase();
   final _getAromasUseCase = GetAromasUseCase();
   final _getSubtaskTypesUseCase = GetSubtaskTypesUseCase();
-  final _createRouteUseCase = CreateRouteUseCase();
 
   final _router = getIt<RouteGenerator>().router;
 
@@ -51,8 +49,11 @@ class EditRouteViewModel extends BaseSearchViewModel {
   final List<CustomerResponse> _customers = [];
   List<AromaResponse> _aromas = [];
   List<SubtaskTypeResponse> _subtaskTypes = [];
-  final Map<String, TextEditingController> _timeControllers = {};
-  final Map<String, DateTime?> _visitTimes = {};
+  final Map<String, TextEditingController> _fromControllers = {};
+  final Map<String, TextEditingController> _toControllers = {};
+  final Map<String, String> _taskComments = {};
+  final Map<String, DateTime?> _visitFromTimes = {};
+  final Map<String, DateTime?> _visitToTimes = {};
   bool _hasChanges = false;
 
   RouteResponse? get route => _route;
@@ -60,7 +61,8 @@ class EditRouteViewModel extends BaseSearchViewModel {
   List<CustomerResponse> get customers => _customers;
   List<AromaResponse> get aromas => _aromas;
   List<SubtaskTypeResponse> get subtaskTypes => _subtaskTypes;
-  Map<String, TextEditingController> get timeControllers => _timeControllers;
+  Map<String, TextEditingController> get fromControllers => _fromControllers;
+  Map<String, TextEditingController> get toControllers => _toControllers;
   bool get hasChanges => _hasChanges;
 
   int _creationStage = 1;
@@ -69,7 +71,10 @@ class EditRouteViewModel extends BaseSearchViewModel {
 
   @override
   void dispose() {
-    for (final controller in _timeControllers.values) {
+    for (final controller in _fromControllers.values) {
+      controller.dispose();
+    }
+    for (final controller in _toControllers.values) {
       controller.dispose();
     }
     super.dispose();
@@ -172,22 +177,51 @@ class EditRouteViewModel extends BaseSearchViewModel {
     //refilter(state.defects);
   }
 
-  void updateVisitTimeForAddress(
-      String customerId, String addressId, String timeText) {
-    final time = parseTime(timeText);
-    _visitTimes['${customerId}_$addressId'] = time;
-
+  void updateVisitTimeFrom(String customerId, String addressId, String text) {
+    _visitFromTimes['${customerId}_$addressId'] = parseTime(text);
     if (_route != null) {
-      final updatedTasks = _route!.tasks.map((task) {
-        if (task.client.id == customerId && task.address.id == addressId) {
-          return task.copyWith(visitDateTime: time);
-        }
-        return task;
-      }).toList();
-
-      _route = _route!.copyWith(tasks: updatedTasks);
+      _route = _route!.copyWith(
+        tasks: _route!.tasks.map((task) {
+          if (task.client.id == customerId && task.address.id == addressId) {
+            return task.copyWith(visitFromTime: _visitFromTimes['${customerId}_$addressId']);
+          }
+          return task;
+        }).toList(),
+      );
     }
+    _hasChanges = true;
+    notifyListeners();
+  }
 
+  void updateVisitTimeTo(String customerId, String addressId, String text) {
+    _visitToTimes['${customerId}_$addressId'] = parseTime(text);
+    if (_route != null) {
+      _route = _route!.copyWith(
+        tasks: _route!.tasks.map((task) {
+          if (task.client.id == customerId && task.address.id == addressId) {
+            return task.copyWith(visitToTime: _visitToTimes['${customerId}_$addressId']);
+          }
+          return task;
+        }).toList(),
+      );
+    }
+    _hasChanges = true;
+    notifyListeners();
+  }
+
+  void updateTaskComment(String customerId, String addressId, String text) {
+    _taskComments['${customerId}_$addressId'] =
+        text.length > 500 ? text.substring(0, 500) : text;
+    if (_route != null) {
+      _route = _route!.copyWith(
+        tasks: _route!.tasks.map((task) {
+          if (task.client.id == customerId && task.address.id == addressId) {
+            return task.copyWith(comment: _taskComments['${customerId}_$addressId']);
+          }
+          return task;
+        }).toList(),
+      );
+    }
     _hasChanges = true;
     notifyListeners();
   }
@@ -216,7 +250,9 @@ class EditRouteViewModel extends BaseSearchViewModel {
               taskStatus: task.taskStatus,
               clientId: task.client.id,
               addressId: task.address.id,
-              visitDateTime: task.visitDateTime,
+              visitTimeFrom: _visitFromTimes['${task.client.id}_${task.address.id}'],
+              visitTimeTo: _visitToTimes['${task.client.id}_${task.address.id}'],
+              comment: _taskComments['${task.client.id}_${task.address.id}'],
               subtasks: task.subtasks
                   .map(
                     (subtask) => SubtaskBody(

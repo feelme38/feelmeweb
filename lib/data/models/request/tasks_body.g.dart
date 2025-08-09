@@ -14,9 +14,13 @@ TasksBody _$TasksBodyFromJson(Map<String, dynamic> json) => TasksBody(
       subtasks: (json['subtasks'] as List<dynamic>)
           .map((e) => SubtaskBody.fromJson(e as Map<String, dynamic>))
           .toList(),
-      visitDateTime: json['visitDateTime'] == null
+      visitTimeFrom: json['visitTimeFrom'] == null
           ? null
-          : DateTime.parse(json['visitDateTime'] as String),
+          : DateTime.parse(json['visitTimeFrom'] as String),
+      visitTimeTo: json['visitTimeTo'] == null
+          ? null
+          : DateTime.parse(json['visitTimeTo'] as String),
+      comment: json['comment'] as String?,
       id: json['id'] as String?,
     );
 
@@ -26,6 +30,8 @@ Map<String, dynamic> _$TasksBodyToJson(TasksBody instance) => <String, dynamic>{
       'clientId': instance.clientId,
       'addressId': instance.addressId,
       'taskStatus': instance.taskStatus,
-      'visitDateTime': instance.visitDateTime?.toIso8601String(),
+      'visitTimeFrom': instance.visitTimeFrom?.toIso8601String(),
+      'visitTimeTo': instance.visitTimeTo?.toIso8601String(),
+      'comment': instance.comment,
       'subtasks': instance.subtasks,
     };
