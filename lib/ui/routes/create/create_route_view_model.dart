@@ -24,6 +24,8 @@ import 'package:feelmeweb/presentation/navigation/route_generation.dart';
 import 'package:feelmeweb/presentation/navigation/route_names.dart';
 import 'package:feelmeweb/provider/di/di_provider.dart';
 
+import '../../../core/date_utils.dart';
+
 class CreateRouteViewModel extends BaseSearchViewModel {
   CreateRouteViewModel(this.userId, this.isUpdate) {
     if (isUpdate) {
@@ -86,6 +88,7 @@ class CreateRouteViewModel extends BaseSearchViewModel {
   final Map<String, String> taskComments = {};
   final Map<String, DateTime?> visitFromTimes = {};
   final Map<String, DateTime?> visitToTimes = {};
+  String? selectedRouteDate;
 
   CustomerResponse? selectedCustomer;
 
@@ -218,6 +221,11 @@ class CreateRouteViewModel extends BaseSearchViewModel {
     }
   }
 
+  void updateRouteDate(DateTime date) {
+    selectedRouteDate = DateUtil.formatToYYYYMMDD(date);
+    notifyListeners();
+  }
+
   void updateTask() {
     // Очищаем старые таски
     savedTasks.clear();
@@ -263,7 +271,8 @@ class CreateRouteViewModel extends BaseSearchViewModel {
   }
 
   void createRoute() async {
-    final RouteBody routeBody = RouteBody(userId, savedTasks.values.toList());
+    final RouteBody routeBody = RouteBody(userId, savedTasks.values.toList(),
+        routeDate: selectedRouteDate);
     loadingOn();
     (await executeUseCaseParam<void, RouteBody>(_createRouteUseCase, routeBody))
         .doOnError((message, exception) {
@@ -320,7 +329,9 @@ class CreateRouteViewModel extends BaseSearchViewModel {
       }
 
       final RouteBody routeBody = RouteBody(userId, savedTasks.values.toList(),
-          routeId: _route?.id, routeStatus: _route?.routeStatus);
+          routeId: _route?.id,
+          routeStatus: _route?.routeStatus,
+          routeDate: selectedRouteDate);
       loadingOn();
       (await executeUseCaseParam<void, RouteBody>(
               _updateRouteUseCase, routeBody))

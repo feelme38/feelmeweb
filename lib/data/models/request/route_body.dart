@@ -9,8 +9,9 @@ class RouteBody {
   final String? routeStatus;
   final String userId;
   final List<TasksBody> tasks;
+  final String? routeDate; // yyyy-MM-dd
 
-  RouteBody(this.userId, this.tasks, {this.routeId, this.routeStatus});
+  RouteBody(this.userId, this.tasks, {this.routeId, this.routeStatus, this.routeDate});
 
   factory RouteBody.fromJson(Map<String, dynamic> json) =>
       _$RouteBodyFromJson(json);

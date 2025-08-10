@@ -13,6 +13,7 @@ RouteBody _$RouteBodyFromJson(Map<String, dynamic> json) => RouteBody(
           .toList(),
       routeId: json['routeId'] as String?,
       routeStatus: json['routeStatus'] as String?,
+      routeDate: json['routeDate'] as String?,
     );
 
 Map<String, dynamic> _$RouteBodyToJson(RouteBody instance) => <String, dynamic>{
@@ -20,4 +21,5 @@ Map<String, dynamic> _$RouteBodyToJson(RouteBody instance) => <String, dynamic>{
       'routeStatus': instance.routeStatus,
       'userId': instance.userId,
       'tasks': instance.tasks,
+      'routeDate': instance.routeDate,
     };

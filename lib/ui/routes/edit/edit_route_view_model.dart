@@ -55,6 +55,7 @@ class EditRouteViewModel extends BaseSearchViewModel {
   final Map<String, DateTime?> _visitFromTimes = {};
   final Map<String, DateTime?> _visitToTimes = {};
   bool _hasChanges = false;
+  String? selectedRouteDate; // yyyy-MM-dd
 
   RouteResponse? get route => _route;
   List<RegionResponse> get regions => _regions;
@@ -122,6 +123,9 @@ class EditRouteViewModel extends BaseSearchViewModel {
                 ))
             .toList(),
       );
+      if (_route != null) {
+        selectedRouteDate = _route!.routeDate;
+      }
       loadRegions();
       notifyListeners();
     });
@@ -271,7 +275,9 @@ class EditRouteViewModel extends BaseSearchViewModel {
         .toList();
 
     final RouteBody routeBody = RouteBody(userId, tasks,
-        routeId: _route?.id, routeStatus: _route?.routeStatus);
+        routeId: _route?.id,
+        routeStatus: _route?.routeStatus,
+        routeDate: selectedRouteDate);
     loadingOn();
     (await executeUseCaseParam<void, RouteBody>(_updateRouteUseCase, routeBody))
         .doOnError((message, exception) {

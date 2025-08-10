@@ -23,16 +23,12 @@ class CreateRouteChooseSubtasksWidget extends StatefulWidget {
 
 class _CreateRouteChooseSubtasksWidgetState
     extends State<CreateRouteChooseSubtasksWidget> {
-  final Map<String, TextEditingController> _timeControllers = {};
   final Map<String, TextEditingController> _fromControllers = {};
   final Map<String, TextEditingController> _toControllers = {};
   final Map<String, bool> _toErrors = {};
 
   @override
   void dispose() {
-    for (final controller in _timeControllers.values) {
-      controller.dispose();
-    }
     for (final controller in _fromControllers.values) {
       controller.dispose();
     }
@@ -72,9 +68,6 @@ class _CreateRouteChooseSubtasksWidgetState
 
       if (customer != null && address != null) {
         final key = '${customer.id}_${address.id}';
-        if (!_timeControllers.containsKey(key)) {
-          _timeControllers[key] = TextEditingController();
-        }
         if (!_fromControllers.containsKey(key)) {
           _fromControllers[key] = TextEditingController();
         }
@@ -177,13 +170,16 @@ class _CreateRouteChooseSubtasksWidgetState
                             fromController.text = fromStr;
                             viewModel.updateVisitTimeFrom(
                                 customer.id!, address.id!, fromStr);
-                            // snap TO if needed
+
                             final to = DateUtil.parseTime(toController.text);
                             final fromDt = DateUtil.parseTime(fromStr);
                             if (fromDt != null && to != null && to.isBefore(fromDt)) {
-                              toController.text = fromStr;
-                              viewModel.updateVisitTimeTo(
-                                  customer.id!, address.id!, fromStr);
+                              toController.clear();
+                              _toErrors[key] = true;
+                              setState(() {});
+                            } else {
+                              _toErrors[key] = false;
+                              setState(() {});
                             }
                           },
                         ),

@@ -46,6 +46,19 @@ class _EditRoutePageState extends State<EditRoutePage> {
           needBottomEdge: true, needBackButton: false),
       child: Column(
         children: [
+          // Route date picker row (prefilled from backend if available)
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 8),
+            child: Row(children: [
+              const Text('Дата маршрута:'),
+              const SizedBox(width: 12),
+              SizedBox(
+                width: 160,
+                child: _RouteDateField(),
+              ),
+              const Spacer(),
+            ]),
+          ),
           if (route != null)
             Expanded(
               child: ListView.builder(
@@ -270,6 +283,65 @@ class _EditRoutePageState extends State<EditRoutePage> {
           ),
         ],
       ),
+    );
+  }
+}
+
+class _RouteDateField extends StatefulWidget {
+  @override
+  State<_RouteDateField> createState() => _RouteDateFieldState();
+}
+
+class _RouteDateFieldState extends State<_RouteDateField> {
+  late final TextEditingController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final vm = context.read<EditRouteViewModel>();
+      final route = vm.route;
+      if (vm.selectedRouteDate != null) {
+        _controller.text = vm.selectedRouteDate!;
+      } else if (route != null) {
+        _controller.text = route.routeDate;
+        vm.selectedRouteDate = _controller.text;
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return TextFormField(
+      readOnly: true,
+      controller: _controller,
+      style: const TextStyle(color: Colors.black),
+      decoration: const InputDecoration(
+        hintText: 'ГГГГ-ММ-ДД',
+        isDense: true,
+        border: OutlineInputBorder(),
+      ),
+      onTap: () async {
+        final now = DateTime.now();
+        final picked = await showDatePicker(
+          context: context,
+          initialDate: now,
+          firstDate: DateTime(now.year - 1),
+          lastDate: DateTime(now.year + 2),
+          locale: const Locale('ru'),
+        );
+        if (picked != null) {
+          _controller.text = DateFormat('yyyy-MM-dd').format(picked);
+          context.read<EditRouteViewModel>().selectedRouteDate = _controller.text;
+        }
+      },
     );
   }
 }

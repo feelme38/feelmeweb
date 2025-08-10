@@ -13,6 +13,7 @@ class RouteResponse {
   final String routeStatus;
   final int allTasksCount;
   final int completedTasksCount;
+  final String routeDate; // yyyy-MM-dd
 
   RouteResponse({
     required this.id,
@@ -20,6 +21,7 @@ class RouteResponse {
     required this.routeStatus,
     required this.allTasksCount,
     required this.completedTasksCount,
+    required this.routeDate,
   });
 
   factory RouteResponse.fromJson(Map<String, dynamic> json) =>
@@ -32,6 +34,7 @@ class RouteResponse {
     String? routeStatus,
     int? allTasksCount,
     int? completedTasksCount,
+    String? routeDate,
   }) {
     return RouteResponse(
       id: id ?? this.id,
@@ -39,6 +42,7 @@ class RouteResponse {
       routeStatus: routeStatus ?? this.routeStatus,
       allTasksCount: allTasksCount ?? this.allTasksCount,
       completedTasksCount: completedTasksCount ?? this.completedTasksCount,
+      routeDate: routeDate ?? this.routeDate,
     );
   }
 }

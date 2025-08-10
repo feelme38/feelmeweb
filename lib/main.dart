@@ -5,6 +5,7 @@ import 'package:feelmeweb/presentation/theme/theme.dart';
 import 'package:feelmeweb/provider/di/di_provider.dart';
 import 'package:feelmeweb/provider/network/network_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -23,6 +24,16 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Панель управления системой',
       theme: AppTheme.dataLight,
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: const [
+        Locale('ru'),
+        Locale('en'),
+      ],
+      locale: const Locale('ru'),
     );
   }
 }

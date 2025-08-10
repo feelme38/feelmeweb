@@ -15,6 +15,7 @@ RouteResponse _$RouteResponseFromJson(Map<String, dynamic> json) =>
       routeStatus: json['routeStatus'] as String,
       allTasksCount: json['allTasksCount'] as int,
       completedTasksCount: json['completedTasksCount'] as int,
+      routeDate: json['routeDate'] as String,
     );
 
 Map<String, dynamic> _$RouteResponseToJson(RouteResponse instance) =>
@@ -24,6 +25,7 @@ Map<String, dynamic> _$RouteResponseToJson(RouteResponse instance) =>
       'routeStatus': instance.routeStatus,
       'allTasksCount': instance.allTasksCount,
       'completedTasksCount': instance.completedTasksCount,
+      'routeDate': instance.routeDate,
     };
 
 Task _$TaskFromJson(Map<String, dynamic> json) => Task(
