@@ -54,8 +54,25 @@ class RouteRemoteSource {
   Future<Result<RouteResponse>> getUserRoute(GetUserRouteParam body) async {
     try {
       final response = await _networkProvider.dio
-          .onGet(Urls.route, queryParams: {'userId': body.userId});
+          .onGet(Urls.route, queryParams: {
+            'userId': body.userId,
+            'date': body.routeDate
+          });
       return Success(RouteResponse.fromJson(response.data));
+    } on DioException catch (e) {
+      return Failure(exception: e, message: e.message);
+    } on ConnectionException catch (e) {
+      return Failure(exception: e, message: e.message);
+    }
+  }
+
+  Future<Result<List<RouteResponse>>> getUserRoutes(String userId) async {
+    try {
+      final response = await _networkProvider.dio
+          .onGet(Urls.routes, queryParams: {'userId': userId});
+      return Success((response.data as List)
+          .map((e) => RouteResponse.fromJson(e))
+          .toList());
     } on DioException catch (e) {
       return Failure(exception: e, message: e.message);
     } on ConnectionException catch (e) {

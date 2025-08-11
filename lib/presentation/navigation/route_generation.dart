@@ -9,6 +9,7 @@ import 'package:feelmeweb/ui/route_info/route_info_page.dart';
 import 'package:feelmeweb/ui/routes/create/create_route_choose_customers.dart';
 import 'package:feelmeweb/ui/routes/edit/edit_route_page.dart';
 import 'package:feelmeweb/ui/users/engineers_managers_page.dart';
+import 'package:feelmeweb/ui/routes/list/route_list_page.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:injectable/injectable.dart';
@@ -109,9 +110,11 @@ class RouteGenerator {
         GoRoute(
           path: RouteName.customerEditRoute,
           builder: (BuildContext context, GoRouterState state) {
-            final userId = state.extra as String?;
-            if (userId == null) return RouteOperationsPage.create();
-            return EditRoutePage.create(userId);
+            final extra = state.extra as Map<String, dynamic>?;
+            final userId = extra?['userId'] as String?;
+            final routeDate = extra?['routeDate'] as String?;
+            if (userId == null || routeDate == null) return RouteOperationsPage.create();
+            return EditRoutePage.create(userId, routeDate);
           },
         ),
         GoRoute(
@@ -128,6 +131,14 @@ class RouteGenerator {
             final userId = state.extra as String?;
 
             return InventoryPage.create(userId!);
+          },
+        ),
+        GoRoute(
+          path: RouteName.routesList,
+          builder: (BuildContext context, GoRouterState state) {
+            final userId = state.extra as String?;
+            if (userId == null) return RouteOperationsPage.create();
+            return RouteListPage.create(userId);
           },
         ),
       ],

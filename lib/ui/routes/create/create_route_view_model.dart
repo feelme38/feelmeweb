@@ -376,13 +376,13 @@ class CreateRouteViewModel extends BaseSearchViewModel {
   }
 
   Future getUserRoute() async {
-    (await executeUseCaseParam<RouteResponse, GetUserRouteParam>(
-            _getUserRouteUseCase, GetUserRouteParam(userId)))
-        .doOnError((message, exception) {
-      addAlert(Alert(message ?? '$exception', style: AlertStyle.danger));
-    }).doOnSuccess((value) {
-      _route = value;
-    });
+    // (await executeUseCaseParam<RouteResponse, GetUserRouteParam>(
+    //         _getUserRouteUseCase, GetUserRouteParam(userId)))
+    //     .doOnError((message, exception) {
+    //   addAlert(Alert(message ?? '$exception', style: AlertStyle.danger));
+    // }).doOnSuccess((value) {
+    //   _route = value;
+    // });
   }
 
   void calculateCreateOrUpdateRouteButtonState() {

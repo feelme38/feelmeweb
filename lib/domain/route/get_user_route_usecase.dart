@@ -6,8 +6,8 @@ import 'package:feelmeweb/provider/di/di_provider.dart';
 
 class GetUserRouteParam {
   final String userId;
-
-  GetUserRouteParam(this.userId);
+  final String routeDate;
+  GetUserRouteParam(this.userId, this.routeDate);
 }
 
 class GetUserRouteUseCase
@@ -17,4 +17,13 @@ class GetUserRouteUseCase
   @override
   Future<Result<RouteResponse>> call(GetUserRouteParam param) =>
       _repository.getUserRoute(param);
+}
+
+class GetUserRoutesUseCase
+    extends UseCaseParam<Result<List<RouteResponse>>, String> {
+  final _repository = getIt<RouteRepository>();
+
+  @override
+  Future<Result<List<RouteResponse>>> call(String userId) =>
+      _repository.getUserRoutes(userId);
 }

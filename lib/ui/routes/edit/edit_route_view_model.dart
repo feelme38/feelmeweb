@@ -25,7 +25,8 @@ import 'package:feelmeweb/provider/di/di_provider.dart';
 import 'package:flutter/material.dart';
 
 class EditRouteViewModel extends BaseSearchViewModel {
-  EditRouteViewModel(this.userId) {
+  EditRouteViewModel(this.userId, this.routeDate) {
+    selectedRouteDate = routeDate;
     loadRoute();
     loadAromas();
     loadSubtaskTypes();
@@ -43,6 +44,7 @@ class EditRouteViewModel extends BaseSearchViewModel {
   final _router = getIt<RouteGenerator>().router;
 
   final String userId;
+  final String routeDate;
 
   RouteResponse? _route;
   List<RegionResponse> _regions = [];
@@ -91,6 +93,12 @@ class EditRouteViewModel extends BaseSearchViewModel {
     notifyListeners();
   }
 
+  void updateSelectedRouteDate(DateTime date) {
+    selectedRouteDate = DateFormat('yyyy-MM-dd').format(date);
+    _hasChanges = true;
+    notifyListeners();
+  }
+
   Future loadRegions() async {
     loadingOn();
     (await executeUseCaseParam<List<RegionResponse>, String>(
@@ -107,7 +115,7 @@ class EditRouteViewModel extends BaseSearchViewModel {
   Future loadRoute() async {
     loadingOn();
     (await executeUseCaseParam<RouteResponse, GetUserRouteParam>(
-            _getUserRouteUseCase, GetUserRouteParam(userId)))
+            _getUserRouteUseCase, GetUserRouteParam(userId, routeDate)))
         .doOnError((message, exception) {
       addAlert(Alert(message ?? '$exception', style: AlertStyle.danger));
     }).doOnSuccess((value) {
@@ -124,7 +132,17 @@ class EditRouteViewModel extends BaseSearchViewModel {
             .toList(),
       );
       if (_route != null) {
-        selectedRouteDate = _route!.routeDate;
+        // Prefill date
+        selectedRouteDate = DateFormat('yyyy-MM-dd').format(_route!.routeDate);
+        // Prefill times and comments so UI and payload stay consistent
+        for (final task in _route!.tasks) {
+          final key = '${task.client.id}_${task.address.id}';
+          _visitFromTimes[key] = task.visitFromTime;
+          _visitToTimes[key] = task.visitToTime;
+          if (task.comment != null) {
+            _taskComments[key] = task.comment!;
+          }
+        }
       }
       loadRegions();
       notifyListeners();
@@ -166,7 +184,7 @@ class EditRouteViewModel extends BaseSearchViewModel {
       addAlert(Alert(message ?? '$exception', style: AlertStyle.danger));
     }).doOnSuccess((value) {
       addAlert(
-          Alert('Пользователь снят с мааршрута', style: AlertStyle.success));
+          Alert('Пользователь снят с маршрута', style: AlertStyle.success));
       Future.delayed(const Duration(milliseconds: 1000), () {
         // Перейти на customerEditRoute
         _router.pushReplacement(RouteName.usersList);

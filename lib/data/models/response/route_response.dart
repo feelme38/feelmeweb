@@ -13,7 +13,7 @@ class RouteResponse {
   final String routeStatus;
   final int allTasksCount;
   final int completedTasksCount;
-  final String routeDate; // yyyy-MM-dd
+  final DateTime routeDate; // LocalDate (date only)
 
   RouteResponse({
     required this.id,
@@ -34,7 +34,7 @@ class RouteResponse {
     String? routeStatus,
     int? allTasksCount,
     int? completedTasksCount,
-    String? routeDate,
+    DateTime? routeDate,
   }) {
     return RouteResponse(
       id: id ?? this.id,

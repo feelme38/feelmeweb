@@ -17,8 +17,8 @@ import 'edit_route_view_model.dart';
 class EditRoutePage extends StatefulWidget {
   const EditRoutePage({super.key});
 
-  static Widget create(String userId) => ChangeNotifierProvider(
-        create: (context) => EditRouteViewModel(userId),
+  static Widget create(String userId, String routeDate) => ChangeNotifierProvider(
+        create: (context) => EditRouteViewModel(userId, routeDate),
         child: const EditRoutePage(),
       );
 
@@ -80,6 +80,19 @@ class _EditRoutePageState extends State<EditRoutePage> {
                             : '',
                       ),
                     );
+                    // Sync controller texts with latest task values in case of async updates
+                    final expectedFrom = task.visitFromTime != null
+                        ? DateFormat('HH:mm').format(task.visitFromTime!)
+                        : '';
+                    if (fromController.text != expectedFrom) {
+                      fromController.text = expectedFrom;
+                    }
+                    final expectedTo = task.visitToTime != null
+                        ? DateFormat('HH:mm').format(task.visitToTime!)
+                        : '';
+                    if (toController.text != expectedTo) {
+                      toController.text = expectedTo;
+                    }
                     final lastDate = viewModel.getLastVisitDate(
                       task.client.id,
                       task.address.id,
@@ -287,41 +300,18 @@ class _EditRoutePageState extends State<EditRoutePage> {
   }
 }
 
-class _RouteDateField extends StatefulWidget {
-  @override
-  State<_RouteDateField> createState() => _RouteDateFieldState();
-}
-
-class _RouteDateFieldState extends State<_RouteDateField> {
-  late final TextEditingController _controller;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = TextEditingController();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final vm = context.read<EditRouteViewModel>();
-      final route = vm.route;
-      if (vm.selectedRouteDate != null) {
-        _controller.text = vm.selectedRouteDate!;
-      } else if (route != null) {
-        _controller.text = route.routeDate;
-        vm.selectedRouteDate = _controller.text;
-      }
-    });
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
+class _RouteDateField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final vm = context.watch<EditRouteViewModel>();
+    final text = vm.selectedRouteDate ??
+        (vm.route != null
+            ? DateFormat('yyyy-MM-dd').format(vm.route!.routeDate)
+            : '');
+
     return TextFormField(
       readOnly: true,
-      controller: _controller,
+      controller: TextEditingController(text: text),
       style: const TextStyle(color: Colors.black),
       decoration: const InputDecoration(
         hintText: 'ГГГГ-ММ-ДД',
@@ -338,8 +328,7 @@ class _RouteDateFieldState extends State<_RouteDateField> {
           locale: const Locale('ru'),
         );
         if (picked != null) {
-          _controller.text = DateFormat('yyyy-MM-dd').format(picked);
-          context.read<EditRouteViewModel>().selectedRouteDate = _controller.text;
+          context.read<EditRouteViewModel>().updateSelectedRouteDate(picked);
         }
       },
     );

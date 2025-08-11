@@ -33,6 +33,10 @@ class RouteRepositoryImpl extends RouteRepository {
       _routeRemoteSource.getUserRoute(param);
 
   @override
+  Future<Result<List<RouteResponse>>> getUserRoutes(String userId) =>
+      _routeRemoteSource.getUserRoutes(userId);
+
+  @override
   Future<Result<bool>> changeRouteStatus(RouteUpdateBody body) =>
       _routeRemoteSource.changeRouteStatus(body: body);
 }
@@ -42,5 +46,6 @@ abstract class RouteRepository {
   Future<Result<bool>> updateRoute(RouteBody body);
   Future<Result<List<TodayRouteResponse>>> getRoutesToday();
   Future<Result<RouteResponse>> getUserRoute(GetUserRouteParam param);
+  Future<Result<List<RouteResponse>>> getUserRoutes(String userId);
   Future<Result<bool>> changeRouteStatus(RouteUpdateBody body);
 }

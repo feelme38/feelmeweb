@@ -147,7 +147,7 @@ class RouteOperationsViewModel extends BaseSearchViewModel {
                   final context =
                       getIt<RouteGenerator>().navigatorKey.currentContext;
                   if (context == null) return;
-                  context.go(RouteName.customerEditRoute, extra: user.id);
+                  context.go(RouteName.routesList, extra: user.id);
                 },
                 tooltip: 'Редактировать',
               ),
