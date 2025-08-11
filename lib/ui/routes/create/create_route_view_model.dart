@@ -15,7 +15,7 @@ import 'package:feelmeweb/domain/checklists/get_available_checklists_usecase.dar
 import 'package:feelmeweb/domain/customers/get_available_customers_usecase.dart';
 import 'package:feelmeweb/domain/regions/get_available_regions_usecase.dart';
 import 'package:feelmeweb/domain/route/create_route_usecase.dart';
-import 'package:feelmeweb/domain/route/get_user_route_usecase.dart';
+import 'package:feelmeweb/domain/route/get_route_by_id_usecase.dart';
 import 'package:feelmeweb/domain/route/update_route_usecase.dart';
 import 'package:feelmeweb/domain/subtasks/get_subtask_types_usecase.dart';
 import 'package:feelmeweb/presentation/alert/alert.dart';
@@ -27,13 +27,15 @@ import 'package:feelmeweb/provider/di/di_provider.dart';
 import '../../../core/date_utils.dart';
 
 class CreateRouteViewModel extends BaseSearchViewModel {
-  CreateRouteViewModel(this.userId, this.isUpdate) {
-    if (isUpdate) {
-      getUserRoute();
-    }
-    loadRegions();
-    loadAromas();
-    loadTaskTypes();
+  CreateRouteViewModel(this.userId, this.routeId) {
+    Future.microtask(() async {
+      if (routeId != null) {
+        await getUserRoute();
+      }
+      loadRegions();
+      loadAromas();
+      loadTaskTypes();
+    });
   }
 
   final _getAvailableRegionsUseCase = GetAvailableRegionsUseCase();
@@ -43,12 +45,12 @@ class CreateRouteViewModel extends BaseSearchViewModel {
   final _getSubtaskTypesUseCase = GetSubtaskTypesUseCase();
   final _createRouteUseCase = CreateRouteUseCase();
   final _updateRouteUseCase = UpdateRouteUseCase();
-  final _getUserRouteUseCase = GetUserRouteUseCase();
+  final _getRouteByIdUseCase = GetRouteByIdUseCase();
 
   final _router = getIt<RouteGenerator>().router;
 
   final String userId;
-  final bool isUpdate;
+  final String? routeId;
 
   List<RegionResponse> _regions = [];
 
@@ -116,8 +118,10 @@ class CreateRouteViewModel extends BaseSearchViewModel {
 
   Future loadRegions() async {
     loadingOn();
-    (await executeUseCaseParam<List<RegionResponse>, String>(
-            _getAvailableRegionsUseCase, userId))
+    (await executeUseCaseParam<List<RegionResponse>, GetAvailableRegionsParams>(
+            _getAvailableRegionsUseCase,
+            GetAvailableRegionsParams(
+                userId, _route?.routeDate.toIso8601String().split('T').first)))
         .doOnError((message, exception) {
       addAlert(Alert(message ?? '$exception', style: AlertStyle.danger));
     }).doOnSuccess((value) async {
@@ -132,8 +136,10 @@ class CreateRouteViewModel extends BaseSearchViewModel {
     loadingOn();
 
     (await executeUseCaseParam<List<CustomerResponse>,
-                GetAvailableCustomersParam?>(_getAvailableCustomersUseCase,
-            GetAvailableCustomersParam(userId, regionId!)))
+                GetAvailableCustomersParam?>(
+            _getAvailableCustomersUseCase,
+            GetAvailableCustomersParam(userId, regionId!,
+                _route?.routeDate.toIso8601String().split('T').first)))
         .doOnError((message, exception) {
       addAlert(Alert(message ?? '$exception', style: AlertStyle.danger));
     }).doOnSuccess((value) {
@@ -158,8 +164,10 @@ class CreateRouteViewModel extends BaseSearchViewModel {
       for (AddressDTO address in customer.addresses ?? []) {
         selectedCustomer = customer;
         (await executeUseCaseParam<List<LastCheckListInfoResponse>,
-                    GetAvailableChecklistParam>(_getAvailableChecklistsUseCase,
-                GetAvailableChecklistParam(address.id!, customer.id!, userId)))
+                    GetAvailableChecklistParam>(
+                _getAvailableChecklistsUseCase,
+                GetAvailableChecklistParam(address.id!, customer.id!, userId,
+                    _route?.routeDate.toIso8601String().split('T').first)))
             .doOnSuccess((value) {
           _lastChecklists.addAll(value);
         });
@@ -350,7 +358,7 @@ class CreateRouteViewModel extends BaseSearchViewModel {
     }
   }
 
-  void loadAromas() async {
+  Future loadAromas() async {
     loadingOn();
     (await executeUseCase<List<AromaResponse>>(_getAromasUseCase))
         .doOnError((message, exception) {
@@ -376,13 +384,13 @@ class CreateRouteViewModel extends BaseSearchViewModel {
   }
 
   Future getUserRoute() async {
-    // (await executeUseCaseParam<RouteResponse, GetUserRouteParam>(
-    //         _getUserRouteUseCase, GetUserRouteParam(userId)))
-    //     .doOnError((message, exception) {
-    //   addAlert(Alert(message ?? '$exception', style: AlertStyle.danger));
-    // }).doOnSuccess((value) {
-    //   _route = value;
-    // });
+    (await executeUseCaseParam<RouteResponse, String>(
+            _getRouteByIdUseCase, routeId!))
+        .doOnError((message, exception) {
+      addAlert(Alert(message ?? '$exception', style: AlertStyle.danger));
+    }).doOnSuccess((value) {
+      _route = value;
+    });
   }
 
   void calculateCreateOrUpdateRouteButtonState() {
@@ -444,7 +452,7 @@ class CreateRouteViewModel extends BaseSearchViewModel {
   }
 
   @override
-  String get title => isUpdate
+  String get title => routeId != null
       ? 'Редактирование маршрутного листа'
       : 'Создание маршрутного листа';
 }

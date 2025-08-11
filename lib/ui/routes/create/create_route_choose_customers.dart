@@ -13,9 +13,10 @@ import 'create_route_subtasks.dart';
 class CreateRouteChooseCustomersPage extends StatelessWidget {
   const CreateRouteChooseCustomersPage({super.key});
 
-  static Widget create(String userId, bool isUpdate) => ChangeNotifierProvider(
-      create: (context) => CreateRouteViewModel(userId, isUpdate),
-      child: const CreateRouteChooseCustomersPage());
+  static Widget create(String userId, String? routeId) =>
+      ChangeNotifierProvider(
+          create: (context) => CreateRouteViewModel(userId, routeId),
+          child: const CreateRouteChooseCustomersPage());
 
   @override
   Widget build(BuildContext context) {

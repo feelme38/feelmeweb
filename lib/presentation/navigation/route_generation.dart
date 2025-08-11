@@ -8,8 +8,8 @@ import 'package:feelmeweb/ui/regions/regions_page.dart';
 import 'package:feelmeweb/ui/route_info/route_info_page.dart';
 import 'package:feelmeweb/ui/routes/create/create_route_choose_customers.dart';
 import 'package:feelmeweb/ui/routes/edit/edit_route_page.dart';
-import 'package:feelmeweb/ui/users/engineers_managers_page.dart';
 import 'package:feelmeweb/ui/routes/list/route_list_page.dart';
+import 'package:feelmeweb/ui/users/engineers_managers_page.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:injectable/injectable.dart';
@@ -101,10 +101,9 @@ class RouteGenerator {
           builder: (BuildContext context, GoRouterState state) {
             final extra = state.extra as Map<String, dynamic>?;
             final userId = extra?['userId'] as String?;
-            final isUpdate = extra?['isUpdate'] as bool?;
+            final routeId = extra?['routeId'] as String?;
             if (userId == null) return RouteOperationsPage.create();
-            return CreateRouteChooseCustomersPage.create(
-                userId, isUpdate ?? false);
+            return CreateRouteChooseCustomersPage.create(userId, routeId);
           },
         ),
         GoRoute(
@@ -113,7 +112,8 @@ class RouteGenerator {
             final extra = state.extra as Map<String, dynamic>?;
             final userId = extra?['userId'] as String?;
             final routeDate = extra?['routeDate'] as String?;
-            if (userId == null || routeDate == null) return RouteOperationsPage.create();
+            if (userId == null || routeDate == null)
+              return RouteOperationsPage.create();
             return EditRoutePage.create(userId, routeDate);
           },
         ),

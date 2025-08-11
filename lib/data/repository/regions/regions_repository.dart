@@ -2,6 +2,7 @@ import 'package:feelmeweb/core/result/result_of.dart';
 import 'package:feelmeweb/data/models/request/create_region_body.dart';
 import 'package:feelmeweb/data/models/request/update_region_body.dart';
 import 'package:feelmeweb/data/models/response/region_response.dart';
+import 'package:feelmeweb/domain/regions/get_available_regions_usecase.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../sources/remote/regions_remote_source.dart';
@@ -25,8 +26,8 @@ class RegionsRepositoryImpl extends RegionsRepository {
 
   @override
   Future<Result<List<RegionResponse>>> getAvailableRegions(
-      String userId) async {
-    final result = await _regionsRemoteSource.getAvailableRegions(userId);
+      GetAvailableRegionsParams param) async {
+    final result = await _regionsRemoteSource.getAvailableRegions(param);
     if (result is Success<List<RegionResponse>>) {
       _regions = result.data;
     }
@@ -52,7 +53,8 @@ class RegionsRepositoryImpl extends RegionsRepository {
 abstract class RegionsRepository {
   Future<Result<List<RegionResponse>>> getRegions();
 
-  Future<Result<List<RegionResponse>>> getAvailableRegions(String userId);
+  Future<Result<List<RegionResponse>>> getAvailableRegions(
+      GetAvailableRegionsParams param);
 
   Future<Result<bool>> createRegion(CreateRegionBody body);
 

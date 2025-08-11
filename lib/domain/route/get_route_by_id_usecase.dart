@@ -1,0 +1,13 @@
+import 'package:feelmeweb/core/result/result_of.dart';
+import 'package:feelmeweb/data/models/response/route_response.dart';
+import 'package:feelmeweb/data/repository/route/route_repository.dart';
+import 'package:feelmeweb/domain/base_use_case.dart';
+import 'package:feelmeweb/provider/di/di_provider.dart';
+
+class GetRouteByIdUseCase extends UseCaseParam<Result<RouteResponse>, String> {
+  final _repository = getIt<RouteRepository>();
+
+  @override
+  Future<Result<RouteResponse>> call(String param) =>
+      _repository.getRouteById(param);
+}

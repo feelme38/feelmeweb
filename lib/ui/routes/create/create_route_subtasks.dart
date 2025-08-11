@@ -4,14 +4,15 @@ import 'package:feelmeweb/ui/routes/create/widgets/choose_subtasks_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'create_route_view_model.dart';
 import '../../../core/date_utils.dart';
+import 'create_route_view_model.dart';
 
 class CreateRouteSubtasksWidget extends StatefulWidget {
   const CreateRouteSubtasksWidget({super.key});
 
   @override
-  State<CreateRouteSubtasksWidget> createState() => _CreateRouteSubtasksWidgetState();
+  State<CreateRouteSubtasksWidget> createState() =>
+      _CreateRouteSubtasksWidgetState();
 }
 
 class _CreateRouteSubtasksWidgetState extends State<CreateRouteSubtasksWidget> {
@@ -43,7 +44,8 @@ class _CreateRouteSubtasksWidgetState extends State<CreateRouteSubtasksWidget> {
     final isCreateOrUpdateRouteButtonEnabled = context
         .watch<CreateRouteViewModel>()
         .isCreateOrUpdateRouteButtonEnabled;
-    final selectedDate = context.watch<CreateRouteViewModel>().selectedRouteDate;
+    final selectedDate =
+        context.watch<CreateRouteViewModel>().selectedRouteDate;
     // Keep controller in sync when VM date changes externally
     if (selectedDate != null && _dateController.text != selectedDate) {
       // schedule to avoid setState during build issues
@@ -100,10 +102,10 @@ class _CreateRouteSubtasksWidgetState extends State<CreateRouteSubtasksWidget> {
                 child: SizedBox(
                     width: 200,
                     child: BaseTextButton(
-                        buttonText: viewModel.isUpdate
+                        buttonText: viewModel.routeId != null
                             ? "Обновить маршрут"
                             : "Создать маршрут",
-                        onTap: () => viewModel.isUpdate
+                        onTap: () => viewModel.routeId != null
                             ? viewModel.updateRoute()
                             : viewModel.createRoute(),
                         weight: FontWeight.w500,

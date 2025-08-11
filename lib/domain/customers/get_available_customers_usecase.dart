@@ -8,8 +8,9 @@ import '../../provider/di/di_provider.dart';
 class GetAvailableCustomersParam {
   final String userId;
   final String regionId;
+  final String? routeDate;
 
-  GetAvailableCustomersParam(this.userId, this.regionId);
+  GetAvailableCustomersParam(this.userId, this.regionId, this.routeDate);
 }
 
 class GetAvailableCustomersUseCase extends UseCaseParam<

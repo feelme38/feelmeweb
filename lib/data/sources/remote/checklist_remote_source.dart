@@ -43,6 +43,7 @@ class ChecklistRemoteSource {
           .onGet(Urls.availableChecklists, queryParams: {
         "userId": body.userId,
         'addressId': body.addressId,
+        'routeDate': body.routeDate
       });
       var result = (response.data as List)
           .map((e) => LastCheckListInfoResponse.fromJson(e)

@@ -37,7 +37,11 @@ class CustomersRemoteSource {
       GetAvailableCustomersParam param) async {
     try {
       final response = await _networkProvider.dio.onGet(Urls.availableCustomers,
-          queryParams: {'regionId': param.regionId, 'userId': param.userId});
+          queryParams: {
+            'regionId': param.regionId,
+            'userId': param.userId,
+            'routeDate': param.routeDate
+          });
       var result = (response.data as List)
           .map((e) => CustomerResponse.fromJson(e))
           .toList();

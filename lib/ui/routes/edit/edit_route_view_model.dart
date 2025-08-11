@@ -101,8 +101,10 @@ class EditRouteViewModel extends BaseSearchViewModel {
 
   Future loadRegions() async {
     loadingOn();
-    (await executeUseCaseParam<List<RegionResponse>, String>(
-            _getAvailableRegionsUseCase, userId))
+    (await executeUseCaseParam<List<RegionResponse>, GetAvailableRegionsParams>(
+            _getAvailableRegionsUseCase,
+            GetAvailableRegionsParams(
+                userId, _route?.routeDate.toIso8601String().split('T').first)))
         .doOnError((message, exception) {
       addAlert(Alert(message ?? '$exception', style: AlertStyle.danger));
     }).doOnSuccess((value) async {
@@ -205,7 +207,8 @@ class EditRouteViewModel extends BaseSearchViewModel {
       _route = _route!.copyWith(
         tasks: _route!.tasks.map((task) {
           if (task.client.id == customerId && task.address.id == addressId) {
-            return task.copyWith(visitFromTime: _visitFromTimes['${customerId}_$addressId']);
+            return task.copyWith(
+                visitFromTime: _visitFromTimes['${customerId}_$addressId']);
           }
           return task;
         }).toList(),
@@ -221,7 +224,8 @@ class EditRouteViewModel extends BaseSearchViewModel {
       _route = _route!.copyWith(
         tasks: _route!.tasks.map((task) {
           if (task.client.id == customerId && task.address.id == addressId) {
-            return task.copyWith(visitToTime: _visitToTimes['${customerId}_$addressId']);
+            return task.copyWith(
+                visitToTime: _visitToTimes['${customerId}_$addressId']);
           }
           return task;
         }).toList(),
@@ -238,7 +242,8 @@ class EditRouteViewModel extends BaseSearchViewModel {
       _route = _route!.copyWith(
         tasks: _route!.tasks.map((task) {
           if (task.client.id == customerId && task.address.id == addressId) {
-            return task.copyWith(comment: _taskComments['${customerId}_$addressId']);
+            return task.copyWith(
+                comment: _taskComments['${customerId}_$addressId']);
           }
           return task;
         }).toList(),
@@ -272,8 +277,10 @@ class EditRouteViewModel extends BaseSearchViewModel {
               taskStatus: task.taskStatus,
               clientId: task.client.id,
               addressId: task.address.id,
-              visitTimeFrom: _visitFromTimes['${task.client.id}_${task.address.id}'],
-              visitTimeTo: _visitToTimes['${task.client.id}_${task.address.id}'],
+              visitTimeFrom:
+                  _visitFromTimes['${task.client.id}_${task.address.id}'],
+              visitTimeTo:
+                  _visitToTimes['${task.client.id}_${task.address.id}'],
               comment: _taskComments['${task.client.id}_${task.address.id}'],
               subtasks: task.subtasks
                   .map(

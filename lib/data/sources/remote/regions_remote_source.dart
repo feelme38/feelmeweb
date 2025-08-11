@@ -3,6 +3,7 @@ import 'package:feelmeweb/core/result/result_of.dart';
 import 'package:feelmeweb/data/models/request/create_region_body.dart';
 import 'package:feelmeweb/data/models/request/update_region_body.dart';
 import 'package:feelmeweb/data/models/response/region_response.dart';
+import 'package:feelmeweb/domain/regions/get_available_regions_usecase.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../../provider/network/network_provider.dart';
@@ -29,10 +30,10 @@ class RegionsRemoteSource {
   }
 
   Future<Result<List<RegionResponse>>> getAvailableRegions(
-      String userId) async {
+      GetAvailableRegionsParams param) async {
     try {
-      final response = await _networkProvider.dio
-          .onGet(Urls.availableRegions, queryParams: {'userId': userId});
+      final response = await _networkProvider.dio.onGet(Urls.availableRegions,
+          queryParams: {'userId': param.userId, 'routeDate': param.routeDate});
       var result = (response.data as List)
           .map((e) => RegionResponse.fromJson(e))
           .toList();
