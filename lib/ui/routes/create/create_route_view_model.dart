@@ -1,4 +1,5 @@
 import 'package:collection/collection.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:feelmeweb/core/extensions/base_class_extensions/list_ext.dart';
 import 'package:feelmeweb/data/models/request/route_body.dart';
 import 'package:feelmeweb/data/models/request/subtask_body.dart';
@@ -221,6 +222,13 @@ class CreateRouteViewModel extends BaseSearchViewModel {
     calculateCreateOrUpdateRouteButtonState();
   }
 
+  // функция проверяет, если ли в маршруте уже такая задача, если есть, то запрещаем редактировать поля, иначе разрешаем
+  bool canChangeTaskFields(String customerId, String addressId) {
+    Task? existTask = _route?.tasks.firstWhereOrNull(
+        (e) => e.client.id == customerId && e.address.id == addressId);
+    return existTask == null;
+  }
+
   void updateTaskComment(String customerId, String addressId, String text) {
     if (text.length > 500) {
       taskComments['${customerId}_$addressId'] = text.substring(0, 500);
@@ -390,6 +398,17 @@ class CreateRouteViewModel extends BaseSearchViewModel {
       addAlert(Alert(message ?? '$exception', style: AlertStyle.danger));
     }).doOnSuccess((value) {
       _route = value;
+      updateRouteDate(_route!.routeDate);
+      for (var task in _route!.tasks) {
+        if (task.visitTimeFrom != null) {
+          updateVisitTimeFrom(task.client.id, task.address.id,
+              DateFormat(DateFormats.HHmm).format(task.visitTimeFrom!));
+        }
+        if (task.visitTimeTo != null) {
+          updateVisitTimeTo(task.client.id, task.address.id,
+              DateFormat(DateFormats.HHmm).format(task.visitTimeTo!));
+        }
+      }
     });
   }
 

@@ -1,4 +1,3 @@
-import 'package:easy_localization/easy_localization.dart';
 import 'package:feelmeweb/data/models/response/checklist_info_response.dart';
 import 'package:feelmeweb/data/models/response/last_checklist_info_response.dart';
 import 'package:feelmeweb/data/models/response/subtask_types_response.dart';
@@ -58,57 +57,54 @@ class Task {
   final List<Subtask> subtasks;
   final String routeId;
   final List<LastCheckListInfoResponse> checkListInfo;
-  final DateTime? visitFromTime;
-  final DateTime? visitToTime;
+  final DateTime? visitTimeFrom;
+  final DateTime? visitTimeTo;
   final String? comment;
 
-  Task({
-    required this.id,
-    required this.name,
-    required this.client,
-    required this.taskStatus,
-    required this.completedTime,
-    required this.address,
-    required this.subtasks,
-    required this.routeId,
-    required this.checkListInfo,
-    this.visitFromTime,
-    this.visitToTime,
-    this.comment
-  });
+  Task(
+      {required this.id,
+      required this.name,
+      required this.client,
+      required this.taskStatus,
+      required this.completedTime,
+      required this.address,
+      required this.subtasks,
+      required this.routeId,
+      required this.checkListInfo,
+      this.visitTimeFrom,
+      this.visitTimeTo,
+      this.comment});
 
   factory Task.fromJson(Map<String, dynamic> json) => _$TaskFromJson(json);
   Map<String, dynamic> toJson() => _$TaskToJson(this);
 
-  Task copyWith({
-    String? id,
-    String? name,
-    TaskType? taskType,
-    Client? client,
-    String? taskStatus,
-    int? completedTime,
-    Address? address,
-    List<Subtask>? subtasks,
-    String? routeId,
-    List<LastCheckListInfoResponse>? checkListInfo,
-    DateTime? visitFromTime,
-    DateTime? visitToTime,
-    String? comment
-  }) {
+  Task copyWith(
+      {String? id,
+      String? name,
+      TaskType? taskType,
+      Client? client,
+      String? taskStatus,
+      int? completedTime,
+      Address? address,
+      List<Subtask>? subtasks,
+      String? routeId,
+      List<LastCheckListInfoResponse>? checkListInfo,
+      DateTime? visitTimeFrom,
+      DateTime? visitTimeTo,
+      String? comment}) {
     return Task(
-      id: id ?? this.id,
-      name: name ?? this.name,
-      client: client ?? this.client,
-      taskStatus: taskStatus ?? this.taskStatus,
-      completedTime: completedTime ?? this.completedTime,
-      address: address ?? this.address,
-      subtasks: subtasks ?? this.subtasks,
-      routeId: routeId ?? this.routeId,
-      checkListInfo: checkListInfo ?? this.checkListInfo,
-      visitFromTime: visitFromTime ?? this.visitFromTime,
-      visitToTime: visitToTime ?? this.visitToTime,
-      comment: comment ?? this.comment
-    );
+        id: id ?? this.id,
+        name: name ?? this.name,
+        client: client ?? this.client,
+        taskStatus: taskStatus ?? this.taskStatus,
+        completedTime: completedTime ?? this.completedTime,
+        address: address ?? this.address,
+        subtasks: subtasks ?? this.subtasks,
+        routeId: routeId ?? this.routeId,
+        checkListInfo: checkListInfo ?? this.checkListInfo,
+        visitTimeFrom: visitTimeFrom ?? this.visitTimeFrom,
+        visitTimeTo: visitTimeTo ?? this.visitTimeTo,
+        comment: comment ?? this.comment);
   }
 }
 

@@ -32,8 +32,13 @@ class RegionsRemoteSource {
   Future<Result<List<RegionResponse>>> getAvailableRegions(
       GetAvailableRegionsParams param) async {
     try {
-      final response = await _networkProvider.dio.onGet(Urls.availableRegions,
-          queryParams: {'userId': param.userId, 'routeDate': param.routeDate});
+      final query = {
+        'userId': param.userId,
+        if (param.routeDate != null) 'routeDate': param.routeDate
+      };
+
+      final response = await _networkProvider.dio
+          .onGet(Urls.availableRegions, queryParams: query);
       var result = (response.data as List)
           .map((e) => RegionResponse.fromJson(e))
           .toList();

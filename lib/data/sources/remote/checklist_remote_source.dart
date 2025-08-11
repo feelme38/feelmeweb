@@ -39,12 +39,14 @@ class ChecklistRemoteSource {
   Future<Result<List<LastCheckListInfoResponse>>> getAvailableCheckListInfo(
       GetAvailableChecklistParam body) async {
     try {
-      final response = await _networkProvider.dio
-          .onGet(Urls.availableChecklists, queryParams: {
-        "userId": body.userId,
+      final query = {
+        'userId': body.userId,
         'addressId': body.addressId,
-        'routeDate': body.routeDate
-      });
+        if (body.routeDate != null) 'routeDate': body.routeDate
+      };
+
+      final response = await _networkProvider.dio
+          .onGet(Urls.availableChecklists, queryParams: query);
       var result = (response.data as List)
           .map((e) => LastCheckListInfoResponse.fromJson(e)
               .copyWith(addressId: body.addressId, customerId: body.customerId))

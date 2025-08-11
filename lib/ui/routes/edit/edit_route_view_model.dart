@@ -26,7 +26,6 @@ import 'package:flutter/material.dart';
 
 class EditRouteViewModel extends BaseSearchViewModel {
   EditRouteViewModel(this.userId, this.routeDate) {
-    selectedRouteDate = routeDate;
     loadRoute();
     loadAromas();
     loadSubtaskTypes();
@@ -57,7 +56,8 @@ class EditRouteViewModel extends BaseSearchViewModel {
   final Map<String, DateTime?> _visitFromTimes = {};
   final Map<String, DateTime?> _visitToTimes = {};
   bool _hasChanges = false;
-  String? selectedRouteDate; // yyyy-MM-dd
+  TextEditingController selectedRouteDateController =
+      TextEditingController(); // yyyy-MM-dd
 
   RouteResponse? get route => _route;
   List<RegionResponse> get regions => _regions;
@@ -94,7 +94,7 @@ class EditRouteViewModel extends BaseSearchViewModel {
   }
 
   void updateSelectedRouteDate(DateTime date) {
-    selectedRouteDate = DateFormat('yyyy-MM-dd').format(date);
+    selectedRouteDateController.text = date.toIso8601String().split('T').first;
     _hasChanges = true;
     notifyListeners();
   }
@@ -135,12 +135,13 @@ class EditRouteViewModel extends BaseSearchViewModel {
       );
       if (_route != null) {
         // Prefill date
-        selectedRouteDate = DateFormat('yyyy-MM-dd').format(_route!.routeDate);
+        selectedRouteDateController.text =
+            DateFormat('yyyy-MM-dd').format(_route!.routeDate);
         // Prefill times and comments so UI and payload stay consistent
         for (final task in _route!.tasks) {
           final key = '${task.client.id}_${task.address.id}';
-          _visitFromTimes[key] = task.visitFromTime;
-          _visitToTimes[key] = task.visitToTime;
+          _visitFromTimes[key] = task.visitTimeFrom;
+          _visitToTimes[key] = task.visitTimeTo;
           if (task.comment != null) {
             _taskComments[key] = task.comment!;
           }
@@ -208,7 +209,7 @@ class EditRouteViewModel extends BaseSearchViewModel {
         tasks: _route!.tasks.map((task) {
           if (task.client.id == customerId && task.address.id == addressId) {
             return task.copyWith(
-                visitFromTime: _visitFromTimes['${customerId}_$addressId']);
+                visitTimeFrom: _visitFromTimes['${customerId}_$addressId']);
           }
           return task;
         }).toList(),
@@ -225,7 +226,7 @@ class EditRouteViewModel extends BaseSearchViewModel {
         tasks: _route!.tasks.map((task) {
           if (task.client.id == customerId && task.address.id == addressId) {
             return task.copyWith(
-                visitToTime: _visitToTimes['${customerId}_$addressId']);
+                visitTimeTo: _visitToTimes['${customerId}_$addressId']);
           }
           return task;
         }).toList(),
@@ -302,7 +303,7 @@ class EditRouteViewModel extends BaseSearchViewModel {
     final RouteBody routeBody = RouteBody(userId, tasks,
         routeId: _route?.id,
         routeStatus: _route?.routeStatus,
-        routeDate: selectedRouteDate);
+        routeDate: selectedRouteDateController.text);
     loadingOn();
     (await executeUseCaseParam<void, RouteBody>(_updateRouteUseCase, routeBody))
         .doOnError((message, exception) {

@@ -36,12 +36,13 @@ class CustomersRemoteSource {
   Future<Result<List<CustomerResponse>>> getAvailableCustomers(
       GetAvailableCustomersParam param) async {
     try {
-      final response = await _networkProvider.dio.onGet(Urls.availableCustomers,
-          queryParams: {
-            'regionId': param.regionId,
-            'userId': param.userId,
-            'routeDate': param.routeDate
-          });
+      final query = {
+        'userId': param.userId,
+        'regionId': param.regionId,
+        if (param.routeDate != null) 'routeDate': param.routeDate
+      };
+      final response = await _networkProvider.dio
+          .onGet(Urls.availableCustomers, queryParams: query);
       var result = (response.data as List)
           .map((e) => CustomerResponse.fromJson(e))
           .toList();

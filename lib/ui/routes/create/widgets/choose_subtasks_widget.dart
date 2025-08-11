@@ -142,17 +142,22 @@ class _CreateRouteChooseSubtasksWidgetState
                             // if TO already selected and < FROM -> snap TO to FROM
                             final from = DateUtil.parseTime(v);
                             final to = DateUtil.parseTime(toController.text);
-                            if (from != null && to != null && to.isBefore(from)) {
+                            if (from != null &&
+                                to != null &&
+                                to.isBefore(from)) {
                               toController.clear();
                               _toErrors[key] = true;
                               setState(() {});
                             }
-                            if (from != null && to != null && !to.isBefore(from)) {
+                            if (from != null &&
+                                to != null &&
+                                !to.isBefore(from)) {
                               _toErrors[key] = false;
                               setState(() {});
                             }
                           },
-                          enabled: true,
+                          enabled: viewModel.canChangeTaskFields(
+                              customerId, addressId),
                           onTap: () async {
                             final now = TimeOfDay.now();
                             final from = await showTimePicker(
@@ -166,14 +171,17 @@ class _CreateRouteChooseSubtasksWidgetState
                             );
                             if (from == null) return;
                             String two(int v) => v.toString().padLeft(2, '0');
-                            final fromStr = '${two(from.hour)}:${two(from.minute)}';
+                            final fromStr =
+                                '${two(from.hour)}:${two(from.minute)}';
                             fromController.text = fromStr;
                             viewModel.updateVisitTimeFrom(
                                 customer.id!, address.id!, fromStr);
 
                             final to = DateUtil.parseTime(toController.text);
                             final fromDt = DateUtil.parseTime(fromStr);
-                            if (fromDt != null && to != null && to.isBefore(fromDt)) {
+                            if (fromDt != null &&
+                                to != null &&
+                                to.isBefore(fromDt)) {
                               toController.clear();
                               _toErrors[key] = true;
                               setState(() {});
@@ -190,9 +198,12 @@ class _CreateRouteChooseSubtasksWidgetState
                           controller: toController,
                           hasError: _toErrors[key] ?? false,
                           onChanged: (v) {
-                            final from = DateUtil.parseTime(fromController.text);
+                            final from =
+                                DateUtil.parseTime(fromController.text);
                             final to = DateUtil.parseTime(v);
-                            if (from != null && to != null && to.isBefore(from)) {
+                            if (from != null &&
+                                to != null &&
+                                to.isBefore(from)) {
                               toController.clear();
                               _toErrors[key] = true;
                               setState(() {});
@@ -203,7 +214,8 @@ class _CreateRouteChooseSubtasksWidgetState
                               setState(() {});
                             }
                           },
-                          enabled: true,
+                          enabled: viewModel.canChangeTaskFields(
+                              customerId, addressId),
                           onTap: () async {
                             final now = TimeOfDay.now();
                             final to = await showTimePicker(
@@ -218,9 +230,12 @@ class _CreateRouteChooseSubtasksWidgetState
                             if (to == null) return;
                             String two(int v) => v.toString().padLeft(2, '0');
                             final toStr = '${two(to.hour)}:${two(to.minute)}';
-                            final from = DateUtil.parseTime(fromController.text);
+                            final from =
+                                DateUtil.parseTime(fromController.text);
                             final toDt = DateUtil.parseTime(toStr);
-                            if (from != null && toDt != null && toDt.isBefore(from)) {
+                            if (from != null &&
+                                toDt != null &&
+                                toDt.isBefore(from)) {
                               toController.clear();
                               _toErrors[key] = true;
                               setState(() {});
@@ -241,14 +256,18 @@ class _CreateRouteChooseSubtasksWidgetState
                     SizedBox(
                       width: 500,
                       child: TextFormField(
+                        enabled: viewModel.canChangeTaskFields(
+                            customerId, addressId),
                         maxLength: 500,
+                        style: const TextStyle(color: Colors.black),
                         decoration: const InputDecoration(
+                          hintStyle: TextStyle(color: Colors.black),
                           hintText: 'Комментарий к посещению',
                           counterText: '',
                           border: OutlineInputBorder(),
                           isDense: true,
-                          contentPadding:
-                              EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
+                          contentPadding: EdgeInsets.symmetric(
+                              vertical: 8.0, horizontal: 12.0),
                         ),
                         onChanged: (value) => viewModel.updateTaskComment(
                             customer.id!, address.id!, value),

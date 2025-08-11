@@ -43,12 +43,12 @@ Task _$TaskFromJson(Map<String, dynamic> json) => Task(
           .map((e) =>
               LastCheckListInfoResponse.fromJson(e as Map<String, dynamic>))
           .toList(),
-      visitFromTime: json['visitFromTime'] == null
+      visitTimeFrom: json['visitTimeFrom'] == null
           ? null
-          : DateTime.parse(json['visitFromTime'] as String),
-      visitToTime: json['visitToTime'] == null
+          : DateTime.parse(json['visitTimeFrom'] as String),
+      visitTimeTo: json['visitTimeTo'] == null
           ? null
-          : DateTime.parse(json['visitToTime'] as String),
+          : DateTime.parse(json['visitTimeTo'] as String),
       comment: json['comment'] as String?,
     );
 
@@ -62,8 +62,8 @@ Map<String, dynamic> _$TaskToJson(Task instance) => <String, dynamic>{
       'subtasks': instance.subtasks,
       'routeId': instance.routeId,
       'checkListInfo': instance.checkListInfo,
-      'visitFromTime': instance.visitFromTime?.toIso8601String(),
-      'visitToTime': instance.visitToTime?.toIso8601String(),
+      'visitTimeFrom': instance.visitTimeFrom?.toIso8601String(),
+      'visitTimeTo': instance.visitTimeTo?.toIso8601String(),
       'comment': instance.comment,
     };
 

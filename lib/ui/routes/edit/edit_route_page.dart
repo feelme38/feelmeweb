@@ -69,28 +69,28 @@ class _EditRoutePageState extends State<EditRoutePage> {
                         viewModel.fromControllers.putIfAbsent(
                       '${task.client.id}_${task.address.id}',
                       () => TextEditingController(
-                        text: task.visitFromTime != null
-                            ? DateFormat('HH:mm').format(task.visitFromTime!)
+                        text: task.visitTimeFrom != null
+                            ? DateFormat('HH:mm').format(task.visitTimeFrom!)
                             : '',
                       ),
                     );
                     final toController = viewModel.toControllers.putIfAbsent(
                       '${task.client.id}_${task.address.id}',
                       () => TextEditingController(
-                        text: task.visitToTime != null
-                            ? DateFormat('HH:mm').format(task.visitToTime!)
+                        text: task.visitTimeTo != null
+                            ? DateFormat('HH:mm').format(task.visitTimeTo!)
                             : '',
                       ),
                     );
                     // Sync controller texts with latest task values in case of async updates
-                    final expectedFrom = task.visitFromTime != null
-                        ? DateFormat('HH:mm').format(task.visitFromTime!)
+                    final expectedFrom = task.visitTimeFrom != null
+                        ? DateFormat('HH:mm').format(task.visitTimeFrom!)
                         : '';
                     if (fromController.text != expectedFrom) {
                       fromController.text = expectedFrom;
                     }
-                    final expectedTo = task.visitToTime != null
-                        ? DateFormat('HH:mm').format(task.visitToTime!)
+                    final expectedTo = task.visitTimeTo != null
+                        ? DateFormat('HH:mm').format(task.visitTimeTo!)
                         : '';
                     if (toController.text != expectedTo) {
                       toController.text = expectedTo;
@@ -231,7 +231,9 @@ class _EditRoutePageState extends State<EditRoutePage> {
                             width: 500,
                             child: TextFormField(
                               maxLength: 500,
+                              style: const TextStyle(color: Colors.black),
                               decoration: const InputDecoration(
+                                hintStyle: TextStyle(color: Colors.black),
                                 hintText: 'Комментарий к посещению',
                                 counterText: '',
                                 border: OutlineInputBorder(),
@@ -322,14 +324,10 @@ class _RouteDateField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final vm = context.watch<EditRouteViewModel>();
-    final text = vm.selectedRouteDate ??
-        (vm.route != null
-            ? DateFormat('yyyy-MM-dd').format(vm.route!.routeDate)
-            : '');
 
     return TextFormField(
       readOnly: true,
-      controller: TextEditingController(text: text),
+      controller: vm.selectedRouteDateController,
       style: const TextStyle(color: Colors.black),
       decoration: const InputDecoration(
         hintText: 'ГГГГ-ММ-ДД',

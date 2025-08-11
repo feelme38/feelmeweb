@@ -4,7 +4,6 @@ import 'package:feelmeweb/ui/routes/create/widgets/choose_subtasks_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../../core/date_utils.dart';
 import 'create_route_view_model.dart';
 
 class CreateRouteSubtasksWidget extends StatefulWidget {
@@ -70,12 +69,13 @@ class _CreateRouteSubtasksWidgetState extends State<CreateRouteSubtasksWidget> {
                   controller: _dateController,
                   style: const TextStyle(color: Colors.black),
                   decoration: const InputDecoration(
+                    enabled: false,
                     hintText: 'ГГГГ-ММ-ДД',
                     isDense: true,
                     border: OutlineInputBorder(),
                   ),
                   onTap: () async {
-                    final now = DateTime.now();
+                    /*final now = DateTime.now();
                     final picked = await showDatePicker(
                       context: context,
                       initialDate: now,
@@ -86,7 +86,7 @@ class _CreateRouteSubtasksWidgetState extends State<CreateRouteSubtasksWidget> {
                     if (picked != null) {
                       _dateController.text = DateUtil.formatToYYYYMMDD(picked);
                       viewModel.updateRouteDate(picked);
-                    }
+                    }*/
                   },
                 ),
               ),
