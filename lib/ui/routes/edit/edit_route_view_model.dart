@@ -52,7 +52,7 @@ class EditRouteViewModel extends BaseSearchViewModel {
   List<SubtaskTypeResponse> _subtaskTypes = [];
   final Map<String, TextEditingController> _fromControllers = {};
   final Map<String, TextEditingController> _toControllers = {};
-  final Map<String, String> _taskComments = {};
+  final Map<String, TextEditingController> _taskComments = {};
   final Map<String, DateTime?> _visitFromTimes = {};
   final Map<String, DateTime?> _visitToTimes = {};
   bool _hasChanges = false;
@@ -64,6 +64,7 @@ class EditRouteViewModel extends BaseSearchViewModel {
   List<CustomerResponse> get customers => _customers;
   List<AromaResponse> get aromas => _aromas;
   List<SubtaskTypeResponse> get subtaskTypes => _subtaskTypes;
+  Map<String, TextEditingController> get taskComments => _taskComments;
   Map<String, TextEditingController> get fromControllers => _fromControllers;
   Map<String, TextEditingController> get toControllers => _toControllers;
   bool get hasChanges => _hasChanges;
@@ -140,11 +141,11 @@ class EditRouteViewModel extends BaseSearchViewModel {
         // Prefill times and comments so UI and payload stay consistent
         for (final task in _route!.tasks) {
           final key = '${task.client.id}_${task.address.id}';
+
           _visitFromTimes[key] = task.visitTimeFrom;
           _visitToTimes[key] = task.visitTimeTo;
-          if (task.comment != null) {
-            _taskComments[key] = task.comment!;
-          }
+          updateTaskComment(
+              task.client.id, task.address.id, task.comment ?? '');
         }
       }
       loadRegions();
@@ -237,14 +238,19 @@ class EditRouteViewModel extends BaseSearchViewModel {
   }
 
   void updateTaskComment(String customerId, String addressId, String text) {
-    _taskComments['${customerId}_$addressId'] =
+    final key = '${customerId}_$addressId';
+
+    // создаём контроллер, если его ещё нет
+    taskComments.putIfAbsent(key, () => TextEditingController());
+
+    _taskComments['${customerId}_$addressId']?.text =
         text.length > 500 ? text.substring(0, 500) : text;
     if (_route != null) {
       _route = _route!.copyWith(
         tasks: _route!.tasks.map((task) {
           if (task.client.id == customerId && task.address.id == addressId) {
             return task.copyWith(
-                comment: _taskComments['${customerId}_$addressId']);
+                comment: _taskComments['${customerId}_$addressId']?.text);
           }
           return task;
         }).toList(),
@@ -282,7 +288,8 @@ class EditRouteViewModel extends BaseSearchViewModel {
                   _visitFromTimes['${task.client.id}_${task.address.id}'],
               visitTimeTo:
                   _visitToTimes['${task.client.id}_${task.address.id}'],
-              comment: _taskComments['${task.client.id}_${task.address.id}'],
+              comment:
+                  _taskComments['${task.client.id}_${task.address.id}']?.text,
               subtasks: task.subtasks
                   .map(
                     (subtask) => SubtaskBody(

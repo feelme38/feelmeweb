@@ -3,7 +3,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:feelmeweb/core/date_utils.dart';
 import 'package:feelmeweb/data/models/request/subtask_body.dart';
 import 'package:feelmeweb/data/models/response/last_checklist_info_response.dart';
-import 'package:feelmeweb/ui/routes/create/create_route_view_model.dart';
+import 'package:feelmeweb/ui/routes/copy/copy_route_view_model.dart';
 import 'package:feelmeweb/ui/routes/create/widgets/subtask_card_widget.dart';
 import 'package:feelmeweb/ui/routes/create/widgets/time_input_field.dart';
 import 'package:flutter/material.dart';
@@ -11,18 +11,18 @@ import 'package:provider/provider.dart';
 
 typedef ToggleCustomerCallback = void Function(SubtaskBody);
 
-class CreateRouteChooseSubtasksWidget extends StatefulWidget {
-  const CreateRouteChooseSubtasksWidget({
+class CopyRouteChooseSubtasksWidget extends StatefulWidget {
+  const CopyRouteChooseSubtasksWidget({
     super.key,
   });
 
   @override
-  State<CreateRouteChooseSubtasksWidget> createState() =>
-      _CreateRouteChooseSubtasksWidgetState();
+  State<CopyRouteChooseSubtasksWidget> createState() =>
+      _CopyRouteChooseSubtasksWidgetState();
 }
 
-class _CreateRouteChooseSubtasksWidgetState
-    extends State<CreateRouteChooseSubtasksWidget> {
+class _CopyRouteChooseSubtasksWidgetState
+    extends State<CopyRouteChooseSubtasksWidget> {
   final Map<String, TextEditingController> _fromControllers = {};
   final Map<String, TextEditingController> _toControllers = {};
   final Map<String, bool> _toErrors = {};
@@ -40,14 +40,13 @@ class _CreateRouteChooseSubtasksWidgetState
 
   @override
   Widget build(BuildContext context) {
-    final viewModel = context.read<CreateRouteViewModel>();
-    final selectedCustomers =
-        context.watch<CreateRouteViewModel>().selectedCustomers;
-    final aromas = context.watch<CreateRouteViewModel>().aromas;
-    final taskTypes = context.watch<CreateRouteViewModel>().subtaskTypes;
+    final viewModel = context.read<CopyRouteViewModel>();
+    final selectedCustomers = context.watch<CopyRouteViewModel>().customers;
+    final aromas = context.watch<CopyRouteViewModel>().aromas;
+    final taskTypes = context.watch<CopyRouteViewModel>().subtaskTypes;
     final selectedSubtasks =
-        context.watch<CreateRouteViewModel>().selectedSubtasks;
-    final checklists = context.watch<CreateRouteViewModel>().lastChecklists;
+        context.watch<CopyRouteViewModel>().selectedSubtasks;
+    final checklists = context.watch<CopyRouteViewModel>().lastChecklists;
     final checklistsNotNullId =
         checklists.where((item) => item.id != null).toList();
     final lastDate = checklistsNotNullId.isEmpty
@@ -56,7 +55,7 @@ class _CreateRouteChooseSubtasksWidgetState
             ? ruDateFormat.format(checklistsNotNullId.firstOrNull!.createdAt!)
             : '–';
 
-    final taskComments = context.watch<CreateRouteViewModel>().taskComments;
+    final taskComments = context.watch<CopyRouteViewModel>().taskComments;
 
     // Group checklists by customer and address
     final Map<String, Map<String, List<LastCheckListInfoResponse>>>

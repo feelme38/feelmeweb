@@ -38,6 +38,9 @@ class _EditRoutePageState extends State<EditRoutePage> {
             !['CANCELED', 'COMPLETED'].contains(e.taskStatus) &&
             e.subtasks.isNotEmpty)
         .toList();
+
+    final taskComments = context.watch<EditRouteViewModel>().taskComments;
+
     return BaseScreen<EditRouteViewModel>(
       needBackButton: false,
       needAppBar: true,
@@ -99,6 +102,9 @@ class _EditRoutePageState extends State<EditRoutePage> {
                       task.client.id,
                       task.address.id,
                     );
+
+                    final taskCommentController =
+                        taskComments['${task.client.id}_${task.address.id}'];
 
                     return ExpansionTile(
                       shape: const Border(),
@@ -230,6 +236,7 @@ class _EditRoutePageState extends State<EditRoutePage> {
                           SizedBox(
                             width: 500,
                             child: TextFormField(
+                              controller: taskCommentController,
                               maxLength: 500,
                               style: const TextStyle(color: Colors.black),
                               decoration: const InputDecoration(

@@ -2,7 +2,9 @@ import 'package:dio/dio.dart';
 import 'package:feelmeweb/core/result/result_of.dart';
 import 'package:feelmeweb/data/models/request/route_body.dart';
 import 'package:feelmeweb/data/models/request/route_update_body.dart';
+import 'package:feelmeweb/data/models/response/pagination_routes_response.dart';
 import 'package:feelmeweb/data/models/response/route_response.dart';
+import 'package:feelmeweb/domain/route/get_filtered_routes_usecase.dart';
 import 'package:feelmeweb/domain/route/get_user_route_usecase.dart';
 import 'package:injectable/injectable.dart';
 
@@ -56,6 +58,25 @@ class RouteRemoteSource {
       final response = await _networkProvider.dio.onGet(Urls.route,
           queryParams: {'userId': body.userId, 'date': body.routeDate});
       return Success(RouteResponse.fromJson(response.data));
+    } on DioException catch (e) {
+      return Failure(exception: e, message: e.message);
+    } on ConnectionException catch (e) {
+      return Failure(exception: e, message: e.message);
+    }
+  }
+
+  Future<Result<PaginationRoutesResponse>> getFilteredRoutes(
+      GetFilteredRoutesParam param) async {
+    try {
+      final response =
+          await _networkProvider.dio.onGet(Urls.routesFilter, queryParams: {
+        if (param.userId != null) 'userId': param.userId,
+        if (param.assignDate != null) 'assignDate': param.assignDate,
+        if (param.routeStatus != null) 'routeStatus': param.routeStatus,
+        'page': param.page,
+        'pageSize': param.pageSize,
+      });
+      return Success(PaginationRoutesResponse.fromJson(response.data));
     } on DioException catch (e) {
       return Failure(exception: e, message: e.message);
     } on ConnectionException catch (e) {

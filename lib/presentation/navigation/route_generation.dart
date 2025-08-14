@@ -6,8 +6,10 @@ import 'package:feelmeweb/ui/device_models/device_models_page.dart';
 import 'package:feelmeweb/ui/inventory/inventory_page.dart';
 import 'package:feelmeweb/ui/regions/regions_page.dart';
 import 'package:feelmeweb/ui/route_info/route_info_page.dart';
+import 'package:feelmeweb/ui/routes/copy/copy_route_choose_customers.dart';
 import 'package:feelmeweb/ui/routes/create/create_route_choose_customers.dart';
 import 'package:feelmeweb/ui/routes/edit/edit_route_page.dart';
+import 'package:feelmeweb/ui/routes/history/routes_history_list_page.dart';
 import 'package:feelmeweb/ui/routes/list/route_list_page.dart';
 import 'package:feelmeweb/ui/users/engineers_managers_page.dart';
 import 'package:flutter/material.dart';
@@ -107,13 +109,26 @@ class RouteGenerator {
           },
         ),
         GoRoute(
+          path: RouteName.customerCopyRoute,
+          builder: (BuildContext context, GoRouterState state) {
+            final extra = state.extra as Map<String, dynamic>?;
+            final userId = extra?['userId'] as String?;
+            final routeDate = extra?['routeDate'] as DateTime?;
+            if (userId == null || routeDate == null) {
+              return RouteOperationsPage.create();
+            }
+            return CopyRouteChooseCustomersPage.create(userId, routeDate);
+          },
+        ),
+        GoRoute(
           path: RouteName.customerEditRoute,
           builder: (BuildContext context, GoRouterState state) {
             final extra = state.extra as Map<String, dynamic>?;
             final userId = extra?['userId'] as String?;
             final routeDate = extra?['routeDate'] as String?;
-            if (userId == null || routeDate == null)
+            if (userId == null || routeDate == null) {
               return RouteOperationsPage.create();
+            }
             return EditRoutePage.create(userId, routeDate);
           },
         ),
@@ -139,6 +154,12 @@ class RouteGenerator {
             final userId = state.extra as String?;
             if (userId == null) return RouteOperationsPage.create();
             return RouteListPage.create(userId);
+          },
+        ),
+        GoRoute(
+          path: RouteName.routesHistoryList,
+          builder: (BuildContext context, GoRouterState state) {
+            return RoutesHistoryListPage.create();
           },
         ),
       ],

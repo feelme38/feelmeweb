@@ -17,19 +17,19 @@ class CustomerResponse {
   final List<DeviceResponse>? devices;
   final double? lat;
   final double? lon;
-  final RegionResponse region;
+  final RegionResponse? region;
 
   CustomerResponse({
     required this.id,
-    required this.name,
-    required this.phone,
-    required this.ownerName,
-    required this.preferredStartTime,
-    required this.addresses,
-    required this.devices,
+    this.name,
+    this.phone,
+    this.ownerName,
+    this.preferredStartTime,
+    this.addresses,
+    this.devices,
     this.lat,
     this.lon,
-    required this.region,
+    this.region,
   });
 
   /// Метод для создания новой копии объекта с изменёнными полями

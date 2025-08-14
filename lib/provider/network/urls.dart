@@ -28,6 +28,7 @@ class Urls {
   static const subtaskTypes = 'subtask/types';
   static const route = 'route';
   static const routes = 'routes';
+  static const routesFilter = 'routes/filter';
   static const routeStatus = 'route/status';
 
   static const inventory = 'inventory';

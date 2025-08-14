@@ -6,28 +6,6 @@ part of 'route_response.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-RouteResponse _$RouteResponseFromJson(Map<String, dynamic> json) =>
-    RouteResponse(
-      id: json['id'] as String,
-      tasks: (json['tasks'] as List<dynamic>)
-          .map((e) => Task.fromJson(e as Map<String, dynamic>))
-          .toList(),
-      routeStatus: json['routeStatus'] as String,
-      allTasksCount: json['allTasksCount'] as int,
-      completedTasksCount: json['completedTasksCount'] as int,
-      routeDate: DateTime.parse(json['routeDate'] as String),
-    );
-
-Map<String, dynamic> _$RouteResponseToJson(RouteResponse instance) =>
-    <String, dynamic>{
-      'id': instance.id,
-      'tasks': instance.tasks,
-      'routeStatus': instance.routeStatus,
-      'allTasksCount': instance.allTasksCount,
-      'completedTasksCount': instance.completedTasksCount,
-      'routeDate': instance.routeDate.toIso8601String(),
-    };
-
 Task _$TaskFromJson(Map<String, dynamic> json) => Task(
       id: json['id'] as String,
       name: json['name'] as String,
@@ -182,4 +160,34 @@ Aroma _$AromaFromJson(Map<String, dynamic> json) => Aroma(
 Map<String, dynamic> _$AromaToJson(Aroma instance) => <String, dynamic>{
       'id': instance.id,
       'name': instance.name,
+    };
+
+_$RouteResponseImpl _$$RouteResponseImplFromJson(Map<String, dynamic> json) =>
+    _$RouteResponseImpl(
+      id: json['id'] as String,
+      tasks: (json['tasks'] as List<dynamic>)
+          .map((e) => Task.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      engineer: json['engineer'] == null
+          ? null
+          : UserResponse.fromJson(json['engineer'] as Map<String, dynamic>),
+      client: json['client'] == null
+          ? null
+          : CustomerResponse.fromJson(json['client'] as Map<String, dynamic>),
+      routeStatus: json['routeStatus'] as String,
+      allTasksCount: json['allTasksCount'] as int,
+      completedTasksCount: json['completedTasksCount'] as int,
+      routeDate: DateTime.parse(json['routeDate'] as String),
+    );
+
+Map<String, dynamic> _$$RouteResponseImplToJson(_$RouteResponseImpl instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'tasks': instance.tasks,
+      'engineer': instance.engineer,
+      'client': instance.client,
+      'routeStatus': instance.routeStatus,
+      'allTasksCount': instance.allTasksCount,
+      'completedTasksCount': instance.completedTasksCount,
+      'routeDate': instance.routeDate.toIso8601String(),
     };

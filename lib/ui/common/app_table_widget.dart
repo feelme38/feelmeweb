@@ -21,6 +21,7 @@ class AppTableWidget extends StatelessWidget {
           scrollDirection: Axis.horizontal,
           controller: _scrollController,
           child: DataTable(
+            showCheckboxColumn: false,
             columns: dataColumns,
             rows: dataRows,
           ),

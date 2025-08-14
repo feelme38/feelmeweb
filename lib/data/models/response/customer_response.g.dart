@@ -21,7 +21,9 @@ CustomerResponse _$CustomerResponseFromJson(Map<String, dynamic> json) =>
           .toList(),
       lat: (json['lat'] as num?)?.toDouble(),
       lon: (json['lon'] as num?)?.toDouble(),
-      region: RegionResponse.fromJson(json['region'] as Map<String, dynamic>),
+      region: json['region'] == null
+          ? null
+          : RegionResponse.fromJson(json['region'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$CustomerResponseToJson(CustomerResponse instance) =>

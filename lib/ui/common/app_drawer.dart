@@ -72,6 +72,13 @@ Drawer getDrawer(BuildContext context, {Function()? reloadCallback}) {
               context.go('/users');
             }),
         ListTile(
+            leading: const Icon(Icons.route),
+            title: const Text('Маршруты'),
+            onTap: () {
+              Navigator.pop(context);
+              context.go('/routes/history');
+            }),
+        ListTile(
           leading: const Icon(Icons.home_repair_service),
           title: const Text('Инженеры'),
           onTap: () {

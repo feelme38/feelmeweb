@@ -7,6 +7,7 @@ class RouteName {
   static const aromasList = '/aromas';
   static const customersList = '/customers';
   static const customerCreateRoute = '/customer/create/route';
+  static const customerCopyRoute = '/customer/copy/route';
   static const customerEditRoute = '/customer/edit/route';
   static const customerDevices = '/customers/devices';
   static const regions = '/regions';
@@ -15,4 +16,5 @@ class RouteName {
   static const inventory = '/inventory';
   static const deviceModels = '/device-models';
   static const routesList = '/routes/list';
+  static const routesHistoryList = '/routes/history';
 }

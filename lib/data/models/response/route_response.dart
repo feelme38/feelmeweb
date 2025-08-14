@@ -1,49 +1,28 @@
 import 'package:feelmeweb/data/models/response/checklist_info_response.dart';
+import 'package:feelmeweb/data/models/response/customer_response.dart';
 import 'package:feelmeweb/data/models/response/last_checklist_info_response.dart';
 import 'package:feelmeweb/data/models/response/subtask_types_response.dart';
-import 'package:json_annotation/json_annotation.dart';
+import 'package:feelmeweb/data/models/response/user_response.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
+part 'route_response.freezed.dart';
 part 'route_response.g.dart';
 
-@JsonSerializable()
-class RouteResponse {
-  final String id;
-  final List<Task> tasks;
-  final String routeStatus;
-  final int allTasksCount;
-  final int completedTasksCount;
-  final DateTime routeDate; // LocalDate (date only)
-
-  RouteResponse({
-    required this.id,
-    required this.tasks,
-    required this.routeStatus,
-    required this.allTasksCount,
-    required this.completedTasksCount,
-    required this.routeDate,
-  });
+@freezed
+class RouteResponse with _$RouteResponse {
+  const factory RouteResponse({
+    required String id,
+    required List<Task> tasks,
+    UserResponse? engineer,
+    CustomerResponse? client,
+    required String routeStatus,
+    required int allTasksCount,
+    required int completedTasksCount,
+    required DateTime routeDate, // LocalDate (date only)
+  }) = _RouteResponse;
 
   factory RouteResponse.fromJson(Map<String, dynamic> json) =>
       _$RouteResponseFromJson(json);
-  Map<String, dynamic> toJson() => _$RouteResponseToJson(this);
-
-  RouteResponse copyWith({
-    String? id,
-    List<Task>? tasks,
-    String? routeStatus,
-    int? allTasksCount,
-    int? completedTasksCount,
-    DateTime? routeDate,
-  }) {
-    return RouteResponse(
-      id: id ?? this.id,
-      tasks: tasks ?? this.tasks,
-      routeStatus: routeStatus ?? this.routeStatus,
-      allTasksCount: allTasksCount ?? this.allTasksCount,
-      completedTasksCount: completedTasksCount ?? this.completedTasksCount,
-      routeDate: routeDate ?? this.routeDate,
-    );
-  }
 }
 
 @JsonSerializable()

@@ -1,21 +1,21 @@
 import 'package:feelmeweb/core/date_utils.dart';
 import 'package:feelmeweb/presentation/buttons/base_text_button.dart';
 import 'package:feelmeweb/presentation/theme/theme_colors.dart';
-import 'package:feelmeweb/ui/routes/create/widgets/choose_subtasks_widget.dart';
+import 'package:feelmeweb/ui/routes/copy/widgets/choose_subtasks_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'create_route_view_model.dart';
+import 'copy_route_view_model.dart';
 
-class CreateRouteSubtasksWidget extends StatefulWidget {
-  const CreateRouteSubtasksWidget({super.key});
+class CopyRouteSubtasksWidget extends StatefulWidget {
+  const CopyRouteSubtasksWidget({super.key});
 
   @override
-  State<CreateRouteSubtasksWidget> createState() =>
-      _CreateRouteSubtasksWidgetState();
+  State<CopyRouteSubtasksWidget> createState() =>
+      _CopyRouteSubtasksWidgetState();
 }
 
-class _CreateRouteSubtasksWidgetState extends State<CreateRouteSubtasksWidget> {
+class _CopyRouteSubtasksWidgetState extends State<CopyRouteSubtasksWidget> {
   late final TextEditingController _dateController;
 
   @override
@@ -24,7 +24,7 @@ class _CreateRouteSubtasksWidgetState extends State<CreateRouteSubtasksWidget> {
     _dateController = TextEditingController();
     // Initialize from VM if already selected
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final vm = context.read<CreateRouteViewModel>();
+      final vm = context.read<CopyRouteViewModel>();
       if (vm.selectedRouteDate != null) {
         _dateController.text = vm.selectedRouteDate!;
       }
@@ -39,13 +39,11 @@ class _CreateRouteSubtasksWidgetState extends State<CreateRouteSubtasksWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final viewModel = context.read<CreateRouteViewModel>();
+    final viewModel = context.read<CopyRouteViewModel>();
 
-    final isCreateOrUpdateRouteButtonEnabled = context
-        .watch<CreateRouteViewModel>()
-        .isCreateOrUpdateRouteButtonEnabled;
-    final selectedDate =
-        context.watch<CreateRouteViewModel>().selectedRouteDate;
+    final isCreateOrUpdateRouteButtonEnabled =
+        context.watch<CopyRouteViewModel>().isCreateOrUpdateRouteButtonEnabled;
+    final selectedDate = context.watch<CopyRouteViewModel>().selectedRouteDate;
     // Keep controller in sync when VM date changes externally
     if (selectedDate != null && _dateController.text != selectedDate) {
       // schedule to avoid setState during build issues
@@ -70,7 +68,6 @@ class _CreateRouteSubtasksWidgetState extends State<CreateRouteSubtasksWidget> {
                   controller: _dateController,
                   style: const TextStyle(color: Colors.black),
                   decoration: const InputDecoration(
-                    enabled: true,
                     hintText: 'ГГГГ-ММ-ДД',
                     isDense: true,
                     border: OutlineInputBorder(),
@@ -95,7 +92,7 @@ class _CreateRouteSubtasksWidgetState extends State<CreateRouteSubtasksWidget> {
             ],
           ),
         ),
-        const Expanded(flex: 1, child: CreateRouteChooseSubtasksWidget()),
+        const Expanded(flex: 1, child: CopyRouteChooseSubtasksWidget()),
         Row(
           children: [
             Padding(
@@ -103,12 +100,8 @@ class _CreateRouteSubtasksWidgetState extends State<CreateRouteSubtasksWidget> {
                 child: SizedBox(
                     width: 200,
                     child: BaseTextButton(
-                        buttonText: viewModel.routeId != null
-                            ? "Обновить маршрут"
-                            : "Создать маршрут",
-                        onTap: () => viewModel.routeId != null
-                            ? viewModel.updateRoute()
-                            : viewModel.createRoute(),
+                        buttonText: "Копировать маршрут",
+                        onTap: () => viewModel.createRoute(),
                         weight: FontWeight.w500,
                         fontSize: 14,
                         enabled: isCreateOrUpdateRouteButtonEnabled,
@@ -121,7 +114,7 @@ class _CreateRouteSubtasksWidgetState extends State<CreateRouteSubtasksWidget> {
                     width: 150,
                     child: BaseTextButton(
                         buttonText: "Назад",
-                        onTap: () => viewModel.resetStage(),
+                        onTap: () {},
                         weight: FontWeight.w500,
                         fontSize: 14,
                         enabled: true,

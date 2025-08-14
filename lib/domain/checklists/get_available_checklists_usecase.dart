@@ -11,8 +11,8 @@ class GetAvailableChecklistParam {
   final String addressId;
   final String? routeDate;
 
-  GetAvailableChecklistParam(
-      this.addressId, this.customerId, this.userId, this.routeDate);
+  GetAvailableChecklistParam(this.addressId, this.customerId, this.userId,
+      {this.routeDate});
 }
 
 class GetAvailableChecklistsUseCase extends UseCaseParam<
