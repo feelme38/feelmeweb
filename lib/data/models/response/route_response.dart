@@ -96,6 +96,7 @@ class Subtask {
   final Aroma expectedAroma;
   final double expectedAromaVolume;
   final String? volumeFormula;
+  final String? contractType;
   final bool isNeedChangeBattery;
   final String subtaskStatus;
   final String? startAt;
@@ -112,6 +113,7 @@ class Subtask {
     required this.expectedAroma,
     required this.expectedAromaVolume,
     this.volumeFormula,
+    this.contractType,
     required this.isNeedChangeBattery,
     required this.subtaskStatus,
     this.startAt,
@@ -133,6 +135,7 @@ class Subtask {
     Aroma? expectedAroma,
     double? expectedAromaVolume,
     String? volumeFormula,
+    String? contractType,
     bool? isNeedChangeBattery,
     String? subtaskStatus,
     String? startAt,
@@ -148,6 +151,7 @@ class Subtask {
       expectedAroma: expectedAroma ?? this.expectedAroma,
       expectedAromaVolume: expectedAromaVolume ?? this.expectedAromaVolume,
       volumeFormula: volumeFormula ?? this.volumeFormula,
+      contractType: contractType ?? this.contractType,
       isNeedChangeBattery: isNeedChangeBattery ?? this.isNeedChangeBattery,
       subtaskStatus: subtaskStatus ?? this.subtaskStatus,
       startAt: startAt ?? this.startAt,

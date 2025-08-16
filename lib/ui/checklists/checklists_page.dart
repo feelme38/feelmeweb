@@ -21,35 +21,41 @@ class ChecklistsPage extends StatelessWidget {
     final checklists = context.watch<ChecklistsViewModel>().checklists;
 
     return BaseScreen<ChecklistsViewModel>(
-        needBackButton: false,
-        needAppBar: true,
-        drawer: getDrawer(context),
-        appBar: SearchWidget<ChecklistsViewModel>(
-            context.read<ChecklistsViewModel>().onSearch, () {},
-            needBottomEdge: true, needBackButton: false),
-        child: Row(children: [
+      needBackButton: false,
+      needAppBar: true,
+      drawer: getDrawer(context),
+      appBar: SearchWidget<ChecklistsViewModel>(
+          context.read<ChecklistsViewModel>().onSearch, () {},
+          needBottomEdge: true, needBackButton: false),
+      child: Row(
+        children: [
           Expanded(
-              child: ListView.builder(
-                  itemCount: users.length,
-                  itemBuilder: (context, index) {
-                    final user = users[index];
-                    final isSelectedUser = viewModel.selectedUserId == user.id;
-                    return ListTile(
-                        title: Text(user.name),
-                        tileColor: isSelectedUser
-                            ? Colors.blue[100]
-                            : Colors.transparent,
-                        onTap: () {
-                          viewModel.loadChecklists(userId: user.id);
-                        });
-                  })),
+            child: ListView.builder(
+              itemCount: users.length,
+              itemBuilder: (context, index) {
+                final user = users[index];
+                final isSelectedUser = viewModel.selectedUserId == user.id;
+                return ListTile(
+                    title: Text(user.name),
+                    tileColor:
+                        isSelectedUser ? Colors.blue[100] : Colors.transparent,
+                    onTap: () {
+                      viewModel.loadChecklists(userId: user.id);
+                    });
+              },
+            ),
+          ),
           Expanded(
-              flex: 4,
-              child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Expanded(child: ChecklistsWidget(checklists: checklists))
-                  ]))
-        ]));
+            flex: 4,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Expanded(child: ChecklistsWidget(checklists: checklists))
+              ],
+            ),
+          )
+        ],
+      ),
+    );
   }
 }

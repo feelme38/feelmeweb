@@ -13,6 +13,7 @@ class SubtaskBody {
   final String expectedAromaId;
   final double expectedAromaVolume;
   final String volumeFormula;
+  final String contractType;
   final String typeId;
 
   SubtaskBody(
@@ -22,6 +23,7 @@ class SubtaskBody {
     this.expectedAromaId,
     this.expectedAromaVolume,
     this.volumeFormula,
+    this.contractType,
     this.typeId, {
     this.id,
     this.addressId,
@@ -44,6 +46,7 @@ class SubtaskBody {
     String? expectedAromaId,
     double? expectedAromaVolume,
     String? volumeFormula,
+    String? contractType,
     String? typeId,
   }) {
     return SubtaskBody(
@@ -53,6 +56,7 @@ class SubtaskBody {
         expectedAromaId ?? this.expectedAromaId,
         expectedAromaVolume ?? this.expectedAromaVolume,
         volumeFormula ?? this.volumeFormula,
+        contractType ?? this.contractType,
         typeId ?? this.typeId,
         id: id ?? this.id,
         addressId: addressId ?? this.addressId,

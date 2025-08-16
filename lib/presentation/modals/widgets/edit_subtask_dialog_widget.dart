@@ -43,6 +43,8 @@ class _EditSubtaskDialogWidgetState extends State<EditSubtaskDialogWidget> {
       TextEditingController();
   final TextEditingController _commentController = TextEditingController();
 
+  String? _selectedContractType;
+
   AromaResponse? _selectedAroma;
   String? _selectedAromaFormula;
   SubtaskTypeResponse? _selectedSubtaskType;
@@ -62,6 +64,8 @@ class _EditSubtaskDialogWidgetState extends State<EditSubtaskDialogWidget> {
         widget.aromas.first;
     _selectedAromaFormula =
         widget.subtask.volumeFormula ?? Constants.aromaFormulasList.first;
+    _selectedContractType =
+        widget.subtask.contractType ?? Constants.contractTypesList.first;
     _selectedSubtaskType = widget.subtaskTypes
             .firstWhereOrNull((e) => e.id == widget.subtask.subtaskType.id) ??
         widget.subtaskTypes.first;
@@ -76,11 +80,13 @@ class _EditSubtaskDialogWidgetState extends State<EditSubtaskDialogWidget> {
     final isAromaSelected = _selectedAroma != null;
     final isSubtaskTypeSelected = _selectedSubtaskType != null;
     final isFormulaSelected = _selectedAromaFormula != null;
+    final isContractTypeSelected = _selectedContractType != null;
 
     final isValid = isVolumeValid &&
         isAromaSelected &&
         isSubtaskTypeSelected &&
-        isFormulaSelected;
+        isFormulaSelected &&
+        isContractTypeSelected;
 
     if (isValid != _isSaveButtonEnabled) {
       setState(() {
@@ -176,13 +182,27 @@ class _EditSubtaskDialogWidgetState extends State<EditSubtaskDialogWidget> {
                   style: TextStyle(fontSize: 16, color: Colors.grey[400]),
                 ),
                 const SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    (widget.checklist?.contract).orDash(),
-                    style: const TextStyle(
-                        fontSize: 16, fontWeight: FontWeight.w500),
-                  ),
-                )
+                DropdownButton<String>(
+                  value: _selectedContractType,
+                  hint: const Text('Выберите тип сотрудничества'),
+                  items: Constants.contractTypesList.map((contractType) {
+                    return DropdownMenuItem(
+                      value: contractType,
+                      child: SizedBox(width: 150, child: Text(contractType)),
+                    );
+                  }).toList(),
+                  onChanged: (contractType) {
+                    if (contractType != null) {
+                      setState(() {
+                        _selectedContractType = contractType;
+                      });
+                      _validateForm();
+                    }
+                  },
+                  focusColor: Colors.white,
+                  dropdownColor: Colors.white,
+                  style: const TextStyle(color: Colors.black, fontSize: 16),
+                ),
               ],
             ),
             const SizedBox(height: 16),
@@ -387,6 +407,7 @@ class _EditSubtaskDialogWidgetState extends State<EditSubtaskDialogWidget> {
                               _selectedAroma!.id,
                               double.parse(_expectedAromaVolumeController.text),
                               _selectedAromaFormula!,
+                              _selectedContractType!,
                               _selectedSubtaskType!.id,
                               id: widget.subtask.id,
                               addressId: widget.checklist!.addressId,

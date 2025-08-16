@@ -1,4 +1,5 @@
 import 'package:collection/collection.dart';
+import 'package:feelmeweb/core/constants.dart';
 import 'package:feelmeweb/core/extensions/base_class_extensions/list_ext.dart';
 import 'package:feelmeweb/data/models/request/route_body.dart';
 import 'package:feelmeweb/data/models/request/subtask_body.dart';
@@ -283,7 +284,9 @@ class CopyRouteViewModel extends BaseSearchViewModel {
                     subtask.comment,
                     subtask.expectedAroma.id, // expectedAromaId
                     subtask.expectedAromaVolume,
-                    subtask.volumeFormula ?? '+100', // volumeFormula
+                    subtask.volumeFormula ??
+                        Constants.aromaFormulasList.last, // volumeFormula
+                    subtask.contractType ?? Constants.contractTypesList.first,
                     subtask.subtaskType.id, // typeId
                     id: subtask.id,
                     addressId: subtask.taskId,

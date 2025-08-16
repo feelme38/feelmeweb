@@ -59,7 +59,7 @@ class RoutesHistoryViewModel extends BaseSearchViewModel {
               : null,
           routeStatus: _selectedStatus,
           page: _currentPage,
-          pageSize: 1),
+          pageSize: 15),
     ))
         .doOnError((message, exception) {
       addAlert(Alert(message ?? '$exception', style: AlertStyle.danger));

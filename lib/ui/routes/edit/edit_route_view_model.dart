@@ -1,5 +1,6 @@
 import 'package:collection/collection.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:feelmeweb/core/constants.dart';
 import 'package:feelmeweb/data/models/request/route_body.dart';
 import 'package:feelmeweb/data/models/request/route_update_body.dart';
 import 'package:feelmeweb/data/models/request/subtask_body.dart';
@@ -298,7 +299,10 @@ class EditRouteViewModel extends BaseSearchViewModel {
                         subtask.comment,
                         subtask.expectedAroma.id,
                         subtask.expectedAromaVolume,
-                        subtask.volumeFormula ?? '+100',
+                        subtask.volumeFormula ??
+                            Constants.aromaFormulasList.last, // volumeFormula
+                        subtask.contractType ??
+                            Constants.contractTypesList.first,
                         subtask.subtaskType.id,
                         id: subtask.id,
                         subtaskStatus: subtask.subtaskStatus),
