@@ -60,8 +60,8 @@ class _EditSubtaskDialogWidgetState extends State<EditSubtaskDialogWidget> {
         widget.subtask.expectedAromaVolume.toString();
     _commentController.text = widget.subtask.comment;
 
-    _selectedAroma = widget.aromas
-            .firstWhereOrNull((e) => e.id == widget.subtask.expectedAroma.id) ??
+    _selectedAroma = widget.aromas.firstWhereOrNull(
+            (e) => e.id == widget.subtask.expectedAroma?.id) ??
         widget.aromas.first;
     _selectedAromaFormula =
         widget.subtask.volumeFormula ?? Constants.aromaFormulasList.first;

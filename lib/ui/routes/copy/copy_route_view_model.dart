@@ -283,8 +283,8 @@ class CopyRouteViewModel extends BaseSearchViewModel {
                     subtask.taskId, // customerId
                     subtask.device.id, // deviceId
                     subtask.comment,
-                    subtask.expectedAroma.id, // expectedAromaId
-                    subtask.expectedAromaVolume,
+                    subtask.expectedAroma?.id ?? '', // expectedAromaId
+                    subtask.expectedAromaVolume ?? 0,
                     subtask.volumeFormula ??
                         Constants.aromaFormulasList.last, // volumeFormula
                     subtask.contractType ?? ActionCause.values.first.name,

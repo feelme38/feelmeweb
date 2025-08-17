@@ -50,9 +50,10 @@ Subtask _$SubtaskFromJson(Map<String, dynamic> json) => Subtask(
       taskId: json['taskId'] as String,
       device: Device.fromJson(json['device'] as Map<String, dynamic>),
       comment: json['comment'] as String,
-      expectedAroma:
-          Aroma.fromJson(json['expectedAroma'] as Map<String, dynamic>),
-      expectedAromaVolume: (json['expectedAromaVolume'] as num).toDouble(),
+      expectedAroma: json['expectedAroma'] == null
+          ? null
+          : Aroma.fromJson(json['expectedAroma'] as Map<String, dynamic>),
+      expectedAromaVolume: (json['expectedAromaVolume'] as num?)?.toDouble(),
       volumeFormula: json['volumeFormula'] as String?,
       contractType: json['contractType'] as String?,
       isNeedChangeBattery: json['isNeedChangeBattery'] as bool,

@@ -93,8 +93,8 @@ class Subtask {
   final String taskId;
   final Device device;
   final String comment;
-  final Aroma expectedAroma;
-  final double expectedAromaVolume;
+  final Aroma? expectedAroma;
+  final double? expectedAromaVolume;
   final String? volumeFormula;
   final String? contractType;
   final bool isNeedChangeBattery;
@@ -110,8 +110,8 @@ class Subtask {
     required this.taskId,
     required this.device,
     required this.comment,
-    required this.expectedAroma,
-    required this.expectedAromaVolume,
+    this.expectedAroma,
+    this.expectedAromaVolume,
     this.volumeFormula,
     this.contractType,
     required this.isNeedChangeBattery,

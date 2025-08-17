@@ -37,9 +37,9 @@ class _UpdateSubtaskDialogWidgetState extends State<UpdateSubtaskDialogWidget> {
     super.initState();
     _commentController = TextEditingController(text: widget.subtask.comment);
     _selectedAroma = widget.aromas.firstWhere(
-      (aroma) => aroma.id == widget.subtask.expectedAroma.id,
+      (aroma) => aroma.id == widget.subtask.expectedAroma?.id,
     );
-    _selectedVolume = widget.subtask.expectedAromaVolume;
+    _selectedVolume = widget.subtask.expectedAromaVolume ?? 0;
     _selectedType = widget.subtaskTypes.firstWhere(
       (type) => type.id == widget.subtask.subtaskType.id,
     );

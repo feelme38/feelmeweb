@@ -37,8 +37,9 @@ class ChecklistResponseItem {
   final Aroma newAroma;
   final double aromaVolume;
   final PowerType powerType;
-  final String powerPayment;
-  final int durationWorkMode;
+  final PowerPayment powerPayment;
+  final bool? isNeedChangeBattery;
+
   final String comment;
   final String pdfUrl;
   final Address address;
@@ -60,13 +61,13 @@ class ChecklistResponseItem {
     required this.aromaVolume,
     required this.powerType,
     required this.powerPayment,
-    required this.durationWorkMode,
     required this.comment,
     required this.pdfUrl,
     required this.address,
     required this.engineer,
     required this.attachments,
     required this.workSchedule,
+    this.isNeedChangeBattery,
   });
 
   factory ChecklistResponseItem.fromJson(Map<String, dynamic> json) =>
@@ -175,5 +176,35 @@ extension AromaFeelExtension on AromaFeel {
 
   static AromaFeel? fromString(String str) {
     return AromaFeel.values.firstWhereOrNull((e) => e.name == str);
+  }
+}
+
+@JsonEnum()
+enum PowerPayment {
+  ISSUE_INVOICE,
+  PAYMENT_TO_CARD,
+  CASH_TO_ENGINEER,
+  EP_IN_STORAGE,
+  LEASE
+}
+
+extension PowerPaymentExtension on PowerPayment {
+  String get displayName {
+    switch (this) {
+      case PowerPayment.ISSUE_INVOICE:
+        return "Выставить счет";
+      case PowerPayment.PAYMENT_TO_CARD:
+        return "Получить оплату на карту";
+      case PowerPayment.CASH_TO_ENGINEER:
+        return "Отлали наличкой СИ";
+      case PowerPayment.EP_IN_STORAGE:
+        return "ЭП на хранении";
+      case PowerPayment.LEASE:
+        return "Аренда";
+    }
+  }
+
+  static PowerPayment? fromString(String str) {
+    return PowerPayment.values.firstWhereOrNull((e) => e.name == str);
   }
 }

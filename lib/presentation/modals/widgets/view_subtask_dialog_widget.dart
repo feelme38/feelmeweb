@@ -67,7 +67,7 @@ class ViewSubtaskDialogWidget extends StatelessWidget {
                   const SizedBox(height: 16),
                   SubtaskParametersWidget(
                       param: 'Ожидаемый аромат',
-                      value: subtask.expectedAroma.name),
+                      value: subtask.expectedAroma?.name),
                   const SizedBox(height: 16),
                   SubtaskParametersWidget(
                       param: 'Объем ожид. аромата',

@@ -42,8 +42,7 @@ ChecklistResponseItem _$ChecklistResponseItemFromJson(
       newAroma: Aroma.fromJson(json['newAroma'] as Map<String, dynamic>),
       aromaVolume: (json['aromaVolume'] as num).toDouble(),
       powerType: PowerType.fromJson(json['powerType'] as Map<String, dynamic>),
-      powerPayment: json['powerPayment'] as String,
-      durationWorkMode: json['durationWorkMode'] as int,
+      powerPayment: $enumDecode(_$PowerPaymentEnumMap, json['powerPayment']),
       comment: json['comment'] as String,
       pdfUrl: json['pdfUrl'] as String,
       address: Address.fromJson(json['address'] as Map<String, dynamic>),
@@ -53,6 +52,7 @@ ChecklistResponseItem _$ChecklistResponseItemFromJson(
           .toList(),
       workSchedule: DeviceWorkSchedule.fromJson(
           json['workSchedule'] as Map<String, dynamic>),
+      isNeedChangeBattery: json['isNeedChangeBattery'] as bool?,
     );
 
 Map<String, dynamic> _$ChecklistResponseItemToJson(
@@ -70,8 +70,8 @@ Map<String, dynamic> _$ChecklistResponseItemToJson(
       'newAroma': instance.newAroma,
       'aromaVolume': instance.aromaVolume,
       'powerType': instance.powerType,
-      'powerPayment': instance.powerPayment,
-      'durationWorkMode': instance.durationWorkMode,
+      'powerPayment': _$PowerPaymentEnumMap[instance.powerPayment]!,
+      'isNeedChangeBattery': instance.isNeedChangeBattery,
       'comment': instance.comment,
       'pdfUrl': instance.pdfUrl,
       'address': instance.address,
@@ -93,6 +93,14 @@ const _$ActionCauseEnumMap = {
   ActionCause.BOUGHT_CASH: 'BOUGHT_CASH',
   ActionCause.STORES_IN_OFFICE: 'STORES_IN_OFFICE',
   ActionCause.STORES_ITSELF: 'STORES_ITSELF',
+};
+
+const _$PowerPaymentEnumMap = {
+  PowerPayment.ISSUE_INVOICE: 'ISSUE_INVOICE',
+  PowerPayment.PAYMENT_TO_CARD: 'PAYMENT_TO_CARD',
+  PowerPayment.CASH_TO_ENGINEER: 'CASH_TO_ENGINEER',
+  PowerPayment.EP_IN_STORAGE: 'EP_IN_STORAGE',
+  PowerPayment.LEASE: 'LEASE',
 };
 
 Attachment _$AttachmentFromJson(Map<String, dynamic> json) => Attachment(

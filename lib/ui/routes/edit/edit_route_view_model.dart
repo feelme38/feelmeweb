@@ -298,8 +298,8 @@ class EditRouteViewModel extends BaseSearchViewModel {
                         task.client.id,
                         subtask.device.id,
                         subtask.comment,
-                        subtask.expectedAroma.id,
-                        subtask.expectedAromaVolume,
+                        subtask.expectedAroma?.id ?? '',
+                        subtask.expectedAromaVolume ?? 0,
                         subtask.volumeFormula ??
                             Constants.aromaFormulasList.last, // volumeFormula
                         subtask.contractType ?? ActionCause.values.first.name,

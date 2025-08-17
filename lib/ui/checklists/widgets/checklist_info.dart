@@ -37,6 +37,11 @@ class ChecklistInfo extends StatelessWidget {
             value: checklist.aromaAction == AromaAction.REFILLED
                 ? checklist.subtask?.device.aroma?.name ?? '-'
                 : checklist.newAroma.name),
+        if (checklist.powerType.name == 'Батарейки' &&
+            checklist.isNeedChangeBattery == true)
+          ChecklistRow(
+              title: "Способ оплаты батареек",
+              value: checklist.powerPayment.displayName),
         ChecklistRow(
             title: "Режим работы",
             value: ChecklistsHelper.formatWorkSchedule(checklist.workSchedule)),
