@@ -33,14 +33,13 @@ class ChecklistsHelper {
       buffer.writeln("Режим ${i + 1}:");
 
       if (mode.intensity != null) {
-        buffer.writeln("  Интенсивность: ${mode.intensity}%");
+        buffer.writeln("\t\t\t\tИнтенсивность: ${mode.intensity}%");
       } else {
         buffer.writeln("\t\t\t\tРабота: ${mode.tWork} мин");
         buffer.writeln("\t\t\t\tПауза: ${mode.tPause} мин");
+        buffer.writeln(
+            "\t\t\t\tВремя работы: ${mode.tStart}:00 - ${mode.tEnd}:00");
       }
-
-      buffer
-          .writeln("\t\t\t\tВремя работы: ${mode.tStart}:00 - ${mode.tEnd}:00");
 
       if (mode.workDays.isNotEmpty) {
         buffer.writeln(
