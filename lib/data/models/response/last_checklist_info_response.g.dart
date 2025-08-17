@@ -73,10 +73,11 @@ Map<String, dynamic> _$DeviceWorkScheduleToJson(DeviceWorkSchedule instance) =>
     };
 
 WorkMode _$WorkModeFromJson(Map<String, dynamic> json) => WorkMode(
-      tWork: json['tWork'] as int,
-      tPause: json['tPause'] as int,
-      tStart: json['tStart'] as int,
-      tEnd: json['tEnd'] as int,
+      tWork: json['tWork'] as int?,
+      tPause: json['tPause'] as int?,
+      tStart: json['tStart'] as int?,
+      tEnd: json['tEnd'] as int?,
+      intensity: json['intensity'] as int?,
       workDays: (json['workDays'] as List<dynamic>)
           .map((e) => $enumDecode(_$WeekDayEnumMap, e))
           .toList(),
@@ -87,6 +88,7 @@ Map<String, dynamic> _$WorkModeToJson(WorkMode instance) => <String, dynamic>{
       'tPause': instance.tPause,
       'tStart': instance.tStart,
       'tEnd': instance.tEnd,
+      'intensity': instance.intensity,
       'workDays': instance.workDays.map((e) => _$WeekDayEnumMap[e]!).toList(),
     };
 

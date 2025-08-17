@@ -1,4 +1,3 @@
-import 'package:feelmeweb/data/models/response/local_date.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'last_checklist_info_response.g.dart';
@@ -112,17 +111,19 @@ class DeviceWorkSchedule {
 
 @JsonSerializable()
 class WorkMode {
-  final int tWork;
-  final int tPause;
-  final int tStart;
-  final int tEnd;
+  final int? tWork;
+  final int? tPause;
+  final int? tStart;
+  final int? tEnd;
+  final int? intensity;
   final List<WeekDay> workDays;
 
   WorkMode({
-    required this.tWork,
-    required this.tPause,
-    required this.tStart,
-    required this.tEnd,
+    this.tWork,
+    this.tPause,
+    this.tStart,
+    this.tEnd,
+    this.intensity,
     required this.workDays,
   });
 
@@ -135,6 +136,7 @@ class WorkMode {
     int? tPause,
     int? tStart,
     int? tEnd,
+    int? intensity,
     List<WeekDay>? workDays,
   }) {
     return WorkMode(
@@ -142,6 +144,7 @@ class WorkMode {
       tPause: tPause ?? this.tPause,
       tStart: tStart ?? this.tStart,
       tEnd: tEnd ?? this.tEnd,
+      intensity: intensity ?? this.intensity,
       workDays: workDays ?? this.workDays,
     );
   }
@@ -149,3 +152,24 @@ class WorkMode {
 
 @JsonEnum()
 enum WeekDay { MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY }
+
+extension WeekDayDisplayName on WeekDay {
+  String get displayName {
+    switch (this) {
+      case WeekDay.MONDAY:
+        return "Пн";
+      case WeekDay.TUESDAY:
+        return "Вт";
+      case WeekDay.WEDNESDAY:
+        return "Ср";
+      case WeekDay.THURSDAY:
+        return "Чт";
+      case WeekDay.FRIDAY:
+        return "Пт";
+      case WeekDay.SATURDAY:
+        return "Сб";
+      case WeekDay.SUNDAY:
+        return "Вс";
+    }
+  }
+}

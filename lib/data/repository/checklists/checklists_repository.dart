@@ -1,9 +1,11 @@
 import 'package:feelmeweb/core/result/result_of.dart';
 import 'package:feelmeweb/data/models/response/checklist_info_response.dart';
 import 'package:feelmeweb/data/models/response/last_checklist_info_response.dart';
+import 'package:feelmeweb/data/models/response/pagination_checklists_response.dart';
 import 'package:feelmeweb/data/sources/remote/checklist_remote_source.dart';
 import 'package:feelmeweb/domain/checklists/get_available_checklists_usecase.dart';
 import 'package:feelmeweb/domain/checklists/get_checklists_usecase.dart';
+import 'package:feelmeweb/domain/checklists/get_filtered_checklists_usecase.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../../domain/checklists/get_last_checklists_usecase.dart';
@@ -31,6 +33,11 @@ class ChecklistsRepositoryImpl extends ChecklistsRepository {
       GetChecklistParam param) async {
     return await _checklistsRemoteSource.getChecklistsInfo(param);
   }
+
+  @override
+  Future<Result<PaginationChecklistsResponse>> getFilteredChecklists(
+          GetFilteredChecklistsParam param) =>
+      _checklistsRemoteSource.getFilteredChecklists(param);
 }
 
 abstract class ChecklistsRepository {
@@ -40,4 +47,6 @@ abstract class ChecklistsRepository {
       GetAvailableChecklistParam param);
   Future<Result<List<CheckListInfoResponse>>> getChecklistsInfo(
       GetChecklistParam param);
+  Future<Result<PaginationChecklistsResponse>> getFilteredChecklists(
+      GetFilteredChecklistsParam param);
 }

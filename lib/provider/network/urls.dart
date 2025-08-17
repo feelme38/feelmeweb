@@ -22,6 +22,7 @@ class Urls {
   static const checklists = 'checklists';
   static const lastChecklists = 'checklists/last';
   static const availableChecklists = 'checklists/available';
+  static const checklistsFilter = 'checklists/filter';
   static const customerAddress = 'customer/address';
   static const task = 'task';
   static const subtask = 'subtask';

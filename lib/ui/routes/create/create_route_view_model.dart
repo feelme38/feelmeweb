@@ -9,6 +9,7 @@ import 'package:feelmeweb/data/models/response/address_dto.dart';
 import 'package:feelmeweb/data/models/response/aroma_response.dart';
 import 'package:feelmeweb/data/models/response/customer_response.dart';
 import 'package:feelmeweb/data/models/response/last_checklist_info_response.dart';
+import 'package:feelmeweb/data/models/response/pagination_checklists_response.dart';
 import 'package:feelmeweb/data/models/response/region_response.dart';
 import 'package:feelmeweb/data/models/response/route_response.dart';
 import 'package:feelmeweb/data/models/response/subtask_types_response.dart';
@@ -338,7 +339,7 @@ class CreateRouteViewModel extends BaseSearchViewModel {
                     subtask.expectedAromaVolume,
                     subtask.volumeFormula ??
                         Constants.aromaFormulasList.last, // volumeFormula
-                    subtask.contractType ?? Constants.contractTypesList.first,
+                    subtask.contractType ?? ActionCause.values.first.name,
                     subtask.subtaskType.id, // typeId
                     id: subtask.id,
                     addressId: subtask.taskId,

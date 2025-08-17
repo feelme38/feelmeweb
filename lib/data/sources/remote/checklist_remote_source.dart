@@ -1,8 +1,10 @@
 import 'package:dio/dio.dart';
 import 'package:feelmeweb/data/models/response/checklist_info_response.dart';
 import 'package:feelmeweb/data/models/response/last_checklist_info_response.dart';
+import 'package:feelmeweb/data/models/response/pagination_checklists_response.dart';
 import 'package:feelmeweb/domain/checklists/get_available_checklists_usecase.dart';
 import 'package:feelmeweb/domain/checklists/get_checklists_usecase.dart';
+import 'package:feelmeweb/domain/checklists/get_filtered_checklists_usecase.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../../core/result/result_of.dart';
@@ -68,6 +70,25 @@ class ChecklistRemoteSource {
           .map((e) => CheckListInfoResponse.fromJson(e))
           .toList();
       return Success(result);
+    } on DioException catch (e) {
+      return Failure(exception: e, message: e.message);
+    } on ConnectionException catch (e) {
+      return Failure(exception: e, message: e.message);
+    }
+  }
+
+  Future<Result<PaginationChecklistsResponse>> getFilteredChecklists(
+      GetFilteredChecklistsParam param) async {
+    try {
+      final response =
+          await _networkProvider.dio.onGet(Urls.checklistsFilter, queryParams: {
+        if (param.engineerId != null) 'userId': param.engineerId,
+        if (param.createdDate != null) 'assignDate': param.createdDate,
+        'customerId': param.customerId,
+        'page': param.page,
+        'pageSize': param.pageSize,
+      });
+      return Success(PaginationChecklistsResponse.fromJson(response.data));
     } on DioException catch (e) {
       return Failure(exception: e, message: e.message);
     } on ConnectionException catch (e) {

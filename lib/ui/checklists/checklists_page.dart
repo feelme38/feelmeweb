@@ -1,4 +1,7 @@
 import 'package:feelmeweb/ui/checklists/checklists_view_model.dart';
+import 'package:feelmeweb/ui/checklists/widgets/checklist_details_panel.dart';
+import 'package:feelmeweb/ui/checklists/widgets/checklists_customer_list.dart';
+import 'package:feelmeweb/ui/checklists/widgets/checklists_pagination_bar.dart';
 import 'package:feelmeweb/ui/checklists/widgets/checklists_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -16,9 +19,22 @@ class ChecklistsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final users = context.watch<ChecklistsViewModel>().users;
     final viewModel = context.read<ChecklistsViewModel>();
+    final customers = context.watch<ChecklistsViewModel>().customers;
+    final users = context.watch<ChecklistsViewModel>().users;
     final checklists = context.watch<ChecklistsViewModel>().checklists;
+    final selectedCustomerId =
+        context.watch<ChecklistsViewModel>().selectedCustomerId;
+    final selectedEngineer =
+        context.watch<ChecklistsViewModel>().selectedEngineer;
+    final selectedDate = context.watch<ChecklistsViewModel>().selectedDate;
+    final selectedChecklist =
+        context.watch<ChecklistsViewModel>().selectedChecklist;
+    final paginationChecklists =
+        context.watch<ChecklistsViewModel>().paginationChecklists;
+    final currentPage = context.watch<ChecklistsViewModel>().currentPage;
+
+    final lastPage = paginationChecklists?.meta?.totalPages ?? 1;
 
     return BaseScreen<ChecklistsViewModel>(
       needBackButton: false,
@@ -27,33 +43,50 @@ class ChecklistsPage extends StatelessWidget {
       appBar: SearchWidget<ChecklistsViewModel>(
           context.read<ChecklistsViewModel>().onSearch, () {},
           needBottomEdge: true, needBackButton: false),
-      child: Row(
+      child: Column(
         children: [
           Expanded(
-            child: ListView.builder(
-              itemCount: users.length,
-              itemBuilder: (context, index) {
-                final user = users[index];
-                final isSelectedUser = viewModel.selectedUserId == user.id;
-                return ListTile(
-                    title: Text(user.name),
-                    tileColor:
-                        isSelectedUser ? Colors.blue[100] : Colors.transparent,
-                    onTap: () {
-                      viewModel.loadChecklists(userId: user.id);
-                    });
-              },
-            ),
-          ),
-          Expanded(
-            flex: 4,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
+            child: Row(
               children: [
-                Expanded(child: ChecklistsWidget(checklists: checklists))
+                // Left side - Customer list
+                Expanded(
+                  child: ChecklistsCustomerList(
+                    customers: customers,
+                    selectedCustomerId: selectedCustomerId,
+                    onCustomerSelected: viewModel.chooseCustomer,
+                  ),
+                ),
+                // Right side - Checklists table and filters
+                Expanded(
+                  flex: 2,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Expanded(
+                        child: ChecklistsWidget(
+                            checklists: checklists,
+                            engineers: users,
+                            selectedEngineer: selectedEngineer,
+                            selectedDate: selectedDate,
+                            onEngineerChanged: viewModel.filterByEngineer,
+                            onDateChanged: viewModel.filterByDate,
+                            selectedChecklist: selectedChecklist,
+                            onChecklistSelected: viewModel.onChecklistSelected),
+                      ),
+                      // Pagination
+                      ChecklistsPaginationBar(
+                          currentPage: currentPage,
+                          lastPage: lastPage,
+                          onPageChanged: viewModel.changePage),
+                    ],
+                  ),
+                ),
+                Expanded(
+                  child: ChecklistDetailsPanel(checklist: selectedChecklist),
+                ),
               ],
             ),
-          )
+          ),
         ],
       ),
     );

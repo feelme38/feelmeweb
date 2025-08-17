@@ -5,6 +5,7 @@ import 'package:feelmeweb/core/extensions/base_class_extensions/string_ext.dart'
 import 'package:feelmeweb/data/models/request/subtask_body.dart';
 import 'package:feelmeweb/data/models/response/aroma_response.dart';
 import 'package:feelmeweb/data/models/response/last_checklist_info_response.dart';
+import 'package:feelmeweb/data/models/response/pagination_checklists_response.dart';
 import 'package:feelmeweb/data/models/response/subtask_types_response.dart';
 import 'package:feelmeweb/presentation/buttons/base_text_button.dart';
 import 'package:feelmeweb/presentation/theme/theme_colors.dart';
@@ -42,7 +43,7 @@ class _CreateSubtaskDialogWidgetState extends State<CreateSubtaskDialogWidget> {
       TextEditingController();
   final TextEditingController _commentController = TextEditingController();
 
-  String? _selectedContractType;
+  ActionCause? _selectedContractType;
 
   AromaResponse? _selectedAroma;
   String? _selectedAromaFormula;
@@ -64,7 +65,8 @@ class _CreateSubtaskDialogWidgetState extends State<CreateSubtaskDialogWidget> {
     _selectedAromaFormula =
         widget.subtask?.volumeFormula ?? Constants.aromaFormulasList.first;
     _selectedContractType =
-        widget.subtask?.contractType ?? Constants.contractTypesList.first;
+        ActionCauseExtension.fromString(widget.subtask?.contractType) ??
+            ActionCause.values.first;
     _selectedSubtaskType = widget.subtaskTypes
             .firstWhereOrNull((e) => e.id == widget.subtask?.typeId) ??
         widget.subtaskTypes.firstWhereOrNull((e) => e.name == 'Плановое') ??
@@ -182,13 +184,14 @@ class _CreateSubtaskDialogWidgetState extends State<CreateSubtaskDialogWidget> {
                   style: TextStyle(fontSize: 16, color: Colors.grey[400]),
                 ),
                 const SizedBox(width: 8),
-                DropdownButton<String>(
+                DropdownButton<ActionCause>(
                   value: _selectedContractType,
                   hint: const Text('Выберите тип сотрудничества'),
-                  items: Constants.contractTypesList.map((contractType) {
+                  items: ActionCause.values.map((contractType) {
                     return DropdownMenuItem(
                       value: contractType,
-                      child: SizedBox(width: 150, child: Text(contractType)),
+                      child: SizedBox(
+                          width: 150, child: Text(contractType.displayName)),
                     );
                   }).toList(),
                   onChanged: (contractType) {
@@ -404,7 +407,7 @@ class _CreateSubtaskDialogWidgetState extends State<CreateSubtaskDialogWidget> {
                               _selectedAroma!.id,
                               double.parse(_expectedAromaVolumeController.text),
                               _selectedAromaFormula!,
-                              _selectedContractType!,
+                              _selectedContractType!.name,
                               _selectedSubtaskType!.id,
                               addressId: widget.checklist!.addressId),
                         );
