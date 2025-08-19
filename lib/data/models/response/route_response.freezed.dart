@@ -24,6 +24,7 @@ mixin _$RouteResponse {
   List<Task> get tasks => throw _privateConstructorUsedError;
   UserResponse? get engineer => throw _privateConstructorUsedError;
   CustomerResponse? get client => throw _privateConstructorUsedError;
+  double? get routeDistance => throw _privateConstructorUsedError;
   String get routeStatus => throw _privateConstructorUsedError;
   int get allTasksCount => throw _privateConstructorUsedError;
   int get completedTasksCount => throw _privateConstructorUsedError;
@@ -50,6 +51,7 @@ abstract class $RouteResponseCopyWith<$Res> {
       List<Task> tasks,
       UserResponse? engineer,
       CustomerResponse? client,
+      double? routeDistance,
       String routeStatus,
       int allTasksCount,
       int completedTasksCount,
@@ -75,6 +77,7 @@ class _$RouteResponseCopyWithImpl<$Res, $Val extends RouteResponse>
     Object? tasks = null,
     Object? engineer = freezed,
     Object? client = freezed,
+    Object? routeDistance = freezed,
     Object? routeStatus = null,
     Object? allTasksCount = null,
     Object? completedTasksCount = null,
@@ -97,6 +100,10 @@ class _$RouteResponseCopyWithImpl<$Res, $Val extends RouteResponse>
           ? _value.client
           : client // ignore: cast_nullable_to_non_nullable
               as CustomerResponse?,
+      routeDistance: freezed == routeDistance
+          ? _value.routeDistance
+          : routeDistance // ignore: cast_nullable_to_non_nullable
+              as double?,
       routeStatus: null == routeStatus
           ? _value.routeStatus
           : routeStatus // ignore: cast_nullable_to_non_nullable
@@ -130,6 +137,7 @@ abstract class _$$RouteResponseImplCopyWith<$Res>
       List<Task> tasks,
       UserResponse? engineer,
       CustomerResponse? client,
+      double? routeDistance,
       String routeStatus,
       int allTasksCount,
       int completedTasksCount,
@@ -153,6 +161,7 @@ class __$$RouteResponseImplCopyWithImpl<$Res>
     Object? tasks = null,
     Object? engineer = freezed,
     Object? client = freezed,
+    Object? routeDistance = freezed,
     Object? routeStatus = null,
     Object? allTasksCount = null,
     Object? completedTasksCount = null,
@@ -175,6 +184,10 @@ class __$$RouteResponseImplCopyWithImpl<$Res>
           ? _value.client
           : client // ignore: cast_nullable_to_non_nullable
               as CustomerResponse?,
+      routeDistance: freezed == routeDistance
+          ? _value.routeDistance
+          : routeDistance // ignore: cast_nullable_to_non_nullable
+              as double?,
       routeStatus: null == routeStatus
           ? _value.routeStatus
           : routeStatus // ignore: cast_nullable_to_non_nullable
@@ -203,6 +216,7 @@ class _$RouteResponseImpl implements _RouteResponse {
       required final List<Task> tasks,
       this.engineer,
       this.client,
+      this.routeDistance,
       required this.routeStatus,
       required this.allTasksCount,
       required this.completedTasksCount,
@@ -227,6 +241,8 @@ class _$RouteResponseImpl implements _RouteResponse {
   @override
   final CustomerResponse? client;
   @override
+  final double? routeDistance;
+  @override
   final String routeStatus;
   @override
   final int allTasksCount;
@@ -237,7 +253,7 @@ class _$RouteResponseImpl implements _RouteResponse {
 
   @override
   String toString() {
-    return 'RouteResponse(id: $id, tasks: $tasks, engineer: $engineer, client: $client, routeStatus: $routeStatus, allTasksCount: $allTasksCount, completedTasksCount: $completedTasksCount, routeDate: $routeDate)';
+    return 'RouteResponse(id: $id, tasks: $tasks, engineer: $engineer, client: $client, routeDistance: $routeDistance, routeStatus: $routeStatus, allTasksCount: $allTasksCount, completedTasksCount: $completedTasksCount, routeDate: $routeDate)';
   }
 
   @override
@@ -250,6 +266,8 @@ class _$RouteResponseImpl implements _RouteResponse {
             (identical(other.engineer, engineer) ||
                 other.engineer == engineer) &&
             (identical(other.client, client) || other.client == client) &&
+            (identical(other.routeDistance, routeDistance) ||
+                other.routeDistance == routeDistance) &&
             (identical(other.routeStatus, routeStatus) ||
                 other.routeStatus == routeStatus) &&
             (identical(other.allTasksCount, allTasksCount) ||
@@ -268,6 +286,7 @@ class _$RouteResponseImpl implements _RouteResponse {
       const DeepCollectionEquality().hash(_tasks),
       engineer,
       client,
+      routeDistance,
       routeStatus,
       allTasksCount,
       completedTasksCount,
@@ -295,6 +314,7 @@ abstract class _RouteResponse implements RouteResponse {
       required final List<Task> tasks,
       final UserResponse? engineer,
       final CustomerResponse? client,
+      final double? routeDistance,
       required final String routeStatus,
       required final int allTasksCount,
       required final int completedTasksCount,
@@ -311,6 +331,8 @@ abstract class _RouteResponse implements RouteResponse {
   UserResponse? get engineer;
   @override
   CustomerResponse? get client;
+  @override
+  double? get routeDistance;
   @override
   String get routeStatus;
   @override

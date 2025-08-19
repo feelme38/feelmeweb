@@ -20,6 +20,13 @@ class RouteInfo extends StatelessWidget {
     final completedCount =
         tasks.where((task) => task.taskStatus == "COMPLETED").length;
 
+    final distance = selectedRoute.routeDistance ?? 0.0;
+
+    final km = distance.floor(); // целая часть = километры
+    final m = ((distance - km) * 1000).round(); // дробная часть = метры
+
+    final result = "$kmкм $mм";
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -53,9 +60,8 @@ class RouteInfo extends StatelessWidget {
               "${DateFormat('dd.MM.yyyy HH:mm').format(selectedRoute.routeDate)} - "
               "${DateFormat('dd.MM.yyyy 23:59').format(selectedRoute.routeDate)}",
         ),
-        const InfoRow(title: "Прибытие", value: "-"),
-        const InfoRow(title: "Теги", value: "-"),
-        const InfoRow(title: "Статус изменен", value: "-"),
+        if (selectedRoute.routeDistance != null)
+          InfoRow(title: "Длина маршрута", value: result),
       ],
     );
   }

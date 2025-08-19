@@ -15,6 +15,7 @@ class RouteResponse with _$RouteResponse {
     required List<Task> tasks,
     UserResponse? engineer,
     CustomerResponse? client,
+    double? routeDistance,
     required String routeStatus,
     required int allTasksCount,
     required int completedTasksCount,

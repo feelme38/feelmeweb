@@ -177,6 +177,7 @@ _$RouteResponseImpl _$$RouteResponseImplFromJson(Map<String, dynamic> json) =>
       client: json['client'] == null
           ? null
           : CustomerResponse.fromJson(json['client'] as Map<String, dynamic>),
+      routeDistance: (json['routeDistance'] as num?)?.toDouble(),
       routeStatus: json['routeStatus'] as String,
       allTasksCount: json['allTasksCount'] as int,
       completedTasksCount: json['completedTasksCount'] as int,
@@ -189,6 +190,7 @@ Map<String, dynamic> _$$RouteResponseImplToJson(_$RouteResponseImpl instance) =>
       'tasks': instance.tasks,
       'engineer': instance.engineer,
       'client': instance.client,
+      'routeDistance': instance.routeDistance,
       'routeStatus': instance.routeStatus,
       'allTasksCount': instance.allTasksCount,
       'completedTasksCount': instance.completedTasksCount,
